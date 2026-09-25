@@ -4,13 +4,14 @@ import type { Product } from '../data/products'
 import { getOptionalServerEnv } from './env'
 import { getSupabaseAdmin } from './supabase'
 
+export type JsonValue=string|number|boolean|null|JsonValue[]|{[key:string]:JsonValue}
 export type StorefrontShell={
-  settings:Record<string,unknown>
+  settings:Record<string,JsonValue>
   navigation:Array<{id:string;location:string;label:string;href:string;sort_order:number}>
   searchProducts:Product[]
 }
 export type StorefrontCategory={name:string;icon:string;blurb:string}
-export type HomeData={products:Product[];categories:StorefrontCategory[];sections:Array<{section_key:string;title?:string;content:Record<string,unknown>;sort_order:number}>}
+export type HomeData={products:Product[];categories:StorefrontCategory[];sections:Array<{section_key:string;title?:string;content:Record<string,JsonValue>;sort_order:number}>}
 export type CatalogData={products:Product[];categories:StorefrontCategory[]}
 
 function ready(){const e=getOptionalServerEnv();return Boolean(e.supabaseUrl&&e.serviceRoleKey)}
