@@ -1,20 +1,24 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 import { useState } from 'react'
-import { products } from '../data/products'
+import { products as demoProducts } from '../data/products'
+import type { StorefrontShell } from '../server/storefront'
 import { useShop } from '../lib/shop'
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children, shell }: { children: React.ReactNode; shell: StorefrontShell | null }) {
   const shop = useShop()
   const [query, setQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const sourceProducts = shell?.searchProducts?.length ? shell.searchProducts : demoProducts
+  const headerNav = shell?.navigation?.filter((item) => item.location === 'header') ?? []
+  const footerNav = shell?.navigation?.filter((item) => item.location === 'footer') ?? []
   const matches = query.trim().length > 1
-    ? products.filter((p) => `${p.name} ${p.brand} ${p.category} ${p.tags.join(' ')}`.toLowerCase().includes(query.toLowerCase())).slice(0, 5)
+    ? sourceProducts.filter((p) => `${p.name} ${p.brand} ${p.category} ${p.tags.join(' ')}`.toLowerCase().includes(query.toLowerCase())).slice(0, 5)
     : []
 
   return (
     <div className="site-shell">
-      <div className="announcement"><span>🚚 15 000 Ft felett ingyenes szállítás</span><span>•</span><span>30 napos extra visszaküldési vállalás</span><span>•</span><span>Biztonságos online fizetés</span></div>
+      <div className="announcement"><span>🚚 {shop.freeShippingThreshold.toLocaleString('hu-HU')} Ft felett ingyenes szállítás</span><span>•</span><span>14 napos elállási jog</span><span>•</span><span>Biztonságos online fizetés</span></div>
       <header className="header">
         <Link to="/" className="brand" aria-label="DinoToys.hu főoldal"><span className="brand-mark">D</span><span>DinoToys<span className="brand-dot">.hu</span></span></Link>
         <div className="search-wrap">
@@ -28,11 +32,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </header>
       <div className="nav-row">
         <Link to="/termekek" search={{}} className={pathname.startsWith('/termekek') ? 'active' : ''}>Összes termék</Link>
-        <Link to="/termekek" search={{ category: 'Plüss & kulcstartó' }}>Plüss</Link>
-        <Link to="/termekek" search={{ category: 'Dínók & figurák' }}>Dínók</Link>
-        <Link to="/termekek" search={{ category: 'Járművek' }}>Járművek</Link>
-        <Link to="/termekek" search={{ category: 'Puzzle & játék' }}>Játékok</Link>
-        <Link to="/termekek" search={{ category: 'Back to School' }}>Iskola</Link>
+        {headerNav.length ? headerNav.map((item) => <a key={item.id} href={item.href}>{item.label}</a>) : <>
+          <Link to="/termekek" search={{ category: 'Plüss & kulcstartó' }}>Plüss</Link>
+          <Link to="/termekek" search={{ category: 'Dínók & figurák' }}>Dínók</Link>
+          <Link to="/termekek" search={{ category: 'Járművek' }}>Járművek</Link>
+          <Link to="/termekek" search={{ category: 'Puzzle & játék' }}>Játékok</Link>
+          <Link to="/termekek" search={{ category: 'Back to School' }}>Iskola</Link>
+        </>}
         <Link to="/osszehasonlitas" className="nav-muted">Összehasonlítás {shop.compare.length ? `(${shop.compare.length})` : ''}</Link>
       </div>
       <main>{children}</main>
@@ -40,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div><div className="brand footer-brand"><span className="brand-mark">D</span><span>DinoToys<span className="brand-dot">.hu</span></span></div><p>Modern magyar játékwebshop, Dino Toys nagykereskedelmi forrásra tervezve.</p></div>
         <div><strong>Vásárlás</strong><Link to="/termekek" search={{}}>Termékek</Link><Link to="/ai-ajandekkereso">Ajándékkereső</Link><Link to="/kedvencek">Kedvencek</Link></div>
         <div><strong>Ügyfélszolgálat</strong><Link to="/szallitas">Szállítás és fizetés</Link><Link to="/visszakuldes">Visszaküldés</Link><Link to="/kapcsolat">Kapcsolat</Link></div>
-        <div><strong>Jogi</strong><Link to="/jogi/$slug" params={{ slug: 'aszf' }}>ÁSZF</Link><Link to="/jogi/$slug" params={{ slug: 'adatkezeles' }}>Adatkezelés</Link><Link to="/jogi/$slug" params={{ slug: 'cookie' }}>Cookie tájékoztató</Link></div>
+        <div><strong>Jogi / egyéb</strong>{footerNav.length ? footerNav.map((item) => <a key={item.id} href={item.href}>{item.label}</a>) : <><Link to="/jogi/$slug" params={{ slug: 'aszf' }}>ÁSZF</Link><Link to="/jogi/$slug" params={{ slug: 'adatkezeles' }}>Adatkezelés</Link><Link to="/jogi/$slug" params={{ slug: 'cookie' }}>Cookie tájékoztató</Link></>}</div>
       </footer>
 
       {searchOpen && <div className="modal-backdrop" onMouseDown={() => setSearchOpen(false)}>
