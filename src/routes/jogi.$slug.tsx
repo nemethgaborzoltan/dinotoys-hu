@@ -1,0 +1,8 @@
+import { createFileRoute, notFound } from '@tanstack/react-router'
+const pages = {
+  aszf:{title:'Általános Szerződési Feltételek',intro:'A végleges ÁSZF a kereskedő pontos cégadatai, szállítási/fizetési szolgáltatói és értékesítési feltételei alapján készül.'},
+  adatkezeles:{title:'Adatkezelési tájékoztató',intro:'A végleges tájékoztató az adatkezelő adatait, jogalapokat, megőrzési időket, adatfeldolgozókat és érintetti jogokat fogja tartalmazni.'},
+  cookie:{title:'Cookie tájékoztató',intro:'A rendszer szükséges, analitikai és marketing kategóriát különít el. Nem szükséges technológia csak megfelelő hozzájárulás után aktiválható.'},
+} as const
+export const Route=createFileRoute('/jogi/$slug')({loader:({params})=>{const page=pages[params.slug as keyof typeof pages];if(!page)throw notFound();return page},head:({loaderData})=>({meta:[{title:`${loaderData?.title||'Jogi'} | DinoToys.hu`}]}),component:Legal})
+function Legal(){const page=Route.useLoaderData();return <div className="container section info-page legal-page"><span className="eyebrow">Jogi dokumentum – tervezet</span><h1>{page.title}</h1><p className="lead">{page.intro}</p><div className="legal-note">⚠️ Nem végleges jogi szöveg. Éles publikálás előtt magyar e-kereskedelmi jogban jártas szakember ellenőrzése szükséges.</div><section><h2>Technikailag előkészített témák</h2><ul><li>kereskedő és szolgáltatók azonosítása</li><li>megrendelés és szerződés létrejötte</li><li>árak, ÁFA, fizetés és szállítás</li><li>elállás, visszaküldés, szavatosság/jótállás</li><li>adatkezelés, cookie consent és marketing hozzájárulás</li><li>panaszkezelés és kapcsolattartás</li></ul></section></div>}

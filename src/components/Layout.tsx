@@ -39,8 +39,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <footer className="footer">
         <div><div className="brand footer-brand"><span className="brand-mark">D</span><span>DinoToys<span className="brand-dot">.hu</span></span></div><p>Modern magyar játékwebshop, Dino Toys nagykereskedelmi forrásra tervezve.</p></div>
         <div><strong>Vásárlás</strong><Link to="/termekek" search={{}}>Termékek</Link><Link to="/ai-ajandekkereso">Ajándékkereső</Link><Link to="/kedvencek">Kedvencek</Link></div>
-        <div><strong>Ügyfélszolgálat</strong><a href="#">Szállítás és fizetés</a><a href="#">Visszaküldés</a><a href="#">Kapcsolat</a></div>
-        <div><strong>Jogi</strong><a href="#">ÁSZF</a><a href="#">Adatkezelés</a><a href="#">Cookie beállítások</a></div>
+        <div><strong>Ügyfélszolgálat</strong><Link to="/szallitas">Szállítás és fizetés</Link><Link to="/visszakuldes">Visszaküldés</Link><Link to="/kapcsolat">Kapcsolat</Link></div>
+        <div><strong>Jogi</strong><Link to="/jogi/$slug" params={{ slug: 'aszf' }}>ÁSZF</Link><Link to="/jogi/$slug" params={{ slug: 'adatkezeles' }}>Adatkezelés</Link><Link to="/jogi/$slug" params={{ slug: 'cookie' }}>Cookie tájékoztató</Link></div>
       </footer>
 
       {searchOpen && <div className="modal-backdrop" onMouseDown={() => setSearchOpen(false)}>
