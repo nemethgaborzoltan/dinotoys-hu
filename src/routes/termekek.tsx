@@ -5,9 +5,10 @@ import { ProductCard } from '../components/ProductCard'
 import { categories as demoCategories, products as demoProducts } from '../data/products'
 import { getCatalogData } from '../server/storefront'
 import { getProductDisplayPrice } from '../lib/catalog'
+import {absoluteUrl} from '../lib/seo'
 
 const searchSchema=z.object({category:z.string().optional(),q:z.string().optional(),age:z.coerce.number().optional(),max:z.coerce.number().optional(),sort:z.string().optional()})
-export const Route=createFileRoute('/termekek')({validateSearch:(search)=>searchSchema.parse(search),loader:()=>getCatalogData(),component:Products})
+export const Route=createFileRoute('/termekek')({validateSearch:(search)=>searchSchema.parse(search),loader:()=>getCatalogData(),head:()=>({meta:[{title:'Játékok és ajándékötletek | DinoToys.hu'},{name:'description',content:'Böngéssz játékok, plüssök, dínók, járművek, puzzle-k és trendtermékek között. Szűrés kor, kategória és ár szerint.'}],links:[{rel:'canonical',href:absoluteUrl('/termekek')}]}),component:Products})
 
 function Products(){
   const search=Route.useSearch()

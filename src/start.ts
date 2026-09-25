@@ -7,6 +7,10 @@ const securityHeaders = createMiddleware().server(async ({ next }) => {
   setResponseHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
   setResponseHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
   setResponseHeader('X-Frame-Options', 'DENY')
+  setResponseHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
+  setResponseHeader('Cross-Origin-Opener-Policy', 'same-origin')
+  setResponseHeader('X-Permitted-Cross-Domain-Policies', 'none')
+  setResponseHeader('X-DNS-Prefetch-Control', 'off')
   return result
 })
 

@@ -4,6 +4,7 @@ import { products as demoProducts } from '../../data/products'
 import { money } from '../../lib/format'
 import { adminApi, AdminApiError, jsonBody } from '../../lib/admin-api'
 import { getSupabaseBrowser, hasSupabaseBrowserConfig } from '../../lib/supabase.browser'
+import {activateDemoHero,deleteDemoHero,getDemoActiveHero,getDemoHeroVersions,normalizeHero,saveDemoHeroSnapshot} from '../../lib/hero'
 
 type View='dashboard'|'products'|'content'|'commerce'|'orders'|'media'|'integrations'|'security'
 type AdminMe={userId:string;email:string;role:string;permissions:string[]}
@@ -75,7 +76,7 @@ export function AdminApp(){
       <div className="admin2-content">
         {view==='dashboard'&&<Dashboard demo={!configured}/>}
         {view==='products'&&<ProductsWorkspace demo={!configured} onMessage={setMessage}/>}
-        {view==='content'&&<MultiResourceWorkspace demo={!configured} kind="content" onMessage={setMessage}/>}
+        {view==='content'&&<><HeroVersionsWorkspace demo={!configured} onMessage={setMessage}/><MultiResourceWorkspace demo={!configured} kind="content" onMessage={setMessage}/></>}
         {view==='commerce'&&<MultiResourceWorkspace demo={!configured} kind="commerce" onMessage={setMessage}/>}
         {view==='orders'&&<OrdersWorkspace demo={!configured} onMessage={setMessage}/>}
         {view==='media'&&<MediaWorkspace demo={!configured} onMessage={setMessage}/>}
@@ -181,6 +182,21 @@ function VariantMerchandisingEditor({productId,productSku,config,catalogRows,onC
 function sanitizeProduct(form:JsonRow){
   const allowed=['sku','ean','name','slug','brand','description','short_description','retail_price_huf','compare_at_price_huf','cost_net_eur','vat_rate','stock_on_hand','safety_stock','age_from','weight_grams','status','manufacturer_name','manufacturer_address','manufacturer_email','responsible_person_name','responsible_person_address','responsible_person_email','safety_warning_hu','ce_marked','seo_title','seo_description','metadata']
   return Object.fromEntries(allowed.map(k=>[k,form[k]]))
+}
+
+function HeroVersionsWorkspace({demo,onMessage}:{demo:boolean;onMessage:(s:string|null)=>void}){
+ const [versions,setVersions]=useState<JsonRow[]>([]),[activeVersion,setActiveVersion]=useState('premium-v2'),[busy,setBusy]=useState(false)
+ const load=async()=>{
+  try{
+   if(demo){const current=getDemoActiveHero();setActiveVersion(current.version);setVersions(getDemoHeroVersions().map(v=>({id:v.id,section_key:v.sectionKey,title:v.name,content:v.content,built_in:!v.savedAt,saved_at:v.savedAt??null})));return}
+   const rows=await adminApi<JsonRow[]>('/api/v1/admin/hero'),active=rows.find(r=>r.section_key==='hero');setActiveVersion(normalizeHero(active?.content).version);setVersions(rows.filter(r=>r.section_key!=='hero'))
+  }catch(e){onMessage((e as Error).message)}
+ }
+ useEffect(()=>{void load()},[demo])
+ const activate=async(row:JsonRow)=>{setBusy(true);try{if(demo)activateDemoHero(row.id);else await adminApi('/api/v1/admin/hero',{method:'PUT',body:jsonBody({sectionKey:row.section_key})});await load();onMessage('Hero verzió aktiválva.')}catch(e){onMessage((e as Error).message)}finally{setBusy(false)}}
+ const save=async()=>{setBusy(true);try{if(demo)saveDemoHeroSnapshot(getDemoActiveHero());else await adminApi('/api/v1/admin/hero',{method:'POST',body:jsonBody({name:'Mentett hero '+new Date().toLocaleString('hu-HU')})});await load();onMessage('Az aktuális hero verzió elmentve.')}catch(e){onMessage((e as Error).message)}finally{setBusy(false)}}
+ const remove=async(row:JsonRow)=>{setBusy(true);try{if(demo)deleteDemoHero(row.id);else await adminApi('/api/v1/admin/hero',{method:'DELETE',body:jsonBody({sectionKey:row.section_key})});await load()}catch(e){onMessage((e as Error).message)}finally{setBusy(false)}}
+ return <section className="admin2-card hero-version-manager"><div className="admin2-card-head"><div><span className="eyebrow">Hero verziókezelő</span><h2>3D hero mentés és visszaállítás</h2><p>A korábbi hero megmarad külön snapshotként. Aktiváláskor nem törlünk semmit.</p></div><button className="btn btn-primary" disabled={busy} onClick={()=>void save()}>Aktuális hero mentése</button></div><div className="hero-version-grid">{versions.map(row=>{const hero=normalizeHero(row.content),active=hero.version===activeVersion,locked=['hero_legacy_20260925','hero_premium_v2'].includes(row.section_key);return <article className={active?'hero-version-card active':'hero-version-card'} key={row.id||row.section_key}><div className="hero-version-preview" style={{background:hero.background}}><div className="hero-preview-main"/><div className="hero-preview-float one"/><div className="hero-preview-float two"/><span>{hero.mode}</span></div><div className="hero-version-copy"><div><b>{row.title||row.section_key}</b><small>{hero.eyebrow}</small></div><p>{hero.title} <strong>{hero.emphasis}</strong></p><div className="hero-version-actions"><button className="btn btn-ghost" disabled={busy||active} onClick={()=>void activate(row)}>{active?'Aktív':'Visszaállítás / aktiválás'}</button>{!locked&&<button className="btn admin2-danger" disabled={busy} onClick={()=>void remove(row)}>Törlés</button>}</div></div></article>})}</div></section>
 }
 
 const resourceGroups={
@@ -296,10 +312,10 @@ function demoResource(resource:string):JsonRow[]{
  const map:Record<string,JsonRow[]>={
  categories:[{id:id(),name:'Dínók & figurák',slug:'dinok-figurak',description:'Dinoszauruszok és játékfigurák',sort_order:10,active:true},{id:id(),name:'Plüss & kulcstartó',slug:'pluss-kulcstarto',sort_order:20,active:true}],
  brands:[{id:id(),name:'Schleich',slug:'schleich',description:'',logo_url:'',active:true},{id:id(),name:'Hot Wheels',slug:'hot-wheels',description:'',logo_url:'',active:true}],
- content_pages:[{id:id(),slug:'szallitas',title:'Szállítás és fizetés',body:'Adminból szerkeszthető teljes oldal.',published:true},{id:id(),slug:'aszf',title:'ÁSZF',body:'Jogi jóváhagyás után publikálandó.',published:false}],
+ content_pages:[{id:id(),slug:'szallitas',title:'Szállítás és fizetés',body:'Adminból szerkeszthető teljes oldal.',published:true},{id:id(),slug:'impresszum',title:'Impresszum',body:'Az üzemeltető pontos adatai az élesítés előtt kitöltendők.',published:false},{id:id(),slug:'aszf',title:'ÁSZF',body:'Jogi jóváhagyás után publikálandó.',published:false},{id:id(),slug:'adatkezeles',title:'Adatkezelési tájékoztató',body:'GDPR 13. cikk szerinti végleges adatokkal publikálandó.',published:false},{id:id(),slug:'cookie',title:'Cookie tájékoztató',body:'Szükséges, analitika és marketing kategóriák.',published:false},{id:id(),slug:'elallas',title:'Elállás és visszaküldés',body:'14 napos fogyasztói elállási folyamat.',published:false},{id:id(),slug:'panaszkezeles',title:'Panaszkezelés',body:'Panasz, békéltetés és fogyasztóvédelmi jogorvoslat.',published:false},{id:id(),slug:'szavatossag',title:'Szavatosság és jótállás',body:'Hibás teljesítés ügyintézési tájékoztató.',published:false}],
  navigation_items:[{id:id(),location:'header',label:'Dínók',href:'/termekek?category=Dínók',sort_order:10,active:true}],
  homepage_sections:[{id:id(),section_key:'hero',title:'Hero',sort_order:10,enabled:true,content:{eyebrow:'Friss trendek hetente',title:'Találd meg gyorsan azt, aminek örülni fog.'}}],
- settings:[{id:id(),key:'shop.free_shipping_threshold_huf',group_name:'commerce',description:'Ingyenes szállítási küszöb',public:true,value:15000},{id:id(),key:'features.gift_finder',group_name:'features',description:'Dino Match',public:true,value:true}],
+ settings:[{id:id(),key:'shop.free_shipping_threshold_huf',group_name:'commerce',description:'Ingyenes szállítási küszöb',public:true,value:15000},{id:id(),key:'features.gift_finder',group_name:'features',description:'Dino Match',public:true,value:true},{id:id(),key:'legal.company_name',group_name:'legal',description:'Vállalkozás neve',public:true,value:'[KITÖLTENDŐ – vállalkozás neve]'},{id:id(),key:'legal.registered_office',group_name:'legal',description:'Székhely',public:true,value:'[KITÖLTENDŐ – székhely]'},{id:id(),key:'legal.tax_number',group_name:'legal',description:'Adószám',public:true,value:'[KITÖLTENDŐ – adószám]'},{id:id(),key:'legal.registration_number',group_name:'legal',description:'Cégjegyzékszám / nyilvántartási szám',public:true,value:'[KITÖLTENDŐ]'},{id:id(),key:'legal.email',group_name:'legal',description:'Ügyfélszolgálati e-mail',public:true,value:'[KITÖLTENDŐ]'},{id:id(),key:'legal.phone',group_name:'legal',description:'Telefon',public:true,value:'[KITÖLTENDŐ]'}],
  price_rules:[{id:id(),name:'Alap retail margin',target_margin:.4,fx_buffer:.03,inbound_per_unit_huf:300,active:true}],
  promotions:[{id:id(),name:'Első rendelés 10%',description:'10% minimum 8 000 Ft-tól',code:'WELCOME10',kind:'percentage',value:10,conditions:{minSubtotal:8000},max_discount_huf:null,usage_limit:null,per_customer_limit:1,priority:100,combinable:false,active:true}],
  marketing_popups:[{id:id(),name:'Üdvözlő kupon',eyebrow:'Exkluzív ajánlat',title:'Szerezz 10% kedvezményt az első rendelésedre',body:'Aktiváld a WELCOME10 kupont.',coupon_code:'WELCOME10',cta_label:'Kupon aktiválása',cta_href:'/termekek',trigger_type:'delay',delay_seconds:4,min_cart_huf:null,page_scope:'all',frequency:'session',sort_order:10,active:true}],

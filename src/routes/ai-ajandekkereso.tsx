@@ -1,14 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
-import { ProductCard } from '../components/ProductCard'
-import { products as demoProducts } from '../data/products'
-import { getCatalogData } from '../server/storefront'
-import { getProductDisplayPrice } from '../lib/catalog'
-export const Route=createFileRoute('/ai-ajandekkereso')({loader:()=>getCatalogData(),component:GiftFinder})
-function GiftFinder(){
-  const data=Route.useLoaderData()
-  const products=data?.products?.length?data.products:demoProducts
-  const [age,setAge]=useState(7),[budget,setBudget]=useState(8000),[interest,setInterest]=useState('dínó'),[searched,setSearched]=useState(false)
-  const results=useMemo(()=>products.filter((p)=>p.ageFrom<=age&&getProductDisplayPrice(p)<=budget).sort((a,b)=>Number(b.tags.join(' ').toLowerCase().includes(interest.toLowerCase()))-Number(a.tags.join(' ').toLowerCase().includes(interest.toLowerCase()))).slice(0,4),[age,budget,interest,products])
-  return <div className="gift-finder"><div className="container section"><div className="gift-hero"><span className="pill">DINO MATCH ✨</span><h1>Mondd el, kinek keresel ajándékot.</h1><p>A variánsok minimumárát is figyelembe veszi.</p></div><div className="finder-card"><label><span>Hány éves?</span><input type="range" min="3" max="14" value={age} onChange={(e)=>setAge(+e.target.value)}/><b>{age} éves</b></label><label><span>Mekkora a keret?</span><input type="range" min="2000" max="20000" step="1000" value={budget} onChange={(e)=>setBudget(+e.target.value)}/><b>{budget.toLocaleString('hu-HU')} Ft</b></label><label><span>Mi érdekli?</span><input value={interest} onChange={(e)=>setInterest(e.target.value)}/></label><button className="btn btn-primary btn-large" onClick={()=>setSearched(true)}>✨ Mutasd a legjobb ötleteket</button></div>{searched&&<section className="section"><div className="product-grid">{results.map((p)=><ProductCard key={p.id} product={p}/>)}</div></section>}</div></div>
+import {createFileRoute} from '@tanstack/react-router'
+import {useMemo,useState} from 'react'
+import {ProductCard} from '../components/ProductCard'
+import {products as demoProducts} from '../data/products'
+import {getCatalogData} from '../server/storefront'
+import {getProductDisplayPrice} from '../lib/catalog'
+import {absoluteUrl} from '../lib/seo'
+export const Route=createFileRoute('/ai-ajandekkereso')({loader:()=>getCatalogData(),head:()=>({meta:[{title:'Ajándékkereső gyerekeknek | DinoToys.hu'},{name:'description',content:'Keress játékajándékot életkor, keret és érdeklődés alapján a DinoToys.hu ajándékkeresőjével.'}],links:[{rel:'canonical',href:absoluteUrl('/ai-ajandekkereso')}]}),component:GiftFinder})
+function GiftFinder(){const data=Route.useLoaderData(),products=data?.products?.length?data.products:demoProducts,[age,setAge]=useState(7),[budget,setBudget]=useState(8000),[interest,setInterest]=useState('dínó'),[searched,setSearched]=useState(false),results=useMemo(()=>products.filter(p=>p.ageFrom<=age&&getProductDisplayPrice(p)<=budget).sort((a,b)=>Number(b.tags.join(' ').toLowerCase().includes(interest.toLowerCase()))-Number(a.tags.join(' ').toLowerCase().includes(interest.toLowerCase()))).slice(0,4),[age,budget,interest,products])
+ return <div className="gift-finder"><div className="container section"><div className="gift-hero"><span className="pill">DINO MATCH ✨</span><h1>Mondd el, kinek keresel ajándékot.</h1><p>A variánsok minimumárát is figyelembe veszi, így a keret szerinti ajánlás pontosabb.</p></div><div className="finder-card"><label><span>Hány éves?</span><input aria-label="Életkor" type="range" min="3" max="14" value={age} onChange={e=>setAge(+e.target.value)}/><b>{age} éves</b></label><label><span>Mekkora a keret?</span><input aria-label="Költségkeret" type="range" min="2000" max="20000" step="1000" value={budget} onChange={e=>setBudget(+e.target.value)}/><b>{budget.toLocaleString('hu-HU')} Ft</b></label><label><span>Mi érdekli?</span><input value={interest} onChange={e=>setInterest(e.target.value)} placeholder="pl. dínó, autó, Stitch, kreatív"/></label><button className="btn btn-primary btn-large" onClick={()=>setSearched(true)}>✨ Mutasd a legjobb ötleteket</button></div>{searched&&<section className="section"><div className="product-grid">{results.map(p=><ProductCard key={p.id} product={p}/>)}</div></section>}</div></div>
 }

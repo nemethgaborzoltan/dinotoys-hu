@@ -1,0 +1,17 @@
+import {createFileRoute} from '@tanstack/react-router'
+import {requireAdmin} from '../server/auth'
+import {ApiError,fail,ok,readJson} from '../server/http'
+import {getSupabaseAdmin} from '../server/supabase'
+import {writeAudit} from '../server/audit'
+
+async function list(){
+ const db=getSupabaseAdmin(),{data,error}=await db.from('homepage_sections').select('id,section_key,title,enabled,sort_order,content,created_at,updated_at').or('section_key.eq.hero,section_key.like.hero_%').order('sort_order')
+ if(error)throw new ApiError(500,'Hero verziók betöltése sikertelen.','HERO_LIST_FAILED',error.message)
+ return data??[]
+}
+export const Route=createFileRoute('/api/v1/admin/hero')({server:{handlers:{
+ GET:async({request})=>{try{await requireAdmin(request,'content.write');return ok(await list())}catch(e){return fail(e)}},
+ POST:async({request})=>{try{const actor=await requireAdmin(request,'content.write'),body=await readJson<{name?:string}>(request),db=getSupabaseAdmin();const {data:current,error}=await db.from('homepage_sections').select('content').eq('section_key','hero').maybeSingle();if(error||!current)throw new ApiError(404,'Aktív hero nem található.','HERO_NOT_FOUND');const key='hero_saved_'+Date.now(),{data,error:saveError}=await db.from('homepage_sections').insert({section_key:key,title:body.name?.trim()||'Mentett hero '+new Date().toISOString(),enabled:false,sort_order:950,content:current.content}).select('*').single();if(saveError)throw new ApiError(400,'Hero mentése sikertelen.','HERO_SAVE_FAILED',saveError.message);await writeAudit({actorUserId:actor.userId,action:'hero.snapshot',entityType:'homepage_sections',entityId:data.id,after:data});return ok(data)}catch(e){return fail(e)}},
+ PUT:async({request})=>{try{const actor=await requireAdmin(request,'content.write'),body=await readJson<{sectionKey:string}>(request),db=getSupabaseAdmin();const {data:target,error:targetError}=await db.from('homepage_sections').select('*').eq('section_key',body.sectionKey).maybeSingle();if(targetError||!target)throw new ApiError(404,'Hero verzió nem található.','HERO_VERSION_NOT_FOUND');const {data:before}=await db.from('homepage_sections').select('*').eq('section_key','hero').maybeSingle();const {data,error}=await db.from('homepage_sections').upsert({section_key:'hero',title:'Hero – aktív',enabled:true,sort_order:1,content:target.content},{onConflict:'section_key'}).select('*').single();if(error)throw new ApiError(400,'Hero aktiválása sikertelen.','HERO_ACTIVATE_FAILED',error.message);await writeAudit({actorUserId:actor.userId,action:'hero.activate',entityType:'homepage_sections',entityId:data.id,before,after:{...data,source:body.sectionKey}});return ok(data)}catch(e){return fail(e)}},
+ DELETE:async({request})=>{try{const actor=await requireAdmin(request,'content.write'),body=await readJson<{sectionKey:string}>(request);if(['hero','hero_legacy_20260925','hero_premium_v2'].includes(body.sectionKey))throw new ApiError(409,'Beépített hero verzió nem törölhető.','SYSTEM_HERO_LOCKED');const db=getSupabaseAdmin(),{data:before}=await db.from('homepage_sections').select('*').eq('section_key',body.sectionKey).maybeSingle();const {error}=await db.from('homepage_sections').delete().eq('section_key',body.sectionKey);if(error)throw new ApiError(400,'Hero törlése sikertelen.','HERO_DELETE_FAILED',error.message);await writeAudit({actorUserId:actor.userId,action:'hero.delete',entityType:'homepage_sections',entityId:before?.id,before});return ok({deleted:true})}catch(e){return fail(e)}},
+}}})

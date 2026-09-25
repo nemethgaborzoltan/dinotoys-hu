@@ -1,5 +1,10 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /api/
 Disallow: /checkout
+Disallow: /kosar
+Disallow: /kedvencek
+Disallow: /osszehasonlitas
+
 Sitemap: https://dinotoys.hu/sitemap.xml

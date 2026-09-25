@@ -78,3 +78,69 @@ export const getProductPage=createServerFn({method:'GET'}).validator(z.object({s
   }catch(e){console.error('product fallback',e);return null}
 })
 export const getContentPage=createServerFn({method:'GET'}).validator(z.object({slug:z.string().min(1)})).handler(async({data}):Promise<{slug:string;title:string;body:string;seo_title?:string|null;seo_description?:string|null}|null>=>{if(!ready())return null;try{const db=getSupabaseAdmin(),{data:page,error}=await db.from('content_pages').select('slug,title,body,seo_title,seo_description').eq('slug',data.slug).eq('published',true).maybeSingle();if(error)throw error;return page}catch(e){console.error('content page fallback',e);return null}})
+
+
+export type LegalProfile={
+  companyName:string
+  registeredOffice:string
+  mailingAddress:string
+  taxNumber:string
+  registrationNumber:string
+  email:string
+  phone:string
+  hostingName:string
+  hostingAddress:string
+  hostingContact:string
+  complaintAddress:string
+  lastReviewed:string
+  complete:boolean
+}
+
+function legalText(value:unknown,fallback:string){
+  return typeof value==='string'&&value.trim()?value:fallback
+}
+
+export const getLegalProfile=createServerFn({method:'GET'}).handler(async():Promise<LegalProfile>=>{
+  const fallback:LegalProfile={
+    companyName:'[KITÖLTENDŐ – vállalkozás neve]',
+    registeredOffice:'[KITÖLTENDŐ – székhely]',
+    mailingAddress:'[KITÖLTENDŐ – levelezési cím]',
+    taxNumber:'[KITÖLTENDŐ – adószám]',
+    registrationNumber:'[KITÖLTENDŐ – cégjegyzékszám vagy nyilvántartási szám]',
+    email:'[KITÖLTENDŐ – ügyfélszolgálati e-mail]',
+    phone:'[KITÖLTENDŐ – telefonszám]',
+    hostingName:'Cloudflare / Supabase – production konfiguráció szerint pontosítandó',
+    hostingAddress:'[KITÖLTENDŐ / szolgáltatói szerződés alapján]',
+    hostingContact:'[KITÖLTENDŐ / szolgáltatói szerződés alapján]',
+    complaintAddress:'[KITÖLTENDŐ – panaszkezelési cím]',
+    lastReviewed:'2026-09-25',
+    complete:false,
+  }
+  if(!ready())return fallback
+  try{
+    const db=getSupabaseAdmin()
+    const {data,error}=await db.from('settings').select('key,value').eq('group_name','legal')
+    if(error)throw error
+    const values=Object.fromEntries((data??[]).map((row:any)=>[row.key,row.value]))
+    const profile:LegalProfile={
+      companyName:legalText(values['legal.company_name'],fallback.companyName),
+      registeredOffice:legalText(values['legal.registered_office'],fallback.registeredOffice),
+      mailingAddress:legalText(values['legal.mailing_address'],fallback.mailingAddress),
+      taxNumber:legalText(values['legal.tax_number'],fallback.taxNumber),
+      registrationNumber:legalText(values['legal.registration_number'],fallback.registrationNumber),
+      email:legalText(values['legal.email'],fallback.email),
+      phone:legalText(values['legal.phone'],fallback.phone),
+      hostingName:legalText(values['legal.hosting_name'],fallback.hostingName),
+      hostingAddress:legalText(values['legal.hosting_address'],fallback.hostingAddress),
+      hostingContact:legalText(values['legal.hosting_contact'],fallback.hostingContact),
+      complaintAddress:legalText(values['legal.complaint_address'],fallback.complaintAddress),
+      lastReviewed:legalText(values['legal.last_reviewed'],fallback.lastReviewed),
+      complete:true,
+    }
+    profile.complete=!Object.values(profile).some(value=>typeof value==='string'&&value.includes('[KITÖLTENDŐ'))
+    return profile
+  }catch(error){
+    console.error('legal profile fallback',error)
+    return fallback
+  }
+})

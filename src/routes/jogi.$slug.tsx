@@ -1,9 +1,27 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
-import { getContentPage } from '../server/storefront'
-const pages = {
-  aszf:{title:'Általános Szerződési Feltételek',intro:'A végleges ÁSZF a kereskedő pontos cégadatai, szállítási/fizetési szolgáltatói és értékesítési feltételei alapján készül.'},
-  adatkezeles:{title:'Adatkezelési tájékoztató',intro:'A végleges tájékoztató az adatkezelő adatait, jogalapokat, megőrzési időket, adatfeldolgozókat és érintetti jogokat fogja tartalmazni.'},
-  cookie:{title:'Cookie tájékoztató',intro:'A rendszer szükséges, analitikai és marketing kategóriát különít el. Nem szükséges technológia csak megfelelő hozzájárulás után aktiválható.'},
-} as const
-export const Route=createFileRoute('/jogi/$slug')({loader:async({params})=>{const live=await getContentPage({data:{slug:params.slug}});if(live)return {...live,intro:live.body};const page=pages[params.slug as keyof typeof pages];if(!page)throw notFound();return page},head:({loaderData})=>({meta:[{title:`${loaderData?.title||'Jogi'} | DinoToys.hu`}]}),component:Legal})
-function Legal(){const page=Route.useLoaderData();return <div className="container section info-page legal-page"><span className="eyebrow">Jogi dokumentum – tervezet</span><h1>{page.title}</h1><p className="lead">{page.intro}</p>{'body' in page && page.body && <div className="cms-body">{page.body}</div>}<div className="legal-note">⚠️ Nem végleges jogi szöveg. Éles publikálás előtt magyar e-kereskedelmi jogban jártas szakember ellenőrzése szükséges.</div><section><h2>Technikailag előkészített témák</h2><ul><li>kereskedő és szolgáltatók azonosítása</li><li>megrendelés és szerződés létrejötte</li><li>árak, ÁFA, fizetés és szállítás</li><li>elállás, visszaküldés, szavatosság/jótállás</li><li>adatkezelés, cookie consent és marketing hozzájárulás</li><li>panaszkezelés és kapcsolattartás</li></ul></section></div>}
+import {Link,createFileRoute,notFound} from '@tanstack/react-router'
+import {buildLegalDocument} from '../data/legal'
+import {absoluteUrl} from '../lib/seo'
+import {getContentPage,getLegalProfile} from '../server/storefront'
+
+export const Route=createFileRoute('/jogi/$slug')({
+ loader:async({params})=>{
+  const [live,profile]=await Promise.all([getContentPage({data:{slug:params.slug}}),getLegalProfile()])
+  const fallback=buildLegalDocument(params.slug,profile)
+  if(!live&&!fallback)throw notFound()
+  return{live,profile,fallback,slug:params.slug,draft:!live&&!profile.complete}
+ },
+ head:({loaderData,params})=>{
+  const title=loaderData?.live?.seo_title||loaderData?.live?.title||loaderData?.fallback?.title||'Jogi tájékoztató'
+  const description=loaderData?.live?.seo_description||loaderData?.fallback?.description||'DinoToys.hu jogi tájékoztató'
+  return{meta:[{title:`${title} | DinoToys.hu`},{name:'description',content:description},{name:'robots',content:loaderData?.draft?'noindex,follow':'index,follow'}],links:[{rel:'canonical',href:absoluteUrl(`/jogi/${params.slug}`)}]}
+ },
+ component:Legal,
+})
+
+function Legal(){
+ const {live,profile,fallback,draft}=Route.useLoaderData()
+ const title=live?.title||fallback?.title||'Jogi tájékoztató'
+ return <div className="container section info-page legal-page"><div className="breadcrumbs"><Link to="/">Főoldal</Link><span>/</span><b>{title}</b></div><span className="eyebrow">Jogi és vásárlói tájékoztatás</span><h1>{title}</h1>{draft&&<div className="legal-launch-warning"><b>Élesítés előtti teendő</b><span>A vállalkozás pontos jogi adatai még nincsenek teljesen kitöltve. Admin → Kereskedelem → Beállítások alatt töltsd ki a <code>legal.*</code> mezőket, majd jogi ellenőrzés után publikáld a CMS-verziót.</span></div>}
+ {live?.body?<article className="cms-body legal-article">{live.body}</article>:<article className="legal-article"><p className="lead">{fallback?.description}</p>{fallback?.sections.map(section=><section key={section.heading}><h2>{section.heading}</h2>{section.paragraphs?.map((paragraph,index)=><p key={index}>{paragraph}</p>)}{section.bullets&&<ul>{section.bullets.map(item=><li key={item}>{item}</li>)}</ul>}</section>)}</article>}
+ <aside className="legal-meta"><span>Utolsó technikai/jogi sablon-felülvizsgálat: <b>{profile.lastReviewed}</b></span><span>Kapcsolat: <b>{profile.email}</b></span></aside><div className="legal-note">A beépített szöveg működő e-kereskedelmi jogi sablon, de a konkrét vállalkozás, termékkör, fizetési/szállítási partnerek és üzleti folyamatok alapján indulás előtt szakmai jogi ellenőrzés szükséges.</div></div>
+}
