@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --config vitest.config.ts",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "bun run build && wrangler deploy"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.52.1",

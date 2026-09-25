@@ -27,16 +27,16 @@ Product names/categories are seeded only to demonstrate the architecture. Before
 ## Run
 
 ```bash
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 Production verification:
 
 ```bash
-npm run typecheck
-npm test
-npm run build
+bun run typecheck
+bun run test
+bun run build
 ```
 
 ## Deploy
@@ -45,7 +45,7 @@ Cloudflare Workers is configured in `wrangler.jsonc`.
 
 ```bash
 npx wrangler login
-npm run deploy
+bun run deploy
 ```
 
 ## Next integration sequence
