@@ -1,4 +1,3 @@
-import { env } from 'cloudflare:workers'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -17,13 +16,16 @@ const schema = z.object({
 
 export type ServerEnv = z.infer<typeof schema>
 
+function runtimeEnv() {
+  return process.env as Record<string, string | undefined>
+}
+
 export function getServerEnv(): ServerEnv {
-  const runtime = env as unknown as Record<string, string | undefined>
-  return schema.parse(runtime)
+  return schema.parse(runtimeEnv())
 }
 
 export function getOptionalServerEnv() {
-  const runtime = env as unknown as Record<string, string | undefined>
+  const runtime = runtimeEnv()
   return {
     supabaseUrl: runtime.SUPABASE_URL,
     serviceRoleKey: runtime.SUPABASE_SERVICE_ROLE_KEY,
