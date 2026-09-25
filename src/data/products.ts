@@ -1,54 +1,54 @@
-export type Product = {
-  id: string
-  slug: string
-  name: string
-  brand: string
-  category: string
-  sourceSku: string
-  ean: string
-  retailPrice: number
-  compareAtPrice?: number
-  stock: number
-  ageFrom: number
-  tags: string[]
-  description: string
-  highlights: string[]
-  art: string
-  accent: string
-  rating: number
-  reviewCount: number
-  newArrival?: boolean
-  trending?: boolean
-  compliance: {
-    manufacturer: string
-    responsiblePerson: string
-    warning: string
-    ceMarked: boolean
-    safetyStatus: 'ready' | 'needs_review'
-  }
+export type ProductOptionValue={value:string;label:string;swatch?:string|null}
+export type ProductOption={name:string;label:string;display?:'button'|'swatch';values:ProductOptionValue[]}
+export type ProductVariant={
+  id:string;sku:string;ean?:string|null;retailPrice:number;compareAtPrice?:number;stock:number;safetyStock?:number;
+  art?:string;attributes:Record<string,string>;active?:boolean;sortOrder?:number
 }
-
-const svg = (label: string, symbol: string, accent: string) => {
-  const image = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><rect width="800" height="800" rx="64" fill="#f6f7fb"/><circle cx="650" cy="120" r="150" fill="${accent}" opacity=".14"/><circle cx="130" cy="680" r="190" fill="${accent}" opacity=".10"/><text x="400" y="370" font-family="Arial" font-size="220" text-anchor="middle">${symbol}</text><text x="400" y="560" font-family="Arial" font-weight="700" font-size="42" text-anchor="middle" fill="#111827">${label}</text><text x="400" y="615" font-family="Arial" font-size="24" text-anchor="middle" fill="#6b7280">Demo termékkép</text></svg>`
+export type Product={
+  id:string;slug:string;name:string;brand:string;category:string;sourceSku:string;ean:string;retailPrice:number;compareAtPrice?:number;
+  stock:number;ageFrom:number;tags:string[];description:string;highlights:string[];art:string;accent:string;rating:number;reviewCount:number;
+  newArrival?:boolean;trending?:boolean;options?:ProductOption[];variants?:ProductVariant[];upsellIds?:string[];crossSellIds?:string[];
+  compliance:{manufacturer:string;responsiblePerson:string;warning:string;ceMarked:boolean;safetyStatus:'ready'|'needs_review'}
+}
+const svg=(label:string,symbol:string,accent:string)=>{
+  const image=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><rect width="800" height="800" rx="64" fill="#f6f7fb"/><circle cx="650" cy="120" r="150" fill="${accent}" opacity=".14"/><circle cx="130" cy="680" r="190" fill="${accent}" opacity=".10"/><text x="400" y="370" font-family="Arial" font-size="220" text-anchor="middle">${symbol}</text><text x="400" y="560" font-family="Arial" font-weight="700" font-size="42" text-anchor="middle" fill="#111827">${label}</text><text x="400" y="615" font-family="Arial" font-size="24" text-anchor="middle" fill="#6b7280">Demo termékkép</text></svg>`
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(image)}`
 }
-
-export const products: Product[] = [
-  {id:'p-30346',slug:'world-of-dinosaurs-novo-dino-tojas',name:'World of Dinosaurs növekvő dínótojás',brand:'Dinoworld',category:'Dínók & figurák',sourceSku:'6431900124',ean:'64319001241000000200',retailPrice:2490,compareAtPrice:2990,stock:34,ageFrom:3,tags:['dínó','meglepetés','ajándék'],description:'Tedd vízbe a tojást, és figyeld, ahogy fokozatosan előbújik belőle a dínó. Látványos, könnyen ajándékozható meglepetésjáték.',highlights:['6-féle figura','Kis ajándéknak ideális','Gyorsan polcra tehető trendtermék'],art:svg('Dínótojás','🥚','#78c86b'),accent:'#78c86b',rating:4.8,reviewCount:126,newArrival:true,trending:true,compliance:{manufacturer:'Beszállítói adat importálandó',responsiblePerson:'EU felelős személy adata importálandó',warning:'3 éves kor alatt nem ajánlott. Apró alkatrészeket tartalmazhat.',ceMarked:true,safetyStatus:'needs_review'}},
-  {id:'p-hotwheels',slug:'hot-wheels-mystery-models-blindbag',name:'Hot Wheels Mystery Models blindbag',brand:'Hot Wheels',category:'Járművek',sourceSku:'DEMO-HW-01',ean:'DEMO00000001',retailPrice:1990,stock:52,ageFrom:3,tags:['autó','blindbag','gyűjthető'],description:'Meglepetés Hot Wheels kisautó gyűjtőknek és játékhoz. A csomag tartalma véletlenszerű.',highlights:['Gyűjthető','Meglepetés csomag','Könnyű ajándék'],art:svg('Hot Wheels','🏎️','#ff5b4d'),accent:'#ff5b4d',rating:4.9,reviewCount:244,trending:true,compliance:{manufacturer:'Mattel / forrásadatból',responsiblePerson:'Forrásadatból',warning:'3 éves kor alatt nem ajánlott. Apró alkatrészek.',ceMarked:true,safetyStatus:'needs_review'}},
-  {id:'p-kawaii',slug:'kawaii-kuties-memory-game',name:'Kawaii Kuties memóriajáték',brand:'Kawaii',category:'Puzzle & játék',sourceSku:'DEMO-KW-01',ean:'DEMO00000002',retailPrice:3490,compareAtPrice:3990,stock:19,ageFrom:4,tags:['memória','kawaii','családi'],description:'Vidám, kompakt memóriajáték aranyos karakterekkel. Utazáshoz és családi játékhoz is praktikus.',highlights:['Kompakt méret','Családi játék','4+ éves kortól'],art:svg('Memory','🧠','#f7b4cf'),accent:'#f7b4cf',rating:4.7,reviewCount:87,newArrival:true,compliance:{manufacturer:'Forrásadatból',responsiblePerson:'Forrásadatból',warning:'A csomagolást gyermeknek ne add oda.',ceMarked:true,safetyStatus:'needs_review'}},
-  {id:'p-schleich',slug:'schleich-quetzalcoatlus',name:'Schleich Dinosaurs Quetzalcoatlus',brand:'Schleich',category:'Dínók & figurák',sourceSku:'DEMO-SC-01',ean:'DEMO00000003',retailPrice:8990,stock:11,ageFrom:4,tags:['schleich','dínó','figura'],description:'Részletgazdag dinoszaurusz figura szerepjátékhoz és gyűjteménybe.',highlights:['Részletgazdag kidolgozás','Gyűjthető','Tartós játékfigura'],art:svg('Quetzalcoatlus','🦕','#6bb6c9'),accent:'#6bb6c9',rating:4.9,reviewCount:63,compliance:{manufacturer:'Schleich / forrásadatból',responsiblePerson:'Forrásadatból',warning:'A gyártói korhatár- és biztonsági jelölést ellenőrizni kell publikálás előtt.',ceMarked:true,safetyStatus:'needs_review'}},
-  {id:'p-stitch',slug:'disney-stitch-pluss-kulcstarto',name:'Disney Stitch plüss kulcstartó',brand:'Disney',category:'Plüss & kulcstartó',sourceSku:'DEMO-DS-01',ean:'DEMO00000004',retailPrice:3290,stock:41,ageFrom:3,tags:['stitch','plüss','kulcstartó'],description:'Puha Stitch plüss bag clip, hátizsákra vagy kulcscsomóra.',highlights:['Licencelt karakter','Ajándéknak könnyű választás','Táskára akasztható'],art:svg('Stitch','💙','#6a8cff'),accent:'#6a8cff',rating:4.8,reviewCount:151,trending:true,compliance:{manufacturer:'Licencelt gyártói adat importálandó',responsiblePerson:'Forrásadatból',warning:'A termék címkéjén szereplő korhatár- és kezelési jelölés az irányadó.',ceMarked:true,safetyStatus:'needs_review'}},
-  {id:'p-uno',slug:'uno-express-kartyajatek',name:'UNO Express kártyajáték',brand:'Mattel',category:'Puzzle & játék',sourceSku:'DEMO-UNO-01',ean:'DEMO00000005',retailPrice:2990,stock:27,ageFrom:7,tags:['uno','kártya','utazás'],description:'Kompakt, gyors UNO-változat utazáshoz és rövid játékokhoz.',highlights:['Utazó méret','Gyors játékmenet','Családi klasszikus'],art:svg('UNO Express','🃏','#ffd451'),accent:'#ffd451',rating:4.6,reviewCount:92,compliance:{manufacturer:'Mattel / forrásadatból',responsiblePerson:'Forrásadatból',warning:'A gyártó által megadott korhatár az irányadó.',ceMarked:true,safetyStatus:'needs_review'}},
-  {id:'p-hello',slug:'hello-kitty-3d-radir-szett',name:'Hello Kitty 3D radír 3-pack',brand:'Sanrio',category:'Back to School',sourceSku:'DEMO-HK-01',ean:'DEMO00000006',retailPrice:1890,stock:68,ageFrom:6,tags:['hello kitty','iskola','radír'],description:'Háromdarabos 3D radír szett iskolakezdéshez és apró ajándéknak.',highlights:['3 darabos szett','Trend licenc','Iskolakezdésre'],art:svg('Hello Kitty','🎀','#ff9fc8'),accent:'#ff9fc8',rating:4.7,reviewCount:74,newArrival:true,compliance:{manufacturer:'Licencelt gyártói adat importálandó',responsiblePerson:'Forrásadatból',warning:'Nem élelmiszer. Rendeltetésszerű használatra.',ceMarked:false,safetyStatus:'needs_review'}},
-  {id:'p-squeeze',slug:'squeeze-vaj-slow-rise',name:'Squeeze vaj slow-rise stresszjáték',brand:'Dinotoys',category:'Fidget & squeeze',sourceSku:'DEMO-SQ-01',ean:'DEMO00000007',retailPrice:2490,stock:23,ageFrom:6,tags:['squeeze','fidget','stressz'],description:'Puha slow-rise squeeze játék látványos formával.',highlights:['Slow-rise anyag','Trendtermék','Impulzusvásárlásra erős'],art:svg('Squeeze','🧈','#f2c864'),accent:'#f2c864',rating:4.5,reviewCount:58,trending:true,compliance:{manufacturer:'Forrásadatból',responsiblePerson:'Forrásadatból',warning:'Nem ehető. Sérült terméket ne használj.',ceMarked:true,safetyStatus:'needs_review'}}
+export const products:Product[]=[
+{id:'p-30346',slug:'world-of-dinosaurs-novo-dino-tojas',name:'World of Dinosaurs növekvő dínótojás',brand:'Dinoworld',category:'Dínók & figurák',sourceSku:'6431900124',ean:'64319001241000000200',retailPrice:2490,compareAtPrice:2990,stock:34,ageFrom:3,tags:['dínó','meglepetés','ajándék'],description:'Tedd vízbe a tojást, és figyeld, ahogy fokozatosan előbújik belőle a dínó.',highlights:['6-féle figura','Kis ajándéknak ideális','Trendtermék'],art:svg('Dínótojás','🥚','#78c86b'),accent:'#78c86b',rating:4.8,reviewCount:126,newArrival:true,trending:true,upsellIds:['p-schleich'],crossSellIds:['p-uno','p-squeeze'],compliance:{manufacturer:'Beszállítói adat importálandó',responsiblePerson:'EU felelős személy adata importálandó',warning:'3 éves kor alatt nem ajánlott. Apró alkatrészeket tartalmazhat.',ceMarked:true,safetyStatus:'needs_review'}},
+{id:'p-hotwheels',slug:'hot-wheels-mystery-models-blindbag',name:'Hot Wheels Mystery Models blindbag',brand:'Hot Wheels',category:'Járművek',sourceSku:'DEMO-HW-01',ean:'DEMO00000001',retailPrice:1990,stock:52,ageFrom:3,tags:['autó','blindbag','gyűjthető'],description:'Meglepetés Hot Wheels kisautó gyűjtőknek és játékhoz.',highlights:['Gyűjthető','Meglepetés csomag','Könnyű ajándék'],art:svg('Hot Wheels','🏎️','#ff5b4d'),accent:'#ff5b4d',rating:4.9,reviewCount:244,trending:true,crossSellIds:['p-uno','p-squeeze'],compliance:{manufacturer:'Mattel / forrásadatból',responsiblePerson:'Forrásadatból',warning:'3 éves kor alatt nem ajánlott. Apró alkatrészek.',ceMarked:true,safetyStatus:'needs_review'}},
+{id:'p-kawaii',slug:'kawaii-kuties-memory-game',name:'Kawaii Kuties memóriajáték',brand:'Kawaii',category:'Puzzle & játék',sourceSku:'DEMO-KW-01',ean:'DEMO00000002',retailPrice:3490,compareAtPrice:3990,stock:19,ageFrom:4,tags:['memória','kawaii','családi'],description:'Vidám, kompakt memóriajáték aranyos karakterekkel.',highlights:['Kompakt méret','Családi játék','4+ éves kortól'],art:svg('Memory','🧠','#f7b4cf'),accent:'#f7b4cf',rating:4.7,reviewCount:87,newArrival:true,crossSellIds:['p-uno','p-stitch'],compliance:{manufacturer:'Forrásadatból',responsiblePerson:'Forrásadatból',warning:'A csomagolást gyermeknek ne add oda.',ceMarked:true,safetyStatus:'needs_review'}},
+{id:'p-schleich',slug:'schleich-quetzalcoatlus',name:'Schleich Dinosaurs Quetzalcoatlus',brand:'Schleich',category:'Dínók & figurák',sourceSku:'DEMO-SC-01',ean:'DEMO00000003',retailPrice:8990,stock:11,ageFrom:4,tags:['schleich','dínó','figura'],description:'Részletgazdag dinoszaurusz figura szerepjátékhoz és gyűjteménybe.',highlights:['Részletgazdag kidolgozás','Gyűjthető','Tartós játékfigura'],art:svg('Quetzalcoatlus','🦕','#6bb6c9'),accent:'#6bb6c9',rating:4.9,reviewCount:63,crossSellIds:['p-30346'],compliance:{manufacturer:'Schleich / forrásadatból',responsiblePerson:'Forrásadatból',warning:'A gyártói korhatár- és biztonsági jelölést ellenőrizni kell.',ceMarked:true,safetyStatus:'needs_review'}},
+{id:'p-stitch',slug:'disney-stitch-pluss-kulcstarto',name:'Disney Stitch plüss kulcstartó',brand:'Disney',category:'Plüss & kulcstartó',sourceSku:'DEMO-DS-01',ean:'DEMO00000004',retailPrice:2990,stock:41,ageFrom:3,tags:['stitch','plüss','kulcstartó'],description:'Puha Stitch plüss bag clip, több szín- és méretvariációban.',highlights:['Licencelt karakter','Több variáns','Ajándéknak könnyű választás'],art:svg('Stitch','💙','#6a8cff'),accent:'#6a8cff',rating:4.8,reviewCount:151,trending:true,
+ options:[{name:'color',label:'Szín',display:'swatch',values:[{value:'blue',label:'Kék',swatch:'#6a8cff'},{value:'pink',label:'Pink',swatch:'#ff9fc8'}]},{name:'size',label:'Méret',display:'button',values:[{value:'mini',label:'Mini'},{value:'medium',label:'Medium'}]}],
+ variants:[
+  {id:'p-stitch-blue-mini',sku:'DEMO-DS-01-BM',retailPrice:2990,compareAtPrice:3490,stock:18,art:svg('Stitch Mini','💙','#6a8cff'),attributes:{color:'blue',size:'mini'}},
+  {id:'p-stitch-blue-medium',sku:'DEMO-DS-01-BL',retailPrice:3590,compareAtPrice:3990,stock:9,art:svg('Stitch Medium','💙','#5576e8'),attributes:{color:'blue',size:'medium'}},
+  {id:'p-stitch-pink-mini',sku:'DEMO-DS-01-PM',retailPrice:3090,compareAtPrice:3490,stock:7,art:svg('Stitch Pink','💗','#ff9fc8'),attributes:{color:'pink',size:'mini'}},
+  {id:'p-stitch-pink-medium',sku:'DEMO-DS-01-PL',retailPrice:3690,compareAtPrice:4190,stock:7,art:svg('Stitch Pink M','💗','#ff77b9'),attributes:{color:'pink',size:'medium'}}
+ ],upsellIds:['p-stitch-deluxe'],crossSellIds:['p-kawaii','p-hello'],compliance:{manufacturer:'Licencelt gyártói adat importálandó',responsiblePerson:'Forrásadatból',warning:'A termék címkéjén szereplő korhatár az irányadó.',ceMarked:true,safetyStatus:'needs_review'}},
+{id:'p-stitch-deluxe',slug:'stitch-deluxe-pluss',name:'Stitch Deluxe plüss',brand:'Disney',category:'Plüss & kulcstartó',sourceSku:'DEMO-DS-02',ean:'DEMO00000008',retailPrice:4990,compareAtPrice:5690,stock:12,ageFrom:3,tags:['stitch','plüss','prémium'],description:'Prémium Stitch plüss díszdobozos csomagolással.',highlights:['Prémium kivitel','Ajándékdoboz','Upsell opció'],art:svg('Stitch Deluxe','🌟','#7795ff'),accent:'#7795ff',rating:4.9,reviewCount:44,crossSellIds:['p-hello'],compliance:{manufacturer:'Licencelt gyártói adat importálandó',responsiblePerson:'Forrásadatból',warning:'A címkén szereplő korhatár az irányadó.',ceMarked:true,safetyStatus:'needs_review'}},
+{id:'p-uno',slug:'uno-express-kartyajatek',name:'UNO Express kártyajáték',brand:'Mattel',category:'Puzzle & játék',sourceSku:'DEMO-UNO-01',ean:'DEMO00000005',retailPrice:2990,stock:27,ageFrom:7,tags:['uno','kártya','utazás'],description:'Kompakt, gyors UNO-változat utazáshoz.',highlights:['Utazó méret','Gyors játékmenet','Családi klasszikus'],art:svg('UNO Express','🃏','#ffd451'),accent:'#ffd451',rating:4.6,reviewCount:92,crossSellIds:['p-hotwheels','p-kawaii'],compliance:{manufacturer:'Mattel / forrásadatból',responsiblePerson:'Forrásadatból',warning:'A gyártó által megadott korhatár az irányadó.',ceMarked:true,safetyStatus:'needs_review'}},
+{id:'p-hello',slug:'hello-kitty-3d-radir-szett',name:'Hello Kitty 3D radír 3-pack',brand:'Sanrio',category:'Back to School',sourceSku:'DEMO-HK-01',ean:'DEMO00000006',retailPrice:1890,stock:68,ageFrom:6,tags:['hello kitty','iskola','radír'],description:'Háromdarabos 3D radír szett több mintával.',highlights:['3 darabos szett','Trend licenc','Iskolakezdésre'],art:svg('Hello Kitty','🎀','#ff9fc8'),accent:'#ff9fc8',rating:4.7,reviewCount:74,newArrival:true,
+ options:[{name:'theme',label:'Minta',display:'button',values:[{value:'classic',label:'Classic'},{value:'school',label:'School'},{value:'pastel',label:'Pastel'}]}],
+ variants:[
+  {id:'p-hello-classic',sku:'DEMO-HK-01-C',retailPrice:1890,stock:24,art:svg('Hello Classic','🎀','#ff9fc8'),attributes:{theme:'classic'}},
+  {id:'p-hello-school',sku:'DEMO-HK-01-S',retailPrice:1990,compareAtPrice:2290,stock:22,art:svg('Hello School','📚','#ff9fc8'),attributes:{theme:'school'}},
+  {id:'p-hello-pastel',sku:'DEMO-HK-01-P',retailPrice:2090,compareAtPrice:2390,stock:22,art:svg('Hello Pastel','🌸','#e9b4ff'),attributes:{theme:'pastel'}}
+ ],crossSellIds:['p-stitch','p-kawaii'],compliance:{manufacturer:'Licencelt gyártói adat importálandó',responsiblePerson:'Forrásadatból',warning:'Nem élelmiszer.',ceMarked:false,safetyStatus:'needs_review'}},
+{id:'p-squeeze',slug:'squeeze-vaj-slow-rise',name:'Squeeze vaj slow-rise stresszjáték',brand:'Dinotoys',category:'Fidget & squeeze',sourceSku:'DEMO-SQ-01',ean:'DEMO00000007',retailPrice:2490,stock:23,ageFrom:6,tags:['squeeze','fidget','stressz'],description:'Puha slow-rise squeeze játék.',highlights:['Slow-rise anyag','Trendtermék','Impulzusvásárlásra erős'],art:svg('Squeeze','🧈','#f2c864'),accent:'#f2c864',rating:4.5,reviewCount:58,trending:true,
+ options:[{name:'size',label:'Méret',display:'button',values:[{value:'standard',label:'Standard'},{value:'xl',label:'XL'}]},{name:'color',label:'Szín',display:'swatch',values:[{value:'butter',label:'Vaj',swatch:'#f2c864'},{value:'mint',label:'Menta',swatch:'#91d7c4'}]}],
+ variants:[
+  {id:'p-sq-standard-butter',sku:'DEMO-SQ-01-SB',retailPrice:2490,stock:8,attributes:{size:'standard',color:'butter'}},
+  {id:'p-sq-xl-butter',sku:'DEMO-SQ-01-XB',retailPrice:2990,compareAtPrice:3490,stock:5,attributes:{size:'xl',color:'butter'}},
+  {id:'p-sq-standard-mint',sku:'DEMO-SQ-01-SM',retailPrice:2590,stock:6,attributes:{size:'standard',color:'mint'}},
+  {id:'p-sq-xl-mint',sku:'DEMO-SQ-01-XM',retailPrice:3090,compareAtPrice:3590,stock:4,attributes:{size:'xl',color:'mint'}}
+ ],crossSellIds:['p-hotwheels','p-30346'],compliance:{manufacturer:'Forrásadatból',responsiblePerson:'Forrásadatból',warning:'Nem ehető. Sérült terméket ne használj.',ceMarked:true,safetyStatus:'needs_review'}}
 ]
-
-export const categories = [
-  { name: 'Plüss & kulcstartó', icon: '🧸', blurb: 'Stitch, karakterek és puha ajándékok' },
-  { name: 'Dínók & figurák', icon: '🦕', blurb: 'Gyűjthető figurák és felfedező játékok' },
-  { name: 'Járművek', icon: '🏎️', blurb: 'Kisautók, meglepetések, versenyzés' },
-  { name: 'Puzzle & játék', icon: '🧩', blurb: 'Családi és utazó játékok' },
-  { name: 'Fidget & squeeze', icon: '🫧', blurb: 'Tapizható trendjátékok' },
-  { name: 'Back to School', icon: '🎒', blurb: 'Iskolai apróságok és kiegészítők' },
-]
+export const categories=[
+{name:'Plüss & kulcstartó',icon:'🧸',blurb:'Stitch, karakterek és puha ajándékok'},
+{name:'Dínók & figurák',icon:'🦕',blurb:'Gyűjthető figurák és felfedező játékok'},
+{name:'Járművek',icon:'🏎️',blurb:'Kisautók, meglepetések, versenyzés'},
+{name:'Puzzle & játék',icon:'🧩',blurb:'Családi és utazó játékok'},
+{name:'Fidget & squeeze',icon:'🫧',blurb:'Tapizható trendjátékok'},
+{name:'Back to School',icon:'🎒',blurb:'Iskolai apróságok és kiegészítők'}]
