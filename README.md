@@ -57,3 +57,36 @@ bun run deploy
 5. Add Stripe, shipping adapter (Foxpost/Packeta/GLS), invoice adapter (Billingo/Számlázz.hu) and Resend.
 6. Add consent/GA4/Ads/Meta, Merchant Center and product feeds.
 7. Add E2E/browser QA before production.
+
+
+## Backend platform v2
+
+A repository már nem csak storefront alap:
+
+- TanStack Start `/api/v1/*` REST/server routes
+- Supabase Auth + szerveroldali RBAC permission ellenőrzés
+- PostgreSQL RLS
+- teljes product CRUD + category mapping + GPSR publish gate
+- atomikus inventory adjustment + movement ledger
+- idempotens checkout + DB oldali újraárazás + 15 perces stock reservation
+- orders/payments/refunds/shipments/returns adatmodell
+- Supabase Storage alapú médiatár
+- CMS oldalak, navigáció, homepage sectionök és settings adminból
+- pricing rules + promotions
+- suppliers + supplier product staging
+- integration registry + secret-readiness ellenőrzés
+- webhook event store + transactional outbox
+- admin meghívás, szerepkörök és szerkeszthető permission matrix
+- minden kritikus admin mutációhoz audit log
+
+### Éles backend aktiválása
+
+Lásd: `docs/SETUP_SUPABASE.md`.
+
+A migrációk sorrendje:
+
+1. `20260925090000_init_shop.sql`
+2. `20260925100000_backend_platform.sql`
+3. `20260925103000_checkout_engine.sql`
+
+A storefront Supabase nélkül továbbra is demo fallbackkel fut. Supabase konfiguráció után ugyanaz az admin által kezelt adatbázis szolgálja ki a publikus shopot.
