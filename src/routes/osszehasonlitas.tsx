@@ -1,0 +1,6 @@
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { products } from '../data/products'
+import { money } from '../lib/format'
+import { useShop } from '../lib/shop'
+export const Route = createFileRoute('/osszehasonlitas')({ component: Compare })
+function Compare(){ const shop=useShop(); const list=products.filter(p=>shop.compare.includes(p.id)); if(!list.length) return <div className="container section"><div className="empty-state large"><span>⇄</span><h1>Összehasonlítás</h1><p>Legfeljebb 4 terméket tehetsz egymás mellé.</p><Link to="/termekek" search={{}} className="btn btn-primary">Termékek kiválasztása</Link></div></div>; return <div className="container section"><div className="page-title"><span className="eyebrow">Döntéstámogató nézet</span><h1>Összehasonlítás</h1></div><div className="compare-grid">{list.map(p=><div className="compare-card" key={p.id}><button className="compare-remove" onClick={()=>shop.toggleCompare(p.id)}>×</button><img src={p.art} alt=""/><h3>{p.name}</h3><strong>{money(p.retailPrice)}</strong><dl><div><dt>Márka</dt><dd>{p.brand}</dd></div><div><dt>Kor</dt><dd>{p.ageFrom}+ év</dd></div><div><dt>Értékelés</dt><dd>★ {p.rating}</dd></div><div><dt>Készlet</dt><dd>{p.stock} db</dd></div></dl><button className="btn btn-primary" onClick={()=>shop.addToCart(p.id)}>Kosárba</button></div>)}</div></div> }
