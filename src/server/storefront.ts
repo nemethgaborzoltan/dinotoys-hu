@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
+import { products as curatedProducts } from '../data/products'
 import type { Product,ProductOption,ProductVariant } from '../data/products'
 import { getOptionalServerEnv } from './env'
 import { getSupabaseAdmin } from './supabase'
@@ -30,8 +31,9 @@ function mapProduct(row:any,relations?:{upsellIds?:string[];crossSellIds?:string
     id:row.id,slug:row.slug,name:row.name,brand:row.brand||'DinoToys',category,sourceSku:row.sku,ean:row.ean||'',
     retailPrice:Number(row.retail_price_huf||0),compareAtPrice:row.compare_at_price_huf?Number(row.compare_at_price_huf):undefined,stock:availableStock,ageFrom:Number(row.age_from||3),
     tags:Array.isArray(metadata.tags)?metadata.tags.map(String):[row.brand,category].filter(Boolean).map(String),description:row.description||row.short_description||'',
-    highlights:Array.isArray(metadata.highlights)?metadata.highlights.map(String):[],art:image?.url||variants.find(v=>v.art)?.art||'/favicon.svg',accent:String(metadata.accent||'#ff6b45'),
-    rating:Number(metadata.rating||4.8),reviewCount:Number(metadata.reviewCount||0),newArrival:Boolean(metadata.newArrival),trending:Boolean(metadata.trending),
+    highlights:Array.isArray(metadata.highlights)?metadata.highlights.map(String):[],art:image?.url||variants.find(v=>v.art)?.art||'/favicon.svg',images:[...(row.product_images??[])].sort((a:any,b:any)=>(a.sort_order??0)-(b.sort_order??0)).map((i:any)=>i.url),accent:String(metadata.accent||'#ff6b45'),
+    rating:Number(metadata.rating||0),reviewCount:Number(metadata.reviewCount||0),newArrival:Boolean(metadata.newArrival),trending:Boolean(metadata.trending),
+    experience:metadata.experience as Product['experience'],
     options,variants,upsellIds:relations?.upsellIds??[],crossSellIds:relations?.crossSellIds??[],
     compliance:{manufacturer:row.manufacturer_name||'Nincs adat',responsiblePerson:row.responsible_person_name||'Nincs adat',warning:row.safety_warning_hu||'',ceMarked:Boolean(row.ce_marked),safetyStatus:'ready'},
   }
@@ -41,7 +43,10 @@ const productSelect='id,sku,ean,name,slug,brand,description,short_description,re
 async function loadProducts(limit=200){
   const db=getSupabaseAdmin(),{data,error}=await db.from('products').select(productSelect).eq('status','active').order('updated_at',{ascending:false}).limit(limit)
   if(error)throw error
-  return(data??[]).map(row=>mapProduct(row))
+  const mapped=(data??[]).map(row=>mapProduct(row))
+  // Curated, zero-stock catalog item remains discoverable until it is imported into Supabase.
+  const curated=curatedProducts.filter(p=>p.id==='p-barbie-deluxe-jfp42'&&!mapped.some(row=>row.sourceSku===p.sourceSku||row.ean===p.ean))
+  return[...curated,...mapped].slice(0,limit)
 }
 async function loadCategories(){const db=getSupabaseAdmin(),{data,error}=await db.from('categories').select('name,description,sort_order').eq('active',true).order('sort_order');if(error)throw error;return(data??[]).map((c:any)=>({name:c.name,icon:categoryIcon(c.name),blurb:c.description||'Válogatott termékek'}))}
 function mapPromotion(row:any):StorefrontPromotion{return{id:row.id,name:row.name,code:row.code||'',kind:row.kind,value:Number(row.value||0),description:row.description??null,conditions:(row.conditions??{}) as Record<string,JsonValue>,maxDiscountHuf:row.max_discount_huf==null?null:Number(row.max_discount_huf)}}
