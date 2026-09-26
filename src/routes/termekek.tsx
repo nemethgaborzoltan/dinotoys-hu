@@ -6,9 +6,9 @@ import { categories as demoCategories, products as demoProducts } from '../data/
 import { getCatalogData } from '../server/storefront'
 import { getProductDisplayPrice } from '../lib/catalog'
 import {absoluteUrl} from '../lib/seo'
+import {matchesProductQuery} from '../lib/product-search'
 
 const searchSchema=z.object({category:z.string().optional(),q:z.string().optional(),age:z.coerce.number().optional(),max:z.coerce.number().optional(),sort:z.string().optional()})
-const normalizeSearch=(value:string)=>value.toLocaleLowerCase('hu').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
 export const Route=createFileRoute('/termekek')({validateSearch:(search)=>searchSchema.parse(search),loader:()=>getCatalogData(),head:()=>({meta:[{title:'Játékok és ajándékötletek | DinoToys.hu'},{name:'description',content:'Böngéssz játékok, plüssök, dínók, járművek, puzzle-k és trendtermékek között. Szűrés kor, kategória és ár szerint.'}],links:[{rel:'canonical',href:absoluteUrl('/termekek')}]}),component:Products})
 
 function Products(){
@@ -23,7 +23,7 @@ function Products(){
       if(search.category&&p.category!==search.category)return false
       if(search.age&&p.ageFrom>search.age)return false
       if(search.max&&price>search.max)return false
-      if(search.q){const text=normalizeSearch([p.name,p.brand,p.sourceSku,p.ean,...p.tags].join(' '));if(!normalizeSearch(search.q).split(/\s+/).filter(Boolean).every(term=>text.includes(term)))return false}
+      if(search.q&&!matchesProductQuery(p,search.q))return false
       return true
     })
     if(search.sort==='price-asc')result=[...result].sort((a,b)=>getProductDisplayPrice(a)-getProductDisplayPrice(b))

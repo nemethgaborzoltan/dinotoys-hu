@@ -4,13 +4,14 @@ import {products as demoProducts} from '../data/products'
 import type{StorefrontShell} from '../server/storefront'
 import {useShop} from '../lib/shop'
 import {getProductDisplayPrice} from '../lib/catalog'
+import {matchesProductQuery} from '../lib/product-search'
 import {PromoPopup} from './PromoPopup'
 import {CookiePreferencesButton} from './CookiePreferencesButton'
 
 export function Layout({children,shell}:{children:React.ReactNode;shell:StorefrontShell|null}){
  const shop=useShop(),[query,setQuery]=useState(''),[searchOpen,setSearchOpen]=useState(false),pathname=useRouterState({select:s=>s.location.pathname})
  const sourceProducts=shell?.searchProducts?.length?shell.searchProducts:demoProducts,headerNav=shell?.navigation?.filter(i=>i.location==='header')??[],footerNav=shell?.navigation?.filter(i=>i.location==='footer')??[]
- const matches=query.trim().length>1?sourceProducts.filter(p=>`${p.name} ${p.brand} ${p.category} ${p.tags.join(' ')}`.toLowerCase().includes(query.toLowerCase())).slice(0,5):[]
+ const matches=query.trim().length>1?sourceProducts.filter(p=>matchesProductQuery(p,query)).slice(0,5):[]
  const promo=shell?.promotions?.[0]
  return <div className="site-shell">
   <div className="announcement"><span>🚚 {shop.freeShippingThreshold.toLocaleString('hu-HU')} Ft felett ingyenes szállítás</span><span>•</span>{promo?.code&&<><span>🎟 {promo.code}: {promo.name}</span><span>•</span></>}<span>14 napos elállási jog</span><span>•</span><span>Biztonságos online fizetés</span></div>
