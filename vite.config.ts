@@ -4,6 +4,7 @@ import { cloudflare } from '@cloudflare/vite-plugin'
 import viteReact from '@vitejs/plugin-react'
 
 export default defineConfig({
+  server: { port: 5173, strictPort: true },
   plugins: [
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     tanstackStart(),
