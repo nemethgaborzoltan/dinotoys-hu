@@ -39,6 +39,7 @@ import { Route as ApiV1AdminIntegrationsHealthRouteImport } from './routes/api.v
 import { Route as ApiV1AdminMediaIdRouteImport } from './routes/api.v1.admin.media.$id'
 import { Route as ApiV1AdminOrdersIdRouteImport } from './routes/api.v1.admin.orders.$id'
 import { Route as ApiV1AdminProductsIdRouteImport } from './routes/api.v1.admin.products.$id'
+import { Route as ApiV1AdminProductsImportBarbieRouteImport } from './routes/api.v1.admin.products.import-barbie'
 import { Route as ApiV1AdminResourcesResourceRouteImport } from './routes/api.v1.admin.resources.$resource'
 import { Route as ApiV1AdminUsersIdRouteImport } from './routes/api.v1.admin.users.$id'
 import { Route as ApiV1AdminProductsIdCategoriesRouteImport } from './routes/api.v1.admin.products.$id.categories'
@@ -199,6 +200,12 @@ const ApiV1AdminProductsIdRoute = ApiV1AdminProductsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiV1AdminProductsRoute,
 } as any)
+const ApiV1AdminProductsImportBarbieRoute =
+  ApiV1AdminProductsImportBarbieRouteImport.update({
+    id: '/import-barbie',
+    path: '/import-barbie',
+    getParentRoute: () => ApiV1AdminProductsRoute,
+  } as any)
 const ApiV1AdminResourcesResourceRoute =
   ApiV1AdminResourcesResourceRouteImport.update({
     id: '/api/v1/admin/resources/$resource',
@@ -278,6 +285,7 @@ export interface FileRoutesByFullPath {
   '/api/v1/admin/media/$id': typeof ApiV1AdminMediaIdRoute
   '/api/v1/admin/orders/$id': typeof ApiV1AdminOrdersIdRoute
   '/api/v1/admin/products/$id': typeof ApiV1AdminProductsIdRouteWithChildren
+  '/api/v1/admin/products/import-barbie': typeof ApiV1AdminProductsImportBarbieRoute
   '/api/v1/admin/resources/$resource': typeof ApiV1AdminResourcesResourceRouteWithChildren
   '/api/v1/admin/users/$id': typeof ApiV1AdminUsersIdRoute
   '/api/v1/admin/products/$id/categories': typeof ApiV1AdminProductsIdCategoriesRoute
@@ -318,6 +326,7 @@ export interface FileRoutesByTo {
   '/api/v1/admin/media/$id': typeof ApiV1AdminMediaIdRoute
   '/api/v1/admin/orders/$id': typeof ApiV1AdminOrdersIdRoute
   '/api/v1/admin/products/$id': typeof ApiV1AdminProductsIdRouteWithChildren
+  '/api/v1/admin/products/import-barbie': typeof ApiV1AdminProductsImportBarbieRoute
   '/api/v1/admin/resources/$resource': typeof ApiV1AdminResourcesResourceRouteWithChildren
   '/api/v1/admin/users/$id': typeof ApiV1AdminUsersIdRoute
   '/api/v1/admin/products/$id/categories': typeof ApiV1AdminProductsIdCategoriesRoute
@@ -359,6 +368,7 @@ export interface FileRoutesById {
   '/api/v1/admin/media/$id': typeof ApiV1AdminMediaIdRoute
   '/api/v1/admin/orders/$id': typeof ApiV1AdminOrdersIdRoute
   '/api/v1/admin/products/$id': typeof ApiV1AdminProductsIdRouteWithChildren
+  '/api/v1/admin/products/import-barbie': typeof ApiV1AdminProductsImportBarbieRoute
   '/api/v1/admin/resources/$resource': typeof ApiV1AdminResourcesResourceRouteWithChildren
   '/api/v1/admin/users/$id': typeof ApiV1AdminUsersIdRoute
   '/api/v1/admin/products/$id/categories': typeof ApiV1AdminProductsIdCategoriesRoute
@@ -401,6 +411,7 @@ export interface FileRouteTypes {
     | '/api/v1/admin/media/$id'
     | '/api/v1/admin/orders/$id'
     | '/api/v1/admin/products/$id'
+    | '/api/v1/admin/products/import-barbie'
     | '/api/v1/admin/resources/$resource'
     | '/api/v1/admin/users/$id'
     | '/api/v1/admin/products/$id/categories'
@@ -441,6 +452,7 @@ export interface FileRouteTypes {
     | '/api/v1/admin/media/$id'
     | '/api/v1/admin/orders/$id'
     | '/api/v1/admin/products/$id'
+    | '/api/v1/admin/products/import-barbie'
     | '/api/v1/admin/resources/$resource'
     | '/api/v1/admin/users/$id'
     | '/api/v1/admin/products/$id/categories'
@@ -481,6 +493,7 @@ export interface FileRouteTypes {
     | '/api/v1/admin/media/$id'
     | '/api/v1/admin/orders/$id'
     | '/api/v1/admin/products/$id'
+    | '/api/v1/admin/products/import-barbie'
     | '/api/v1/admin/resources/$resource'
     | '/api/v1/admin/users/$id'
     | '/api/v1/admin/products/$id/categories'
@@ -733,6 +746,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1AdminProductsIdRouteImport
       parentRoute: typeof ApiV1AdminProductsRoute
     }
+    '/api/v1/admin/products/import-barbie': {
+      id: '/api/v1/admin/products/import-barbie'
+      path: '/import-barbie'
+      fullPath: '/api/v1/admin/products/import-barbie'
+      preLoaderRoute: typeof ApiV1AdminProductsImportBarbieRouteImport
+      parentRoute: typeof ApiV1AdminProductsRoute
+    }
     '/api/v1/admin/resources/$resource': {
       id: '/api/v1/admin/resources/$resource'
       path: '/api/v1/admin/resources/$resource'
@@ -846,10 +866,12 @@ const ApiV1AdminProductsIdRouteWithChildren =
 
 interface ApiV1AdminProductsRouteChildren {
   ApiV1AdminProductsIdRoute: typeof ApiV1AdminProductsIdRouteWithChildren
+  ApiV1AdminProductsImportBarbieRoute: typeof ApiV1AdminProductsImportBarbieRoute
 }
 
 const ApiV1AdminProductsRouteChildren: ApiV1AdminProductsRouteChildren = {
   ApiV1AdminProductsIdRoute: ApiV1AdminProductsIdRouteWithChildren,
+  ApiV1AdminProductsImportBarbieRoute: ApiV1AdminProductsImportBarbieRoute,
 }
 
 const ApiV1AdminProductsRouteWithChildren =

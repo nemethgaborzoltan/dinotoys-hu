@@ -72,3 +72,4 @@
 @media(max-width:520px){.product-experience-hero{grid-template-columns:1fr 34%;min-height:202px;padding:20px 16px;border-radius:22px}.product-experience-copy h2{font-size:clamp(26px,7.8vw,36px);margin:9px 0}.product-experience-copy span{font-size:9px}.product-experience-copy p{font-size:12px;margin:0}.product-experience-hero>img{height:170px;width:100%;filter:drop-shadow(0 12px 12px #110c3455)}.product-experience-story{grid-template-columns:1fr;padding:28px 22px}.product-experience-story>img{max-height:260px}.product-experience-hero>i{display:none}}
 @media(max-width:360px){.product-experience-hero{grid-template-columns:1fr 28%}.product-experience-hero>img{height:130px}}
 @media(prefers-reduced-motion:reduce){.product-experience-hero>img,.product-experience-hero:after{animation:none!important}}
+.admin2-heading-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
