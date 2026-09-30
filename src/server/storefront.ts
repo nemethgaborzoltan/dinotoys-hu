@@ -44,8 +44,9 @@ async function loadProducts(limit=200){
   const db=getSupabaseAdmin(),{data,error}=await db.from('products').select(productSelect).eq('status','active').order('updated_at',{ascending:false}).limit(limit)
   if(error)throw error
   const mapped=(data??[]).map(row=>mapProduct(row))
-  // Curated, zero-stock catalog item remains discoverable until it is imported into Supabase.
-  const curated=curatedProducts.filter(p=>p.id==='p-barbie-deluxe-jfp42'&&!mapped.some(row=>row.sourceSku===p.sourceSku||row.ean===p.ean))
+  // Curated launch products remain discoverable until they are imported into Supabase.
+  const curatedSkus=new Set(['JFP42','G1277','G1279'])
+  const curated=curatedProducts.filter(p=>curatedSkus.has(p.sourceSku)&&!mapped.some(row=>row.sourceSku===p.sourceSku||row.ean===p.ean))
   return[...curated,...mapped].slice(0,limit)
 }
 async function loadCategories(){const db=getSupabaseAdmin(),{data,error}=await db.from('categories').select('name,description,sort_order').eq('active',true).order('sort_order');if(error)throw error;return(data??[]).map((c:any)=>({name:c.name,icon:categoryIcon(c.name),blurb:c.description||'Válogatott termékek'}))}
