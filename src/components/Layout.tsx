@@ -51,6 +51,7 @@ export function Layout({children,shell}:{children:React.ReactNode;shell:Storefro
       <Link to="/termekek" search={{category:'Puzzle & játék'}}>Játékok</Link>
       <Link to="/termekek" search={{category:'Back to School'}}>Iskola</Link>
      </>}
+     <Link to="/marka/star-wars" className="nav-starwars">✦ Star Wars</Link>
      <Link to="/ai-ajandekkereso" className="nav-highlight">✨ Ajándékkereső</Link>
      <Link to="/osszehasonlitas" className="nav-muted">Összehasonlítás {shop.compare.length?`(${shop.compare.length})`:''}</Link>
     </nav>
