@@ -82,3 +82,43 @@
 
 /* Product-page polish: compact merchandising, resilient sticky header and gallery. */
 .marvel-product-page>.section .product-grid,.themed-product-page>.section .product-grid{grid-template-columns:repeat(auto-fill,minmax(190px,250px));justify-content:start}.marvel-product-page .detail-info{align-self:start}.nav-row{background:#fff;position:relative;z-index:40}@media(max-width:720px){.header{top:0;gap:10px}.brand{font-size:18px}.brand-mark{width:34px;height:34px;border-radius:11px}.header-actions{display:flex;gap:10px}.header-actions .icon-link{font-size:18px}.gallery-thumbs button{flex-basis:72px;width:72px;height:72px}}@media(max-width:420px){.header-actions .icon-link:first-child{display:none}.search-box{height:44px;padding-inline:12px}.search-box kbd{display:none}}
+
+/* Storefront header v2 — one resilient sticky shell across desktop/tablet/mobile */
+.storefront-top{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.97);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 12px 34px rgba(17,24,39,.08)}
+.storefront-top .announcement{min-height:32px;background:#111c19;color:#fff}
+.storefront-top .header{position:relative;top:auto;z-index:auto;height:78px;background:transparent;border:0;box-shadow:none}
+.storefront-top .brand{min-width:max-content}
+.storefront-top .brand-name{display:inline-block}
+.storefront-top .search-box{background:#fff;border-color:#dfe4ea;box-shadow:0 4px 16px rgba(17,24,39,.04)}
+.storefront-top .search-box:hover{border-color:#cfd6df;box-shadow:0 7px 20px rgba(17,24,39,.07)}
+.storefront-top .search-icon{font-size:20px;color:#111827}
+.storefront-top .header-actions{gap:20px}
+.storefront-top .icon-link{min-width:58px;padding:7px 6px;border-radius:12px;transition:.18s ease}
+.storefront-top .icon-link:hover{background:#f6f7f9}
+.storefront-top .nav-row{height:46px;margin:0;background:#fff;border-top:1px solid #eef0f3;border-bottom:1px solid #e4e8ed;box-shadow:none}
+.storefront-top .nav-row .nav-all{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:10px;background:#111827;color:#fff}
+.storefront-top .nav-row .nav-all:hover,.storefront-top .nav-row .nav-all.active{background:#ff5f3d;color:#fff}
+main{min-height:55vh}
+
+@media(max-width:1000px){
+ .storefront-top .header{height:72px;grid-template-columns:170px minmax(0,1fr) auto}
+ .storefront-top .header-actions{display:flex}
+ .storefront-top .icon-link{min-width:42px}
+}
+@media(max-width:720px){
+ .storefront-top{position:sticky;top:0}
+ .storefront-top .announcement{min-height:28px;font-size:10px}
+ .storefront-top .header{width:calc(100% - 20px);padding:10px 0 9px;grid-template-columns:1fr auto;gap:8px}
+ .storefront-top .brand{font-size:18px}
+ .storefront-top .search-wrap{grid-column:1/-1;grid-row:2}
+ .storefront-top .search-box{height:42px}
+ .storefront-top .header-actions{gap:4px}
+ .storefront-top .icon-link{min-width:38px;padding:5px 3px}
+ .storefront-top .nav-row{height:43px;margin-top:0;padding-inline:10px;gap:18px}
+ .storefront-top .nav-row .nav-all{padding:7px 10px}
+}
+@media(max-width:430px){
+ .storefront-top .header-actions .icon-link:first-child{display:none}
+ .storefront-top .brand-name{font-size:17px}
+ .storefront-top .nav-row{font-size:11px}
+}
