@@ -122,3 +122,96 @@ main{min-height:55vh}
  .storefront-top .brand-name{font-size:17px}
  .storefront-top .nav-row{font-size:11px}
 }
+
+/* ===== DinoToys storefront retail header v3 ===== */
+.storefront-top{position:sticky;top:0;z-index:300;background:#fff;box-shadow:0 8px 30px rgba(17,24,39,.08)}
+.storefront-top .announcement{height:34px;min-height:34px;padding:0 18px;background:#111827;color:#fff;gap:18px;font-size:11px;font-weight:700}
+.header-main{background:#fff;border-bottom:1px solid #eef0f3}
+.storefront-top .header{position:relative;top:auto;z-index:auto;width:min(1320px,calc(100% - 40px));height:88px;margin:auto;padding:0;display:grid;grid-template-columns:250px minmax(320px,1fr) auto;gap:30px;align-items:center;background:#fff;border:0;box-shadow:none}
+.storefront-top .brand{gap:12px;font-size:inherit}
+.storefront-top .brand-mark{width:46px;height:46px;border-radius:15px;font-size:20px;box-shadow:0 10px 24px rgba(255,95,61,.25)}
+.storefront-top .brand-copy{display:flex;flex-direction:column;gap:1px}
+.storefront-top .brand-copy strong{font:900 22px/1 Manrope,sans-serif;letter-spacing:-.04em}
+.storefront-top .brand-copy small{font-size:9px;color:#89909d;letter-spacing:.08em;text-transform:uppercase;font-weight:800}
+.storefront-top .search-wrap{min-width:0}
+.storefront-top .search-box{height:52px;border:1px solid #dfe3e8;background:#f8f9fb;border-radius:16px;padding:0 17px;box-shadow:inset 0 1px 0 rgba(255,255,255,.75);transition:.18s ease}
+.storefront-top .search-box:hover{background:#fff;border-color:#cbd2da;box-shadow:0 8px 24px rgba(17,24,39,.06)}
+.storefront-top .search-icon{font-size:22px;color:#111827}
+.storefront-top .search-placeholder{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.storefront-top .header-actions{display:flex;align-items:stretch;gap:8px}
+.storefront-top .icon-link{min-width:74px;min-height:54px;padding:7px 8px;border:1px solid transparent;border-radius:14px;justify-content:center;transition:.18s ease}
+.storefront-top .icon-link:hover{background:#f8f9fb;border-color:#e6e9ee}
+.storefront-top .action-icon{font-size:20px;line-height:1}
+.storefront-top .icon-link small{font-size:9px;font-weight:800;color:#606978}
+.nav-shell{background:#fff;border-bottom:1px solid #e7eaf0}
+.storefront-top .nav-row{width:min(1320px,100%);height:48px;margin:auto;padding:0 20px;border:0;background:#fff;justify-content:flex-start;gap:26px;font-size:12px;box-shadow:none}
+.storefront-top .nav-row .nav-all{display:inline-flex;align-items:center;gap:7px;padding:9px 13px;border-radius:11px;background:#111827;color:#fff}
+.storefront-top .nav-row .nav-all:hover,.storefront-top .nav-row .nav-all.active{background:#ff5f3d;color:#fff}
+.storefront-top .nav-highlight{margin-left:auto;color:#c83b22;font-weight:900}
+.storefront-top .nav-muted{color:#7b8491}
+
+/* ===== Product detail v3 ===== */
+.marvel-product-page{padding-top:34px}
+.marvel-product-page .breadcrumbs{margin-bottom:18px}
+.marvel-product-page .product-detail{grid-template-columns:minmax(0,1.03fr) minmax(390px,.97fr);gap:34px;padding:24px;border-radius:30px}
+.marvel-product-page .gallery{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:start}
+.marvel-product-page .gallery-main{grid-column:2;grid-row:1;min-height:0;aspect-ratio:1/1;border-radius:24px}
+.marvel-product-page .gallery-main>img{width:92%;height:92%;object-fit:contain}
+.marvel-product-page .gallery-thumbs{grid-column:1;grid-row:1;display:grid;grid-auto-rows:76px;gap:10px;margin:0;padding:0 3px 0 0;max-height:560px;overflow-y:auto;overflow-x:hidden;scroll-snap-type:y proximity}
+.marvel-product-page .gallery-thumbs button{width:72px;height:72px;min-width:72px;flex:none;border-radius:12px}
+.marvel-product-page .detail-info{position:sticky;top:184px;align-self:start;padding:6px 2px 4px}
+.marvel-product-page .detail-info h1{font-size:clamp(34px,3.3vw,48px);line-height:1.01;margin:8px 0 10px}
+.marvel-product-page .detail-price{margin-top:14px}
+.marvel-product-page .detail-price strong{font-size:36px}
+.marvel-product-page .availability-card{margin:14px 0}
+.marvel-product-page .marvel-feature-cards{margin:10px 0 14px}
+.marvel-product-page .detail-description{font-size:13px;line-height:1.65;margin:14px 0}
+.marvel-product-page .highlight-list{gap:6px;font-size:12px}
+.marvel-product-page .buy-box{margin:18px 0 10px}
+.spider-hero-after{margin-top:28px;margin-bottom:18px}
+.marvel-product-page>.section{padding:44px 0 20px}
+.marvel-product-page>.section .product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;max-width:100%}
+.marvel-product-page>.section .product-media{max-height:270px}
+.marvel-product-page>.section .product-media img{object-fit:contain;background:#f7f8fa}
+
+/* Fix recommendation whitespace and avoid tiny isolated cards */
+.marvel-product-page>.section .product-card{min-width:0}
+.marvel-product-page>.section .section-head{margin-bottom:18px}
+
+@media(max-width:1080px){
+ .storefront-top .header{grid-template-columns:190px minmax(0,1fr) auto;gap:16px}
+ .storefront-top .brand-copy small{display:none}
+ .storefront-top .icon-link{min-width:48px}
+ .storefront-top .icon-link small{display:none}
+ .marvel-product-page .product-detail{grid-template-columns:1fr 1fr;gap:24px}
+ .marvel-product-page .detail-info{top:174px}
+}
+@media(max-width:760px){
+ .storefront-top{position:relative}
+ .storefront-top .announcement{height:29px;min-height:29px;font-size:10px;justify-content:center;padding-inline:10px}
+ .storefront-top .announcement span:nth-of-type(n+2){display:none}
+ .storefront-top .header{width:calc(100% - 20px);height:auto;padding:10px 0 9px;grid-template-columns:1fr auto;gap:8px}
+ .storefront-top .brand-mark{width:38px;height:38px;border-radius:12px}
+ .storefront-top .brand-copy strong{font-size:19px}
+ .storefront-top .header-actions{gap:3px}
+ .storefront-top .icon-link{min-width:38px;min-height:38px;padding:4px}
+ .storefront-top .search-wrap{grid-column:1/-1;grid-row:2}
+ .storefront-top .search-box{height:44px}
+ .storefront-top .nav-row{height:43px;padding-inline:10px;gap:17px;overflow-x:auto}
+ .storefront-top .nav-highlight{margin-left:0}
+ .marvel-product-page{padding-top:24px}
+ .marvel-product-page .product-detail{grid-template-columns:1fr;padding:14px}
+ .marvel-product-page .gallery{display:block}
+ .marvel-product-page .gallery-main{aspect-ratio:1/1}
+ .marvel-product-page .gallery-thumbs{display:flex;max-height:none;overflow-x:auto;overflow-y:hidden;margin-top:10px;padding-bottom:7px;scroll-snap-type:x mandatory}
+ .marvel-product-page .gallery-thumbs button{width:70px;height:70px;min-width:70px}
+ .marvel-product-page .detail-info{position:static;padding-top:8px}
+ .spider-hero-after{margin-top:22px}
+ .marvel-product-page>.section .product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:430px){
+ .storefront-top .header-actions .icon-link:first-child{display:none}
+ .storefront-top .search-box kbd{display:none}
+ .storefront-top .nav-row{font-size:11px}
+ .marvel-product-page>.section .product-grid{grid-template-columns:1fr 1fr}
+}
