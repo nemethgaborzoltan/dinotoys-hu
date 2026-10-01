@@ -45,7 +45,7 @@ async function loadProducts(limit=200){
   if(error)throw error
   const mapped=(data??[]).map(row=>mapProduct(row))
   // Curated launch products remain discoverable until they are imported into Supabase.
-  const curatedSkus=new Set(['JFP42','G1277','G1279'])
+  const curatedSkus=new Set(['JFP42','G1277','G1279','B67560751','B03075L02','F88045L01','A9305T040','B6508ES00','F75275X01'])
   const curated=curatedProducts.filter(p=>curatedSkus.has(p.sourceSku)&&!mapped.some(row=>row.sourceSku===p.sourceSku||row.ean===p.ean))
   return[...curated,...mapped].slice(0,limit)
 }
