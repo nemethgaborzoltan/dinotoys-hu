@@ -7,6 +7,8 @@ import { getSupabaseBrowser, hasSupabaseBrowserConfig } from '../../lib/supabase
 import {activateDemoHero,deleteDemoHero,getDemoActiveHero,getDemoHeroVersions,normalizeHero,saveDemoHeroSnapshot} from '../../lib/hero'
 import {demoCommerceDefaults,readDemoCommercePreferences,writeDemoCommercePreferences} from '../../lib/demo-commerce'
 import {IntegrationsWorkspace} from './IntegrationsWorkspace'
+import {DemoOrdersWorkspace} from './DemoOrdersWorkspace'
+import {getDemoReservedStock,readDemoOrders,subscribeDemoOrders} from '../../lib/demo-orders'
 
 type View='dashboard'|'products'|'content'|'commerce'|'orders'|'media'|'integrations'|'security'
 type AdminMe={userId:string;email:string;role:string;permissions:string[]}
@@ -107,8 +109,13 @@ function BootstrapScreen({email,onReady}:{email:string;onReady:()=>void}){
 
 function Dashboard({demo,simpleMode}:{demo:boolean;simpleMode:boolean}){
   const totalStock=demoRows.reduce((sum,p)=>sum+p.stock_on_hand,0),value=demoRows.reduce((sum,p)=>sum+p.stock_on_hand*p.retail_price_huf,0)
+  const [demoOrders,setDemoOrders]=useState(()=>demo?readDemoOrders():[])
+  useEffect(()=>demo?subscribeDemoOrders(()=>setDemoOrders(readDemoOrders())):undefined,[demo])
+  const demoRevenue=demoOrders.filter(order=>!['cancelled','returned','refunded'].includes(order.status)).reduce((sum,order)=>sum+order.totals.totalHuf,0)
+  const demoToDo=demoOrders.filter(order=>['new','pending_payment','paid','processing','packed'].includes(order.status)).length
+  const demoReserved=demoOrders.filter(order=>!order.stockReleased).flatMap(order=>order.items).reduce((sum,item)=>sum+item.quantity,0)
   if(simpleMode)return <><div className="admin2-heading"><div><span className="eyebrow">Bolt összefoglaló</span><h1>Mi történik a webshopban?</h1><p>Itt egy helyen látod a legfontosabb dolgokat. Nem kell technikai kifejezéseket ismerned: a részletes fejlesztői adatokat a Haladó mód mutatja.</p></div></div>
-  <div className="admin2-metrics"><Metric label="Termékek" value={demo?String(demoRows.length):'Élő adat'} hint="Ennyi termék van most a katalógusban"/><Metric label="Összes készlet" value={demo?String(totalStock):'Élő adat'} hint="A termékekből összesen ennyi darab van megadva"/><Metric label="Készlet eladási értéke" value={demo?money(value):'—'} hint="Demó számítás a megadott árak alapján"/><Metric label="Működési mód" value={demo?'Demó':'Éles'} hint={demo?'Biztonságosan próbálható':'Valódi adatokkal működik'}/></div>
+  <div className="admin2-metrics">{demo&&demoOrders.length>0?<><Metric label="Demo rendelések" value={String(demoOrders.length)} hint={`${demoToDo} teendő`}/><Metric label="Demo forgalom" value={money(demoRevenue)} hint="helyi rendelések"/><Metric label="Foglalt készlet" value={String(demoReserved)} hint="aktív rendelésekben"/><Metric label="Működési mód" value="Demó" hint="offline rendeléskezelés"/></>:<><Metric label="Termékek" value={demo?String(demoRows.length):'Élő adat'} hint="Ennyi termék van most a katalógusban"/><Metric label="Összes készlet" value={demo?String(totalStock):'Élő adat'} hint="A termékekből összesen ennyi darab van megadva"/><Metric label="Készlet eladási értéke" value={demo?money(value):'—'} hint="Demó számítás a megadott árak alapján"/><Metric label="Működési mód" value={demo?'Demó':'Éles'} hint={demo?'Biztonságosan próbálható':'Valódi adatokkal működik'}/></>}</div>
   <div className="admin2-grid"><section className="admin2-card"><div className="admin2-card-head"><div><span className="eyebrow">Gyors áttekintés</span><h2>Mit tudsz innen kezelni?</h2></div><span className="admin2-ok">Egyszerű</span></div><div className="backend-stack">{['Termékek neve, ára, képe és készlete','Főoldal, menük és szövegek','Ingyenes szállítás, kuponok és popupok','Rendelések állapota','Képek és feltöltött fájlok','Külső szolgáltatások kapcsolatai','Admin jogosultságok és módosítási napló'].map((item,index)=><div key={item}><b>{String(index+1).padStart(2,'0')}</b><span>{item}</span><i>✓</i></div>)}</div></section>
   <section className="admin2-card"><div className="admin2-card-head"><div><span className="eyebrow">Élesítés előtt</span><h2>Ezeket érdemes végignézni</h2></div></div><div className="admin2-domain-grid"><span>○ Hivatalos cégadatok</span><span>○ Saját készlet</span><span>○ Szállítási díjak</span><span>○ Fizetési módok</span><span>○ Jogi oldalak</span><span>○ Kapcsolati adatok</span><span>○ Termékképek</span><span>○ Checkout teszt</span><span>○ Kuponok és akciók</span></div></section></div></>
   return <><div className="admin2-heading"><div><span className="eyebrow">Backend control center</span><h1>A webshop teljes operációja egy helyen</h1><p>Haladó nézet: API, üzleti logika, jogosultságok és adatbázis-műveletek technikai áttekintése.</p></div></div>
@@ -367,6 +374,7 @@ function ResourceDrawer({title,row,fields,resourceKey,simpleMode,onClose,onSave,
 }
 
 function OrdersWorkspace({demo,onMessage}:{demo:boolean;onMessage:(s:string|null)=>void}){
+ if(demo)return <DemoOrdersWorkspace/>
  const [rows,setRows]=useState<JsonRow[]>([]),[loading,setLoading]=useState(!demo)
  const load=async()=>{if(demo){setRows([]);setLoading(false);return}setLoading(true);try{const d=await adminApi<{items:JsonRow[]}>('/api/v1/admin/orders');setRows(d.items)}catch(e){onMessage((e as Error).message)}finally{setLoading(false)}}
  useEffect(()=>{void load()},[demo])
