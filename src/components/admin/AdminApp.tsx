@@ -9,16 +9,18 @@ import {demoCommerceDefaults,readDemoCommercePreferences,writeDemoCommercePrefer
 import {IntegrationsWorkspace} from './IntegrationsWorkspace'
 import {DemoOrdersWorkspace} from './DemoOrdersWorkspace'
 import {DemoEmailWorkspace} from './DemoEmailWorkspace'
+import {SiteDesignWorkspace} from './SiteDesignWorkspace'
 import {getDemoReservedStock,readDemoOrders,subscribeDemoOrders} from '../../lib/demo-orders'
 
-type View='dashboard'|'products'|'content'|'commerce'|'orders'|'emails'|'media'|'integrations'|'security'
+type View='dashboard'|'products'|'design'|'content'|'commerce'|'orders'|'emails'|'media'|'integrations'|'security'
 type AdminMe={userId:string;email:string;role:string;permissions:string[]}
 type JsonRow=Record<string,any>
 
 const nav:Array<{id:View;icon:string;label:string;hint:string}>=[
   {id:'dashboard',icon:'◫',label:'Áttekintés',hint:'Mi történik a boltban?'},
   {id:'products',icon:'◈',label:'Termékek',hint:'Mit árulsz és mennyiért?'},
-  {id:'content',icon:'✎',label:'Oldalak & tartalmak',hint:'Szövegek · menük · főoldal'},
+  {id:'design',icon:'✦',label:'Megjelenés',hint:'Hero · fejléc · lábléc · checkout'},
+  {id:'content',icon:'✎',label:'Oldalak & tartalmak',hint:'Oldalak · blokkok · menük'},
   {id:'commerce',icon:'₣',label:'Vásárlási beállítások',hint:'Árak · kuponok · pénztár'},
   {id:'orders',icon:'▤',label:'Rendelések',hint:'Beérkezett vásárlások'},
   {id:'emails',icon:'✉',label:'E-mailek',hint:'Visszaigazolás · státusz · számla'},
@@ -88,7 +90,8 @@ export function AdminApp(){
       <div className="admin2-content">
         {view==='dashboard'&&<Dashboard demo={!configured} simpleMode={simpleMode}/>}
         {view==='products'&&<ProductsWorkspace demo={!configured} onMessage={setMessage}/>}
-        {view==='content'&&<><HeroVersionsWorkspace demo={!configured} onMessage={setMessage}/><MultiResourceWorkspace demo={!configured} kind="content" simpleMode={simpleMode} onMessage={setMessage}/></>}
+        {view==='design'&&<SiteDesignWorkspace demo={!configured} onMessage={setMessage}/>} 
+        {view==='content'&&<MultiResourceWorkspace demo={!configured} kind="content" simpleMode={simpleMode} onMessage={setMessage}/>} 
         {view==='commerce'&&<MultiResourceWorkspace demo={!configured} kind="commerce" simpleMode={simpleMode} onMessage={setMessage}/>}
         {view==='orders'&&<OrdersWorkspace demo={!configured} onMessage={setMessage}/>}
         {view==='emails'&&(!configured?<DemoEmailWorkspace/>:<div className="admin2-empty"><b>Az éles e-mail központ a Resend outbox bekötése után aktiválható.</b><span>A demo sablonokat és folyamatot demó módban tudod kipróbálni.</span></div>)}
