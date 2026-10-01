@@ -28,10 +28,12 @@ function UniverseHero({hero,spotlight,orbit}:{hero:ReturnType<typeof useResolved
   const rect=event.currentTarget.getBoundingClientRect()
   const x=(event.clientX-rect.left)/rect.width-.5
   const y=(event.clientY-rect.top)/rect.height-.5
-  event.currentTarget.style.setProperty('--hero-mx',String(x))
-  event.currentTarget.style.setProperty('--hero-my',String(y))
+  event.currentTarget.style.setProperty('--hero-rx',`${-y*4}deg`)
+  event.currentTarget.style.setProperty('--hero-ry',`${x*7}deg`)
+  event.currentTarget.style.setProperty('--hero-x',`${x*12}px`)
+  event.currentTarget.style.setProperty('--hero-y',`${y*10}px`)
  }
- const reset=(event:React.PointerEvent<HTMLElement>)=>{event.currentTarget.style.setProperty('--hero-mx','0');event.currentTarget.style.setProperty('--hero-my','0')}
+ const reset=(event:React.PointerEvent<HTMLElement>)=>{event.currentTarget.style.setProperty('--hero-rx','0deg');event.currentTarget.style.setProperty('--hero-ry','0deg');event.currentTarget.style.setProperty('--hero-x','0px');event.currentTarget.style.setProperty('--hero-y','0px')}
  return <section className="hero hero-premium hero-universe container-wide" style={{background:hero.background}} onPointerMove={tilt} onPointerLeave={reset}>
   <div className="dinoverse-atmosphere" aria-hidden="true"><i className="dinoverse-aurora a"/><i className="dinoverse-aurora b"/><i className="dinoverse-orbit-line one"/><i className="dinoverse-orbit-line two"/><i className="dinoverse-spark s1"/><i className="dinoverse-spark s2"/><i className="dinoverse-spark s3"/><i className="dinoverse-spark s4"/></div>
   <div className="hero-copy hero-copy-premium dinoverse-copy">
