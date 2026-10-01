@@ -1,5 +1,5 @@
-import {Link,useRouterState} from '@tanstack/react-router'
-import {useState} from 'react'
+import {Link,useNavigate,useRouterState} from '@tanstack/react-router'
+import {useEffect,useState} from 'react'
 import {products as demoProducts} from '../data/products'
 import type{StorefrontShell} from '../server/storefront'
 import {useShop} from '../lib/shop'
@@ -9,10 +9,12 @@ import {PromoPopup} from './PromoPopup'
 import {CookiePreferencesButton} from './CookiePreferencesButton'
 
 export function Layout({children,shell}:{children:React.ReactNode;shell:StorefrontShell|null}){
- const shop=useShop(),[query,setQuery]=useState(''),[searchOpen,setSearchOpen]=useState(false),pathname=useRouterState({select:s=>s.location.pathname})
+ const shop=useShop(),navigate=useNavigate(),[query,setQuery]=useState(''),[searchOpen,setSearchOpen]=useState(false),pathname=useRouterState({select:s=>s.location.pathname})
  const sourceProducts=shell?.searchProducts?.length?shell.searchProducts:demoProducts,headerNav=shell?.navigation?.filter(i=>i.location==='header')??[],footerNav=shell?.navigation?.filter(i=>i.location==='footer')??[]
  const matches=query.trim().length>1?sourceProducts.filter(p=>matchesProductQuery(p,query)).slice(0,5):[]
  const promo=shell?.promotions?.[0]
+ useEffect(()=>{const onKey=(event:KeyboardEvent)=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();setSearchOpen(true)}if(event.key==='Escape')setSearchOpen(false)};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[])
+ const submitSearch=()=>{const q=query.trim();if(!q)return;navigate({to:'/termekek',search:{q}});setSearchOpen(false)}
  return <div className="site-shell">
   <div className="storefront-top">
    <div className="announcement">
@@ -51,8 +53,7 @@ export function Layout({children,shell}:{children:React.ReactNode;shell:Storefro
       <Link to="/termekek" search={{category:'Puzzle & játék'}}>Játékok</Link>
       <Link to="/termekek" search={{category:'Back to School'}}>Iskola</Link>
      </>}
-     <Link to="/marka/star-wars" className="nav-starwars">✦ Star Wars</Link>
-     <Link to="/marka/play-doh" className="nav-playdoh">● Play-Doh</Link>
+     <details className="brand-menu"><summary>Márkák ▾</summary><div className="brand-menu-panel"><span>Kiemelt márkavilágok</span><Link to="/marka/star-wars" className="brand-menu-starwars">✦ <b>Star Wars</b><small>Galaktikus akciófigurák</small></Link><Link to="/marka/play-doh" className="brand-menu-playdoh">● <b>Play-Doh</b><small>Kreatív gyurmavilág</small></Link><Link to="/termekek" search={{q:'Barbie'}}>◉ <b>Barbie</b><small>Divat és szerepjáték</small></Link><Link to="/termekek" search={{q:'Marvel'}}>◆ <b>Marvel</b><small>Szuperhősök</small></Link></div></details>
      <Link to="/ai-ajandekkereso" className="nav-highlight">✨ Ajándékkereső</Link>
      <Link to="/osszehasonlitas" className="nav-muted">Összehasonlítás {shop.compare.length?`(${shop.compare.length})`:''}</Link>
     </nav>
@@ -60,7 +61,7 @@ export function Layout({children,shell}:{children:React.ReactNode;shell:Storefro
   </div>
   <main>{children}</main>
   <footer className="footer"><div><div className="brand footer-brand"><span className="brand-mark">D</span><span>DinoToys<span className="brand-dot">.hu</span></span></div><p>Modern magyar játékwebshop, Dino Toys nagykereskedelmi forrásra tervezve.</p><small className="footer-legal-note">Az üzemeltető pontos cégadatai az admin jogi profiljából kerülnek a publikus dokumentumokba.</small></div><div><strong>Vásárlás</strong><Link to="/termekek" search={{}}>Termékek</Link><Link to="/ai-ajandekkereso">Ajándékkereső</Link><Link to="/kedvencek">Kedvencek</Link><Link to="/jogi/$slug" params={{slug:'elallas'}}>Elállás & visszaküldés</Link></div><div><strong>Ügyfélszolgálat</strong><Link to="/szallitas">Szállítás és fizetés</Link><Link to="/visszakuldes">Visszaküldés</Link><Link to="/kapcsolat">Kapcsolat</Link><Link to="/jogi/$slug" params={{slug:'panaszkezeles'}}>Panaszkezelés</Link><Link to="/jogi/$slug" params={{slug:'szavatossag'}}>Szavatosság / jótállás</Link></div><div><strong>Jogi / adatvédelem</strong>{footerNav.length?footerNav.map(i=><a key={i.id} href={i.href}>{i.label}</a>):<><Link to="/jogi/$slug" params={{slug:'impresszum'}}>Impresszum</Link><Link to="/jogi/$slug" params={{slug:'aszf'}}>ÁSZF</Link><Link to="/jogi/$slug" params={{slug:'adatkezeles'}}>Adatkezelés</Link><Link to="/jogi/$slug" params={{slug:'cookie'}}>Cookie tájékoztató</Link></>}<CookiePreferencesButton/></div></footer>
-  {searchOpen&&<div className="modal-backdrop" onMouseDown={()=>setSearchOpen(false)}><div className="search-modal" onMouseDown={e=>e.stopPropagation()}><div className="search-input-row"><span>⌕</span><input autoFocus value={query} onChange={e=>setQuery(e.target.value)} placeholder="Keresés termékre, márkára, korosztályra…"/><button onClick={()=>setSearchOpen(false)}>Esc</button></div><div className="search-suggestions">{query.length<=1&&<><p className="eyebrow">Népszerű keresések</p><div className="chips"><button onClick={()=>setQuery('Stitch')}>Stitch</button><button onClick={()=>setQuery('dínó')}>Dínó</button><button onClick={()=>setQuery('Hot Wheels')}>Hot Wheels</button></div></>}{matches.map(p=><Link key={p.id} to="/termek/$slug" params={{slug:p.slug}} onClick={()=>setSearchOpen(false)} className="search-result"><img src={p.art}/><span><b>{p.name}</b><small>{p.brand} • {p.category}</small></span><strong>{new Intl.NumberFormat('hu-HU').format(getProductDisplayPrice(p))} Ft</strong></Link>)}</div></div></div>}
+  {searchOpen&&<div className="modal-backdrop" onMouseDown={()=>setSearchOpen(false)}><div className="search-modal" onMouseDown={e=>e.stopPropagation()}><div className="search-input-row"><span>⌕</span><input autoFocus value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')submitSearch()}} placeholder="Keresés termékre, márkára, korosztályra…"/><button onClick={()=>setSearchOpen(false)}>Esc</button></div><div className="search-suggestions">{query.length<=1&&<><p className="eyebrow">Népszerű keresések</p><div className="chips"><button onClick={()=>setQuery('Stitch')}>Stitch</button><button onClick={()=>setQuery('dínó')}>Dínó</button><button onClick={()=>setQuery('Hot Wheels')}>Hot Wheels</button></div></>}{matches.map(p=><Link key={p.id} to="/termek/$slug" params={{slug:p.slug}} onClick={()=>setSearchOpen(false)} className="search-result"><img src={p.art} onError={e=>{e.currentTarget.src='/favicon.svg'}}/><span><b>{p.name}</b><small>{p.brand} • {p.category}</small></span><strong>{new Intl.NumberFormat('hu-HU').format(getProductDisplayPrice(p))} Ft</strong></Link>)}{query.trim().length>1&&matches.length===0&&<div className="search-empty"><b>Nincs pontos találat</b><span>Nyomj Entert a teljes katalógus kereséséhez.</span></div>}{query.trim().length>1&&<button className="search-all" onClick={submitSearch}>Összes találat erre: „{query.trim()}” →</button>}</div></div></div>}
   <PromoPopup popup={shell?shell.popup:undefined}/>
  </div>
 }
