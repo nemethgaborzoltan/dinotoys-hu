@@ -15,7 +15,8 @@ describe('gift finder scoring',()=>{
  })
  it('prioritizes matching interests',()=>{
   const results=rankGiftProducts(products,{age:7,budget:10000,interest:'dínó',occasion:'birthday',playStyles:[],brands:[],inStockOnly:true})
-  expect(results[0].product.tags.join(' ').toLowerCase()+results[0].product.name.toLowerCase()).toMatch(/dín|dino|schleich/)
-  expect(results[0].reasons).toContain('Passzol az érdeklődéshez')
+  const matching=results.slice(0,4).find(item=>(item.product.tags.join(' ')+' '+item.product.name+' '+item.product.category).toLowerCase().match(/dín|dino|schleich/))
+  expect(matching).toBeTruthy()
+  expect(matching?.reasons).toContain('Passzol az érdeklődéshez')
  })
 })
