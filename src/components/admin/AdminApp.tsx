@@ -80,11 +80,11 @@ export function AdminApp(){
       <div className="admin2-content">
         {view==='dashboard'&&<Dashboard demo={!configured}/>}
         {view==='products'&&<ProductsWorkspace demo={!configured} onMessage={setMessage}/>}
-        {view==='content'&&<><HeroVersionsWorkspace demo={!configured} onMessage={setMessage}/><MultiResourceWorkspace demo={!configured} kind="content" onMessage={setMessage}/></>}
-        {view==='commerce'&&<MultiResourceWorkspace demo={!configured} kind="commerce" onMessage={setMessage}/>}
+        {view==='content'&&<><HeroVersionsWorkspace demo={!configured} onMessage={setMessage}/><MultiResourceWorkspace demo={!configured} kind="content" simpleMode={simpleMode} onMessage={setMessage}/></>}
+        {view==='commerce'&&<MultiResourceWorkspace demo={!configured} kind="commerce" simpleMode={simpleMode} onMessage={setMessage}/>}
         {view==='orders'&&<OrdersWorkspace demo={!configured} onMessage={setMessage}/>}
         {view==='media'&&<MediaWorkspace demo={!configured} onMessage={setMessage}/>}
-        {view==='integrations'&&<><IntegrationHealth demo={!configured} onMessage={setMessage}/><MultiResourceWorkspace demo={!configured} kind="integrations" onMessage={setMessage}/></>}
+        {view==='integrations'&&<><IntegrationHealth demo={!configured} onMessage={setMessage}/><MultiResourceWorkspace demo={!configured} kind="integrations" simpleMode={simpleMode} onMessage={setMessage}/></>}
         {view==='security'&&<SecurityWorkspace demo={!configured} me={me!} onMessage={setMessage}/>}
       </div>
     </main>
