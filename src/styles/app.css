@@ -1137,3 +1137,56 @@
 }
 
 .success-order-meta{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+
+
+/* ===== FOXPOST checkout + admin integration ===== */
+.foxpost-picker{margin-top:10px}
+.foxpost-open{width:100%;display:grid;grid-template-columns:42px 1fr auto;gap:11px;align-items:center;padding:13px 14px;border:1px dashed #ef6c23;border-radius:14px;background:#fff8f2;text-align:left;cursor:pointer}
+.foxpost-open>span{width:40px;height:40px;border-radius:12px;background:#ff6b00;color:#fff;display:grid;place-items:center;font-size:18px}
+.foxpost-open>div{display:grid;gap:3px}
+.foxpost-open b{font-size:11px;color:#2e241f}
+.foxpost-open small{font-size:9px;color:#806f65}
+.foxpost-open i{font-style:normal;color:#e65e00;font-weight:900}
+.foxpost-selected{display:grid;grid-template-columns:42px 1fr auto;gap:11px;align-items:start;padding:14px;border:1px solid #f1a06a;border-radius:14px;background:linear-gradient(135deg,#fff8f2,#fff)}
+.foxpost-selected-icon{width:40px;height:40px;border-radius:12px;background:#ff6b00;display:grid;place-items:center}
+.foxpost-selected>div:nth-child(2){display:grid;gap:3px}
+.foxpost-selected span{font-size:8px;font-weight:1000;letter-spacing:.08em;text-transform:uppercase;color:#d65b09}
+.foxpost-selected b{font-size:11px}
+.foxpost-selected small{font-size:9px;color:#6f7773}
+.foxpost-selected em{font-size:8px;color:#8c817a;font-style:normal;line-height:1.4}
+.foxpost-selected button{border:1px solid #e8d3c6;background:#fff;border-radius:9px;padding:7px 9px;color:#cc570a;font-size:9px;font-weight:900;cursor:pointer}
+.foxpost-modal{position:fixed;z-index:10000;inset:0;background:rgba(15,18,16,.64);backdrop-filter:blur(7px);display:grid;place-items:center;padding:18px}
+.foxpost-modal-card{width:min(1120px,100%);height:min(790px,94vh);background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 32px 100px rgba(0,0,0,.32);display:grid;grid-template-rows:auto 1fr}
+.foxpost-modal-card header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding:17px 20px;border-bottom:1px solid #e6e9e7}
+.foxpost-modal-card h2{font:900 22px/1.05 Manrope;margin:5px 0}
+.foxpost-modal-card p{font-size:9px;color:#76817b;margin:0;max-width:700px}
+.foxpost-modal-card header>button{width:36px;height:36px;border:0;border-radius:10px;background:#f2f4f3;font-size:23px;cursor:pointer}
+.foxpost-modal-card iframe{width:100%;height:100%;border:0;background:#f5f5f5}
+.summary-pickup-point{display:grid!important;grid-template-columns:1fr auto!important;gap:3px 10px!important;padding:10px!important;border-radius:11px;background:#fff8f2!important}
+.summary-pickup-point small{grid-column:1/-1;color:#7b716a;font-size:8px}
+.foxpost-admin-tools{margin-top:3px;padding:12px;border-radius:12px;background:#fff8f2;border:1px solid #f2c4a4}
+.foxpost-admin-tools>div:first-child{display:grid;gap:3px}
+.foxpost-admin-tools>div:first-child b{font-size:10px}
+.foxpost-admin-tools>div:first-child small{font-size:8px;line-height:1.45;color:#7d6d63}
+.foxpost-admin-tools ul{list-style:none;padding:0;margin:10px 0;display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.foxpost-admin-tools li{font-size:8px;padding:6px 7px;border-radius:8px;background:#fff}
+.foxpost-admin-tools li.ok{color:#177849}
+.foxpost-admin-tools li.pending{color:#856b47}
+.foxpost-admin-actions{display:flex;gap:7px;flex-wrap:wrap}
+.foxpost-admin-actions a,.foxpost-admin-actions button{border:1px solid #e7c5ae;background:#fff;color:#cb570b;padding:7px 9px;border-radius:9px;font-size:8px;font-weight:900;text-decoration:none;cursor:pointer}
+.foxpost-admin-actions button:disabled{opacity:.45;cursor:not-allowed}
+.foxpost-admin-tools p{margin:8px 0 0;font-size:8px;line-height:1.4}
+.foxpost-admin-tools p.ok{color:#177849}
+.foxpost-admin-tools p.error{color:#b42318}
+.foxpost-admin-tools p.note{color:#7d6d63}
+
+@media(max-width:680px){
+ .foxpost-modal{padding:0}
+ .foxpost-modal-card{height:100vh;width:100%;border-radius:0}
+ .foxpost-modal-card header{padding:13px 14px}
+ .foxpost-modal-card h2{font-size:19px}
+ .foxpost-selected,.foxpost-open{grid-template-columns:38px 1fr}
+ .foxpost-selected button{grid-column:2;justify-self:start}
+ .foxpost-open>i{display:none}
+ .foxpost-admin-tools ul{grid-template-columns:1fr}
+}
