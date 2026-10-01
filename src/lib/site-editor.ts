@@ -70,9 +70,17 @@ export type CheckoutEditorConfig={
  deliveryNotePlaceholder:string
  paymentTitle:string
  paymentDescription:string
+ billingTitle:string
+ billingDescription:string
+ privateInvoiceLabel:string
  companyInvoiceLabel:string
+ billingNameLabel:string
+ billingSameLabel:string
  companyNameLabel:string
  taxNumberLabel:string
+ billingPostalCodeLabel:string
+ billingCityLabel:string
+ billingLine1Label:string
  consentText:string
  termsLabel:string
  privacyLabel:string
@@ -163,7 +171,7 @@ export const defaultSiteEditorConfig:SiteEditorConfig={
   shippingTitle:'Hogyan kéred a csomagot?',shippingDescription:'Először válassz szállítási módot. FOXPOST esetén utána csak egy átvételi pontot kell kiválasztanod.',
   addressTitle:'Szállítási cím',addressDescription:'Add meg, hová kéred a csomagot.',pickupTitle:'Átvételi pont',pickupDescription:'FOXPOST-nál nem kell külön utcacímet megadnod. A kiválasztott pont lesz a kézbesítési hely.',postalCodeLabel:'Irányítószám',cityLabel:'Város',addressLineLabel:'Utca, házszám',deliveryNoteLabel:'Megjegyzés a futárnak',deliveryNotePlaceholder:'Pl. kapucsengő, emelet…',
   paymentTitle:'Fizetési mód',paymentDescription:'Demóban egyik opció sem indít valódi tranzakciót.',
-  companyInvoiceLabel:'Céges számlát kérek',companyNameLabel:'Cégnév',taxNumberLabel:'Adószám',
+  billingTitle:'Számlázási adatok',billingDescription:'A számla nevéhez és címéhez szükséges adatok. FOXPOST átvételnél külön számlázási címet kérünk.',privateInvoiceLabel:'Magánszemély',companyInvoiceLabel:'Cég / egyéni vállalkozó',billingNameLabel:'Számlázási név',billingSameLabel:'Számlázási cím megegyezik a szállítási címmel',companyNameLabel:'Cégnév',taxNumberLabel:'Adószám',billingPostalCodeLabel:'Irányítószám',billingCityLabel:'Város',billingLine1Label:'Utca, házszám',
   consentText:'Elolvastam és elfogadom a vásárlási feltételeket, valamint megismertem az adatkezelési tájékoztatót.',termsLabel:'ÁSZF',privacyLabel:'Adatkezelési tájékoztató',
   submitLabel:'Fizetési kötelezettséggel járó megrendelés',
   summaryEyebrow:'Rendelésed',summaryTitle:'{{count}} termék',editCartLabel:'Kosár szerkesztése',itemsLabel:'Termékek',totalLabel:'Összesen',pickupLabel:'Átvételi pont',
