@@ -4,20 +4,15 @@ import {money} from '../lib/format'
 import {useShop} from '../lib/shop'
 import {getProductArt,getProductPrice,getVariantLabel} from '../lib/catalog'
 import {demoCommerceDefaults,readDemoCommercePreferences} from '../lib/demo-commerce'
+import {billingProviderLabel,demoIntegrationDefaults,getDemoShippingMethods,readDemoIntegrationConfig} from '../lib/integration-config'
 
 export const Route=createFileRoute('/checkout')({
  head:()=>({meta:[{title:'Pénztár | DinoToys.hu'},{name:'robots',content:'noindex,nofollow'}]}),
  component:Checkout
 })
 
-type ShippingId='courier'|'locker'|'pickup'
 type PaymentId='card'|'cod'|'transfer'
 
-const shippingOptions=[
- {id:'courier' as const,icon:'🚚',name:'Házhozszállítás',description:'GLS/DPD jellegű demo szállítás · várhatóan 1–2 munkanap',fee:1490},
- {id:'locker' as const,icon:'📦',name:'Csomagautomata / átvételi pont',description:'Foxpost/Packeta jellegű demo mód · várhatóan 1–2 munkanap',fee:1090},
- {id:'pickup' as const,icon:'🏠',name:'Személyes átvétel',description:'Demo opció · egyeztetett átvételi ponton',fee:0},
-]
 const paymentOptions=[
  {id:'card' as const,icon:'💳',name:'Online bankkártya',description:'Demo fizetés – nem történik valódi terhelés',fee:0},
  {id:'cod' as const,icon:'💵',name:'Utánvét',description:'Fizetés átvételkor · demo kezelési díj',fee:490},
@@ -27,14 +22,19 @@ const paymentOptions=[
 function Checkout(){
  const shop=useShop()
  const [done,setDone]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState<string|null>(null),[result,setResult]=useState<any>(null)
- const [shipping,setShipping]=useState<ShippingId>('courier'),[payment,setPayment]=useState<PaymentId>('card'),[invoice,setInvoice]=useState(false),[demoPrefs,setDemoPrefs]=useState(demoCommerceDefaults)
- useEffect(()=>{setDemoPrefs(readDemoCommercePreferences())},[])
- const shippingOption=shippingOptions.find(x=>x.id===shipping)!,paymentOption=paymentOptions.find(x=>x.id===payment)!
- const shippingFee=shipping==='pickup'||shop.subtotal>=shop.freeShippingThreshold?0:shippingOption.fee
+ const initialShipping=getDemoShippingMethods(demoIntegrationDefaults)
+ const [shippingOptions,setShippingOptions]=useState(initialShipping),[shipping,setShipping]=useState<string>(initialShipping[0]?.id||'personal-pickup'),[payment,setPayment]=useState<PaymentId>('card'),[invoice,setInvoice]=useState(false),[demoPrefs,setDemoPrefs]=useState(demoCommerceDefaults),[integrationConfig,setIntegrationConfig]=useState(demoIntegrationDefaults)
+ useEffect(()=>{setDemoPrefs(readDemoCommercePreferences());const integrations=readDemoIntegrationConfig();setIntegrationConfig(integrations);const methods=getDemoShippingMethods(integrations);setShippingOptions(methods);setShipping(current=>methods.some(item=>item.id===current)?current:(methods[0]?.id||'personal-pickup'))},[])
+ const shippingOption=shippingOptions.find(x=>x.id===shipping)??shippingOptions[0]??{id:'personal-pickup',provider:'local',name:'Személyes átvétel',description:'Demó',icon:'🏠',fee:0,freeAboveHuf:null}
+ const configuredPaymentOptions=useMemo(()=>{const online=integrationConfig.payment.barion.enabled?{id:'card' as const,icon:'💳',name:'Barion bankkártya',description:`Barion ${integrationConfig.payment.barion.sandbox?'sandbox':'éles'} mód · demóban nincs terhelés`,fee:0}:integrationConfig.payment.stripe.enabled?{id:'card' as const,icon:'💳',name:'Stripe bankkártya',description:'Stripe integráció előkészítve · demóban nincs terhelés',fee:0}:paymentOptions[0];return[online,...paymentOptions.slice(1)]},[integrationConfig])
+ const paymentOption=configuredPaymentOptions.find(x=>x.id===payment)!
+ const shippingFee=shippingOption.freeAboveHuf!==null&&shop.subtotal>=shippingOption.freeAboveHuf?0:shippingOption.fee
  const total=shop.subtotal+shippingFee+paymentOption.fee
+ const shippingThreshold=shippingOption.freeAboveHuf
+ const invoiceProvider=billingProviderLabel(integrationConfig)
  const productCount=useMemo(()=>shop.cart.reduce((sum,line)=>sum+line.quantity,0),[shop.cart])
 
- if(done)return <div className="container section checkout-success-page"><div className="success-card checkout-success"><span>✓</span><div className="demo-badge">DEMO RENDELÉS</div><h1>{result?.order_number?`Rendelés #${result.order_number}`:'Rendelés rögzítve'}</h1><p>Köszönjük! A demó pénztár végigfutott, de valódi fizetés, készletfoglalás és e-mail küldés nem történt.</p><div className="success-order-meta"><div><small>Fizetendő</small><b>{money(result?.total_huf??0)}</b></div><div><small>Szállítás</small><b>{result?.shipping_label}</b></div><div><small>Fizetés</small><b>{result?.payment_label}</b></div></div><div className="success-actions"><Link to="/" className="btn btn-primary">Főoldal</Link><Link to="/termekek" search={{}} className="btn btn-ghost">Tovább vásárolok</Link></div></div></div>
+ if(done)return <div className="container section checkout-success-page"><div className="success-card checkout-success"><span>✓</span><div className="demo-badge">DEMO RENDELÉS</div><h1>{result?.order_number?`Rendelés #${result.order_number}`:'Rendelés rögzítve'}</h1><p>Köszönjük! A demó pénztár végigfutott, de valódi fizetés, készletfoglalás és e-mail küldés nem történt.</p><div className="success-order-meta"><div><small>Fizetendő</small><b>{money(result?.total_huf??0)}</b></div><div><small>Szállítás</small><b>{result?.shipping_label}</b></div><div><small>Fizetés</small><b>{result?.payment_label}</b></div><div><small>Számlázás</small><b>{result?.invoice_provider||invoiceProvider}</b></div></div><div className="success-actions"><Link to="/" className="btn btn-primary">Főoldal</Link><Link to="/termekek" search={{}} className="btn btn-ghost">Tovább vásárolok</Link></div></div></div>
 
  if(!shop.cart.length)return <div className="container section"><div className="empty-state large"><span>🛒</span><h1>A pénztárhoz előbb tegyél valamit a kosárba</h1><p>A demo checkout teljes folyamatát termékkel tudod kipróbálni.</p><Link to="/termekek" search={{}} className="btn btn-primary">Termékek felfedezése</Link></div></div>
 
@@ -52,7 +52,7 @@ function Checkout(){
      const form=new FormData(e.currentTarget)
      const live=shop.cart.every(line=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(line.productId))
      if(!live){
-      const order={order_number:`DEMO-${Date.now().toString().slice(-6)}`,total_huf:total,shipping_label:shippingOption.name,payment_label:paymentOption.name}
+      const order={order_number:`DEMO-${Date.now().toString().slice(-6)}`,total_huf:total,shipping_label:shippingOption.name,payment_label:paymentOption.name,invoice_provider:invoiceProvider}
       setResult(order);shop.clearCart();setDone(true);return
      }
      const response=await fetch('/api/v1/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({
@@ -79,16 +79,16 @@ function Checkout(){
 
     <section className="checkout-section">
      <div className="checkout-section-title"><b>3</b><div><h2>Szállítási mód</h2><p>Válassz kényelmes átvételi módot.</p></div></div>
-     <div className="checkout-choice-grid">{shippingOptions.map(option=>{const effective=option.id==='pickup'||shop.subtotal>=shop.freeShippingThreshold?0:option.fee;return <label key={option.id} className={`checkout-choice ${shipping===option.id?'selected':''}`}><input type="radio" name="shippingMethod" checked={shipping===option.id} onChange={()=>setShipping(option.id)}/><span className="choice-icon">{option.icon}</span><span className="choice-copy"><b>{option.name}</b><small>{option.description}</small></span><strong>{effective?money(effective):'Ingyenes'}</strong></label>})}</div>
+     <div className="checkout-choice-grid">{shippingOptions.map(option=>{const effective=option.freeAboveHuf!==null&&shop.subtotal>=option.freeAboveHuf?0:option.fee;return <label key={option.id} className={`checkout-choice ${shipping===option.id?'selected':''}`}><input type="radio" name="shippingMethod" checked={shipping===option.id} onChange={()=>setShipping(option.id)}/><span className="choice-icon">{option.icon}</span><span className="choice-copy"><b>{option.name}</b><small>{option.description}</small></span><strong>{effective?money(effective):'Ingyenes'}</strong></label>})}</div>
     </section>
 
     <section className="checkout-section">
      <div className="checkout-section-title"><b>4</b><div><h2>Fizetési mód</h2><p>Demóban egyik opció sem indít valódi tranzakciót.</p></div></div>
-     <div className="checkout-choice-grid">{paymentOptions.map(option=><label key={option.id} className={`checkout-choice ${payment===option.id?'selected':''}`}><input type="radio" name="paymentMethod" checked={payment===option.id} onChange={()=>setPayment(option.id)}/><span className="choice-icon">{option.icon}</span><span className="choice-copy"><b>{option.name}</b><small>{option.description}</small></span><strong>{option.fee?`+ ${money(option.fee)}`:'0 Ft'}</strong></label>)}</div>
+     <div className="checkout-choice-grid">{configuredPaymentOptions.map(option=><label key={option.id} className={`checkout-choice ${payment===option.id?'selected':''}`}><input type="radio" name="paymentMethod" checked={payment===option.id} onChange={()=>setPayment(option.id)}/><span className="choice-icon">{option.icon}</span><span className="choice-copy"><b>{option.name}</b><small>{option.description}</small></span><strong>{option.fee?`+ ${money(option.fee)}`:'0 Ft'}</strong></label>)}</div>
     </section>
 
     <section className="checkout-section checkout-invoice">
-     <label className="invoice-toggle"><input type="checkbox" checked={invoice} onChange={e=>setInvoice(e.target.checked)}/><span><b>Céges számlát kérek</b><small>Demo mezők, számlázó integráció nélkül.</small></span></label>
+     <label className="invoice-toggle"><input type="checkbox" checked={invoice} onChange={e=>setInvoice(e.target.checked)}/><span><b>Céges számlát kérek</b><small>{invoiceProvider} · demóban még nem készül valódi számla.</small></span></label>
      {invoice&&<div className="form-grid invoice-fields"><label><span>Cégnév</span><input name="companyName" required={invoice}/></label><label><span>Adószám</span><input name="taxNumber" required={invoice}/></label></div>}
     </section>
 
@@ -105,7 +105,7 @@ function Checkout(){
     <div><span>{shippingOption.name}</span><b>{shippingFee?money(shippingFee):'Ingyenes'}</b></div>
     {paymentOption.fee>0&&<div><span>{paymentOption.name}</span><b>{money(paymentOption.fee)}</b></div>}
     <div className="summary-total"><span>Összesen</span><b>{money(total)}</b></div>
-    {shop.freeShippingLeft>0&&shipping!=='pickup'?<div className="checkout-free-shipping"><b>Még {money(shop.freeShippingLeft)} az ingyenes szállításig</b><span><i style={{width:`${Math.min(100,(shop.subtotal/shop.freeShippingThreshold)*100)}%`}}/></span></div>:<div className="secure-note">🎉 Ennél a kosárnál a választott szállítás díjmentes.</div>}
+    {shippingThreshold!==null&&shop.subtotal<shippingThreshold?<div className="checkout-free-shipping"><b>Még {money(shippingThreshold-shop.subtotal)} a(z) {shippingOption.name} ingyenes szállításáig</b><span><i style={{width:`${Math.min(100,(shop.subtotal/shippingThreshold)*100)}%`}}/></span></div>:<div className="secure-note">🎉 Ennél a kosárnál a választott szállítás díjmentes.</div>}
     {demoPrefs.trustBadges&&<div className="secure-note">🔐 Demo checkout: bankkártyaadatot nem kérünk és nem tárolunk.</div>}
    </aside>
   </div>
