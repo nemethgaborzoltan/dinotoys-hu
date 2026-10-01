@@ -956,3 +956,73 @@
  .field-wide{grid-column:auto}
  .brand-menu-panel{position:fixed;left:12px;right:12px;top:142px;width:auto}
 }
+
+
+/* ===== Beginner-friendly DinoAdmin ===== */
+.admin-mode-switch{display:flex!important;gap:4px!important;padding:4px!important;border-radius:12px;background:#f2f4f3}
+.admin-mode-switch button{border:0;background:transparent;color:#68736d;padding:7px 11px;border-radius:9px;font-size:10px;font-weight:900;cursor:pointer}
+.admin-mode-switch button.active{background:#17211b;color:#fff;box-shadow:0 4px 12px rgba(23,33,27,.13)}
+
+.admin-commerce-guide{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.admin-commerce-score,.admin-commerce-next,.admin-commerce-quick,.admin-commerce-tools,.admin-glossary{background:#fff;border:1px solid #e3e8e5;border-radius:18px;padding:18px}
+.admin-commerce-score{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.admin-commerce-score h2{font:900 38px/1 Manrope;margin:6px 0;color:#17211b}
+.admin-commerce-score p,.admin-commerce-next p,.admin-commerce-tools>p{margin:0;color:#748078;font-size:11px;line-height:1.55}
+.admin-score-ring{--score:0;width:78px;height:78px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#ff6948 calc(var(--score)*1%),#edf1ef 0);position:relative}
+.admin-score-ring:after{content:"";position:absolute;inset:8px;border-radius:50%;background:#fff}
+.admin-score-ring b{position:relative;z-index:1;font:900 14px Manrope}
+.admin-commerce-next h3,.admin-commerce-tools h3{font:800 17px Manrope;margin:6px 0 7px}
+.admin-commerce-next button{margin-top:12px;border:0;background:none;padding:0;color:#df4f31;font-weight:900;cursor:pointer}
+.admin-commerce-quick{grid-column:1/-1}
+.admin-commerce-quick>div{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.admin-commerce-quick button,.admin-commerce-quick a{border:1px solid #e0e6e2;background:#f8faf9;color:#243029;padding:10px 12px;border-radius:11px;font-size:10px;font-weight:900;cursor:pointer;text-decoration:none}
+.admin-commerce-quick button:hover,.admin-commerce-quick a:hover{border-color:#ff9b85;background:#fff7f4}
+.admin-commerce-tools{grid-column:1/-1}
+.admin-commerce-tools-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.admin-demo-switches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+.admin-demo-switch{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1px solid #e4e9e6;border-radius:13px;padding:12px;background:#fafbfa;cursor:pointer}
+.admin-demo-switch>span{display:flex;flex-direction:column;gap:3px}
+.admin-demo-switch b{font-size:11px}
+.admin-demo-switch small{font-size:9px;color:#7d8982;line-height:1.4}
+.admin-demo-switch input{width:18px;height:18px;accent-color:#ff6948}
+.admin-glossary{grid-column:1/-1;padding:0;overflow:hidden}
+.admin-glossary summary{cursor:pointer;padding:15px 18px;font-weight:900;font-size:11px;list-style:none}
+.admin-glossary summary::-webkit-details-marker{display:none}
+.admin-glossary>div{padding:0 18px 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 20px}
+.admin-glossary p{margin:0;color:#65716a;font-size:10px;line-height:1.5}
+.admin-glossary b{color:#17211b}
+
+.admin2-list-row.guided{align-items:flex-start;padding:16px 15px}
+.admin2-row-main{display:flex!important;flex-direction:column!important;gap:3px;min-width:0}
+.admin2-row-main>b{font-size:12px}
+.admin2-row-main>small{font-size:10px;line-height:1.45;max-width:780px}
+.admin2-row-help{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.admin2-row-help span,.admin2-row-help code{padding:6px 8px;border-radius:9px;background:#f6f8f7;color:#65716a;font-size:9px;line-height:1.35}
+.admin2-row-help span b{color:#26312b}
+.admin2-row-help code{background:#eef1f4;color:#45515f}
+.admin2-row-actions{display:flex;gap:8px;align-items:center;white-space:nowrap}
+.admin2-row-actions a{text-decoration:none}
+
+.admin-setting-explainer{margin:14px 0;padding:15px;border-radius:14px;background:linear-gradient(135deg,#fff9e8,#fff);border:1px solid #f3df9e}
+.admin-setting-explainer>p{margin:5px 0 11px;color:#665a2e;font-size:11px;line-height:1.55}
+.admin-setting-explainer>div{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.admin-setting-explainer span{display:flex;flex-direction:column;gap:3px;padding:9px;border-radius:10px;background:rgba(255,255,255,.75);color:#6a6242;font-size:9px;line-height:1.45}
+.admin-setting-explainer span b{color:#3c3a2b}
+.admin-friendly-field>span:first-child{font-weight:800;color:#46524b}
+.admin-field-help{display:block!important;color:#87928c!important;font-size:9px!important;line-height:1.45!important;font-weight:400!important}
+.admin-field-help em{display:block;margin-top:3px;color:#6d776f;font-style:normal}
+
+@media(max-width:900px){
+ .admin-commerce-guide{grid-template-columns:1fr}
+ .admin-commerce-quick,.admin-commerce-tools,.admin-glossary{grid-column:auto}
+ .admin-demo-switches{grid-template-columns:1fr}
+ .admin-glossary>div{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+ .admin-mode-switch{margin-left:auto}
+ .admin-mode-switch button{padding:6px 8px;font-size:9px}
+ .admin-commerce-score{grid-template-columns:1fr auto}
+ .admin2-list-row.guided{grid-template-columns:1fr}
+ .admin2-row-tags,.admin2-row-actions{justify-content:flex-start}
+ .admin-setting-explainer>div{grid-template-columns:1fr}
+}
