@@ -74,8 +74,8 @@ export function AdminApp(){
       <div className="admin2-user"><span>{me?.email?.slice(0,1).toUpperCase()}</span><div><b>{me?.email}</b><small>{me?.role}</small></div>{configured&&<button onClick={()=>getSupabaseBrowser()?.auth.signOut()}>↪</button>}</div>
     </aside>
     <main className="admin2-main">
-      <header className="admin2-top"><div><span className={configured?'env-live':'env-demo'}>{configured?'● LIVE BACKEND':'● DEMO / NINCS SUPABASE'}</span><b>{nav.find(n=>n.id===view)?.label}</b></div><div><span>API v1</span><span>RBAC</span><span>Audit</span></div></header>
-      {!configured&&<div className="admin2-notice"><b>Frontend-demó mód.</b> Az összes admin munkaterület megtekinthető és lokálisan szerkeszthető. Éles mentéshez add meg a Supabase kulcsokat és futtasd a migrációkat.</div>}
+      <header className="admin2-top"><div><span className={configured?'env-live':'env-demo'}>{configured?'● ÉLES ADATKAPCSOLAT':'● DEMÓ MÓD'}</span><b>{nav.find(n=>n.id===view)?.label}</b></div><div className="admin-mode-switch"><button className={simpleMode?'active':''} onClick={()=>setSimpleMode(true)}>Egyszerű mód</button><button className={!simpleMode?'active':''} onClick={()=>setSimpleMode(false)}>Haladó mód</button></div></header>
+      {!configured&&<div className="admin2-notice"><b>Most biztonságos demó módban vagy.</b> Nyugodtan próbálgathatod a beállításokat: ezen a gépen működnek, de még nem kerülnek éles adatbázisba. Az éles összekötést később lehet bekapcsolni.</div>}
       {message&&<div className="admin2-error" onClick={()=>setMessage(null)}>{message} ×</div>}
       <div className="admin2-content">
         {view==='dashboard'&&<Dashboard demo={!configured}/>}
