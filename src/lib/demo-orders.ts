@@ -46,8 +46,10 @@ export type DemoOrder={
  billing:{
   provider:string
   companyInvoice:boolean
+  billingName?:string
   companyName?:string
   taxNumber?:string
+  address?:{countryCode:string;postalCode:string;city:string;line1:string}
   invoiceStatus:DemoInvoiceStatus
   invoiceNumber?:string
   issuedAt?:string
