@@ -10,6 +10,7 @@ export function HeroShowcase({products,liveContent}:{products:Product[];liveCont
  const spotlight=products.find(p=>p.id===hero.spotlightProductId)??products.find(p=>p.trending)??products[0]
  const orbit=hero.orbitProductIds.map(id=>products.find(p=>p.id===id)).filter((p):p is Product=>Boolean(p)).slice(0,4)
  if(!spotlight)return null
+ if(hero.mode==='showcase')return <CleanShowcaseHero hero={hero} spotlight={spotlight} orbit={orbit}/>
  if(hero.mode==='universe')return <UniverseHero hero={hero} spotlight={spotlight} orbit={orbit}/>
  return <section className={`hero hero-premium hero-mode-${hero.mode} container-wide`} style={{background:hero.background}}>
   <div className="hero-copy hero-copy-premium"><span className="pill">{hero.eyebrow}</span><h1>{hero.title}<br/><span>{hero.emphasis}</span></h1><p>{hero.description}</p><div className="hero-actions"><Link to="/termekek" search={{}} className="btn btn-primary btn-large">{hero.primaryCta}</Link><Link to="/ai-ajandekkereso" className="btn btn-ghost btn-large">{hero.secondaryCta}</Link></div><div className="hero-trust hero-trust-premium">{hero.trustItems.map(item=><span key={item}>{item}</span>)}</div><div className="hero-micro-stats">{hero.chips.map(chip=><div className="hero-chip" key={chip.label}><small>{chip.label}</small><b>{chip.value}</b></div>)}</div></div>
@@ -19,6 +20,33 @@ export function HeroShowcase({products,liveContent}:{products:Product[];liveCont
   {orbit[2]&&<div className="hero-floating-card hero-floating-card-c"><img src={orbit[2].art} alt="" loading="lazy" decoding="async"/><span>{orbit[2].name}</span></div>}
   {orbit[3]&&<div className="hero-floating-card hero-floating-card-d"><img src={orbit[3].art} alt="" loading="lazy" decoding="async"/><span>{orbit[3].name}</span></div>}
   <div className="hero-glass-note hero-glass-note-a"><strong>Kuponmotor</strong><small>Popup + checkout validáció</small></div><div className="hero-glass-note hero-glass-note-b"><strong>Variánsok</strong><small>Szín, méret, eltérő ár / készlet</small></div><div className="hero-glass-note hero-glass-note-c"><strong>Upsell / cross-sell</strong><small>Termékoldal + kosár ajánlók</small></div></div><div className="hero-bottom-marquee">{hero.notes.map(note=><span key={note}>{note}</span>)}</div></div>
+ </section>
+}
+
+function CleanShowcaseHero({hero,spotlight,orbit}:{hero:ReturnType<typeof useResolvedHero>;spotlight:Product;orbit:Product[]}){
+ const products=[orbit[0],spotlight,orbit[1]??orbit[2]].filter((product):product is Product=>Boolean(product))
+ return <section className="hero hero-premium hero-showcase-v4 container-wide" style={{background:hero.background}}>
+  <div className="showcase-v4-copy">
+   <span className="showcase-v4-kicker">{hero.eyebrow}</span>
+   <h1>{hero.title}<br/><span>{hero.emphasis}</span></h1>
+   <p>{hero.description}</p>
+   <div className="showcase-v4-actions"><Link to="/termekek" search={{}} className="btn btn-primary btn-large">{hero.primaryCta}</Link><Link to="/ai-ajandekkereso" className="btn btn-ghost btn-large">{hero.secondaryCta}</Link></div>
+   <div className="showcase-v4-trust">{hero.trustItems.map((item,index)=><span key={item}><i>{String(index+1).padStart(2,'0')}</i>{item}</span>)}</div>
+  </div>
+  <div className="showcase-v4-stage" aria-label="Kiemelt játékok">
+   <div className="showcase-v4-backdrop" aria-hidden="true"><span className="shape one"/><span className="shape two"/><span className="shape three"/><span className="arc a"/><span className="arc b"/></div>
+   <div className="showcase-v4-products">
+    {products.map((product,index)=><Link key={product.id} to="/termek/$slug" params={{slug:product.slug}} className={`showcase-v4-product item-${index+1}`} aria-label={product.name}>
+      <div className="showcase-v4-product-image"><span className="showcase-v4-blob" style={{background:product.accent}}/><img src={product.art} alt={product.name} fetchPriority={index===1?'high':undefined} loading={index===1?'eager':'lazy'} decoding="async" onError={e=>{e.currentTarget.src='/favicon.svg'}}/></div>
+      <div className="showcase-v4-product-copy"><small>{product.brand}</small><b>{product.name}</b><strong>{product.retailPrice>0?price(product.retailPrice):'Ár hamarosan'}</strong></div>
+    </Link>)}
+   </div>
+   <div className="showcase-v4-floor" aria-hidden="true"><span/><span/><span/></div>
+  </div>
+  <div className="showcase-v4-bottom">
+   <div className="showcase-v4-worlds">{hero.chips.map(chip=><span key={chip.label}><i>{chip.label}</i><b>{chip.value}</b></span>)}</div>
+   <div className="showcase-v4-notes">{hero.notes.map(note=><span key={note}>{note}</span>)}</div>
+  </div>
  </section>
 }
 
