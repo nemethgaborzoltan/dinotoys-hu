@@ -1026,3 +1026,5 @@
  .admin2-row-tags,.admin2-row-actions{justify-content:flex-start}
  .admin-setting-explainer>div{grid-template-columns:1fr}
 }
+
+.checkout-mode-note{display:inline-flex;margin-top:10px;padding:7px 10px;border-radius:999px;background:#f2f7f4;color:#35664f;font-size:9px;font-weight:900}
