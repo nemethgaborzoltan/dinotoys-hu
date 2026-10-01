@@ -242,6 +242,60 @@ const fieldSets:Record<string,Array<{key:string;label:string;type?:'text'|'numbe
  integration:[{key:'provider',label:'Provider'},{key:'kind',label:'Típus'},{key:'config',label:'Publikus konfiguráció JSON',type:'json'},{key:'secret_names',label:'Secret nevek JSON',type:'json'},{key:'active',label:'Aktív',type:'boolean'}],
 }
 
+type AdminGuide={label:string;summary:string;where:string;example:string;inputLabel?:string;preview?:string}
+const settingGuides:Record<string,AdminGuide>={
+ 'shop.free_shipping_threshold_huf':{label:'Ingyenes szállítás határa',summary:'Ha a kosár eléri ezt az összeget, a vásárló nem fizet szállítási díjat.',where:'Felső információs sáv · kosár · pénztár',example:'15 000 Ft esetén egy 15 200 Ft-os kosárnál a szállítás ingyenes.',inputLabel:'Összeg forintban',preview:'/kosar'},
+ 'features.gift_finder':{label:'Ajándékkereső bekapcsolása',summary:'Segít a bizonytalan vásárlónak kérdések alapján játékot találni.',where:'Fejléc · Ajándékkereső oldal',example:'Bekapcsolva a vevő kor, érdeklődés és keret alapján kaphat ötleteket.',inputLabel:'Ajándékkereső aktív',preview:'/ai-ajandekkereso'},
+ 'legal.company_name':{label:'Vállalkozás neve',summary:'A webshop hivatalos üzemeltetőjének neve.',where:'Impresszum · ÁSZF · jogi oldalak',example:'Minta Játék Kft. vagy Kiss Péter e.v.',inputLabel:'Hivatalos név',preview:'/jogi/impresszum'},
+ 'legal.registered_office':{label:'Székhely címe',summary:'A vállalkozás hivatalosan bejegyzett címe.',where:'Impresszum · ÁSZF',example:'5310 Kisújszállás, Példa utca 1.',inputLabel:'Székhely',preview:'/jogi/impresszum'},
+ 'legal.tax_number':{label:'Adószám',summary:'A vállalkozás hivatalos adóazonosító száma.',where:'Impresszum · számlázási és jogi adatok',example:'12345678-1-16',inputLabel:'Adószám',preview:'/jogi/impresszum'},
+ 'legal.registration_number':{label:'Nyilvántartási / cégjegyzékszám',summary:'A vállalkozás hivatalos nyilvántartási azonosítója.',where:'Impresszum · jogi dokumentumok',example:'Egyéni vállalkozónál nyilvántartási szám, cégnél cégjegyzékszám.',inputLabel:'Nyilvántartási szám',preview:'/jogi/impresszum'},
+ 'legal.email':{label:'Ügyfélszolgálati e-mail',summary:'Erre az e-mailre tudnak írni a vásárlók.',where:'Kapcsolat · lábléc · jogi oldalak',example:'hello@dinotoys.hu',inputLabel:'E-mail cím',preview:'/kapcsolat'},
+ 'legal.phone':{label:'Ügyfélszolgálati telefonszám',summary:'A vásárlók által látható kapcsolati telefonszám.',where:'Kapcsolat · lábléc · jogi oldalak',example:'+36 30 123 4567',inputLabel:'Telefonszám',preview:'/kapcsolat'},
+}
+
+const fieldGuides:Record<string,{label:string;help:string;example?:string;advanced?:boolean}>={
+ 'pricing.target_margin':{label:'Célzott haszonkulcs',help:'Azt mutatja meg, hogy az eladási árból körülbelül mekkora rész maradjon nálad a költségek után.',example:'0,40 = 40% célzott árrés.'},
+ 'pricing.fx_buffer':{label:'Árfolyam biztonsági tartalék',help:'Kis plusz tartalék, ha a beszerzési ár euróban van és közben változik az árfolyam.',example:'0,03 = 3% tartalék.',advanced:true},
+ 'pricing.inbound_per_unit_huf':{label:'Beszerzés plusz költsége / db',help:'Egy termékre jutó becsült szállítási, csomagolási vagy beérkezési költség.',example:'300 = 300 Ft plusz költség darabonként.'},
+ 'promotions.kind':{label:'Milyen kedvezmény?',help:'percentage = százalékos, fixed = fix Ft kedvezmény, free_shipping = ingyen szállítás, bundle = csomagajánlat.'},
+ 'promotions.value':{label:'Kedvezmény mértéke',help:'Százalékos kuponnál például 10, fix kedvezménynél például 1500.'},
+ 'promotions.conditions':{label:'Extra feltételek',help:'Haladó beállítás, például minimum kosárérték.',example:'minSubtotal: 8000',advanced:true},
+ 'promotions.max_discount_huf':{label:'Legnagyobb adható kedvezmény',help:'Megakadályozza, hogy egy kupon túl nagy összeget vonjon le.'},
+ 'promotions.usage_limit':{label:'Összesen hányszor használható?',help:'Ha üres, nincs összesített darabkorlát.'},
+ 'promotions.per_customer_limit':{label:'Egy vásárló hányszor használhatja?',help:'Például 1 esetén ugyanaz a vásárló csak egyszer használhatja.'},
+ 'promotions.priority':{label:'Sorrend ütközéskor',help:'Ha több kedvezmény egyszerre lenne használható, ez segít eldönteni a sorrendet.',advanced:true},
+ 'promotions.combinable':{label:'Összevonható más kedvezménnyel?',help:'Bekapcsolva más kuponnal vagy akcióval együtt is engedélyezhető.',advanced:true},
+ 'promotions.starts_at':{label:'Mikortól él?',help:'Opcionális kezdési időpont.',advanced:true},
+ 'promotions.ends_at':{label:'Meddig él?',help:'Opcionális lejárati időpont.',advanced:true},
+ 'popups.name':{label:'Belső név',help:'Csak te látod az adminban. Segít felismerni, melyik felugró üzenetről van szó.'},
+ 'popups.eyebrow':{label:'Kis felső felirat',help:'Rövid figyelemfelkeltő szöveg a popup tetején.'},
+ 'popups.title':{label:'Nagy főcím',help:'Ez a popup legfontosabb mondata.'},
+ 'popups.coupon_code':{label:'Melyik kupont aktiválja?',help:'Ha a popup kuponhoz kapcsolódik, ide írd a kuponkódot.'},
+ 'popups.cta_label':{label:'Gomb felirata',help:'Például: Kérem a kedvezményt.'},
+ 'popups.cta_href':{label:'Hová vigyen a gomb?',help:'Az oldal címe, ahová kattintás után jut a vásárló.',example:'/termekek',advanced:true},
+ 'popups.trigger_type':{label:'Mikor jelenjen meg?',help:'delay = pár másodperc után, exit_intent = távozáskor, cart_value = adott kosárértéknél.'},
+ 'popups.delay_seconds':{label:'Hány másodperc után?',help:'Csak késleltetett popupnál számít.'},
+ 'popups.min_cart_huf':{label:'Minimum kosárérték',help:'Csak akkor jelenjen meg, ha legalább ennyi van a kosárban.'},
+ 'popups.page_scope':{label:'Melyik oldalon jelenjen meg?',help:'all = mindenhol, home = főoldal, catalog = katalógus, product = termékoldal, cart = kosár.'},
+ 'popups.frequency':{label:'Milyen gyakran lássa a vásárló?',help:'session = látogatásonként egyszer, day = naponta egyszer, once = csak egyszer.'},
+}
+
+function guideForSetting(row:JsonRow){return settingGuides[String(row.key)]}
+function resourceRowTitle(resource:string,row:JsonRow){
+ const guide=resource==='settings'?guideForSetting(row):undefined
+ return guide?.label||row.name||row.title||row.label||row.key||row.provider||row.section_key||'Névtelen elem'
+}
+function resourceRowSubtitle(resource:string,row:JsonRow){
+ const guide=resource==='settings'?guideForSetting(row):undefined
+ if(guide)return guide.summary
+ if(resource==='price_rules')return 'Célárrés: '+Math.round(Number(row.target_margin||0)*100)+'% · plusz költség: '+money(Number(row.inbound_per_unit_huf||0))+'/db'
+ if(resource==='promotions')return (row.code||'Nincs kuponkód')+' · '+(row.description||'Kedvezmény')
+ if(resource==='marketing_popups')return (row.title||'Felugró üzenet')+' · '+(row.trigger_type||'időzítés nincs megadva')
+ return row.slug||row.code||row.kind||row.group_name||row.location||row.feed_type||''
+}
+function isPlaceholderValue(value:any){return typeof value==='string'&&(/KITÖLTENDŐ/i.test(value)||value.trim()==='')}
+
 function MultiResourceWorkspace({demo,kind,onMessage}:{demo:boolean;kind:keyof typeof resourceGroups;onMessage:(s:string|null)=>void}){
   const choices=resourceGroups[kind], [resource,setResource]=useState<string>(choices[0][0]), [rows,setRows]=useState<JsonRow[]>([]),[edit,setEdit]=useState<JsonRow|null>(null),[isNew,setIsNew]=useState(false),[loading,setLoading]=useState(false)
   const def=choices.find(x=>x[0]===resource)!,fieldKey=def[3],fields=fieldSets[fieldKey]
