@@ -17,11 +17,12 @@ export function Layout({children,shell}:{children:React.ReactNode;shell:Storefro
  const effectiveFooterLegal=footerNav.length?footerNav.map(i=>({id:i.id,label:i.label,href:i.href,enabled:true})):footer.legalLinks
  const matches=query.trim().length>1?sourceProducts.filter(p=>matchesProductQuery(p,query)).slice(0,5):[]
  const promo=shell?.promotions?.[0]
+ const renderHeaderText=(value:string)=>value.replace('{{freeShippingThreshold}}',shop.freeShippingThreshold.toLocaleString('hu-HU'))
  useEffect(()=>{const onKey=(event:KeyboardEvent)=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();setSearchOpen(true)}if(event.key==='Escape')setSearchOpen(false)};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[])
  const submitSearch=()=>{const q=query.trim();if(!q)return;navigate({to:'/termekek',search:{q}});setSearchOpen(false)}
  return <div className={`site-shell ${header.sticky?'site-header-sticky':''} ${header.compact?'site-header-compact':''}`} style={{'--brand':header.accent,'--brand2':header.accent,'--site-accent':header.accent,'--site-header-bg':header.headerBackground} as React.CSSProperties}>
   <div className="storefront-top">
-   {header.showAnnouncement&&<div className="announcement" style={{background:header.announcementBackground}}>{header.announcementItems.map((item,index)=><span key={index}>{item}</span>)}{promo?.code&&<><span>•</span><span>🎟 <b>{promo.code}</b> · {promo.name}</span></>}</div>}
+   {header.showAnnouncement&&<div className="announcement" style={{background:header.announcementBackground}}>{header.announcementItems.map((item,index)=><span key={index}>{renderHeaderText(item)}</span>)}{promo?.code&&<><span>•</span><span>🎟 <b>{promo.code}</b> · {promo.name}</span></>}</div>}
    <div className="header-main">
     <header className="header" aria-label="DinoToys fő fejléc">
      <Link to="/" className="brand" aria-label="DinoToys.hu főoldal">
