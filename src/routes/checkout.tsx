@@ -2,11 +2,12 @@ import {createFileRoute,Link} from '@tanstack/react-router'
 import {useEffect,useMemo,useState} from 'react'
 import {money} from '../lib/format'
 import {useShop} from '../lib/shop'
-import {getProductArt,getProductPrice,getVariantLabel} from '../lib/catalog'
+import {getProductArt,getProductPrice,getProductStock,getVariantLabel} from '../lib/catalog'
 import {demoCommerceDefaults,readDemoCommercePreferences} from '../lib/demo-commerce'
 import {billingProviderLabel,demoIntegrationDefaults,getDemoShippingMethods,readDemoIntegrationConfig} from '../lib/integration-config'
 import {FoxpostPointPicker} from '../components/FoxpostPointPicker'
 import {normalizeFoxpostPhone,type FoxpostPickupPoint} from '../lib/foxpost'
+import {createDemoOrder} from '../lib/demo-orders'
 
 export const Route=createFileRoute('/checkout')({
  head:()=>({meta:[{title:'Pénztár | DinoToys.hu'},{name:'robots',content:'noindex,nofollow'}]}),
@@ -37,7 +38,7 @@ function Checkout(){
  const invoiceProvider=billingProviderLabel(integrationConfig)
  const productCount=useMemo(()=>shop.cart.reduce((sum,line)=>sum+line.quantity,0),[shop.cart])
 
- if(done)return <div className="container section checkout-success-page"><div className="success-card checkout-success"><span>✓</span><div className="demo-badge">DEMO RENDELÉS</div><h1>{result?.order_number?`Rendelés #${result.order_number}`:'Rendelés rögzítve'}</h1><p>Köszönjük! A demó pénztár végigfutott, de valódi fizetés, készletfoglalás és e-mail küldés nem történt.</p><div className="success-order-meta"><div><small>Fizetendő</small><b>{money(result?.total_huf??0)}</b></div><div><small>Szállítás</small><b>{result?.shipping_label}</b></div><div><small>Fizetés</small><b>{result?.payment_label}</b></div><div><small>Számlázás</small><b>{result?.invoice_provider||invoiceProvider}</b></div>{result?.pickup_point&&<div><small>Átvételi pont</small><b>{result.pickup_point.name}</b></div>}</div><div className="success-actions"><Link to="/" className="btn btn-primary">Főoldal</Link><Link to="/termekek" search={{}} className="btn btn-ghost">Tovább vásárolok</Link></div></div></div>
+ if(done)return <div className="container section checkout-success-page"><div className="success-card checkout-success"><span>✓</span><div className="demo-badge">DEMO RENDELÉS</div><h1>{result?.order_number?`Rendelés #${result.order_number}`:'Rendelés rögzítve'}</h1><p>Köszönjük! A demo rendelést helyben elmentettük, a készletet lefoglaltuk, és az admin Rendelések menüjében már kezelhető. Valódi fizetés, futárfeladás és e-mail még nem történik.</p><div className="success-order-meta"><div><small>Fizetendő</small><b>{money(result?.total_huf??0)}</b></div><div><small>Szállítás</small><b>{result?.shipping_label}</b></div><div><small>Fizetés</small><b>{result?.payment_label}</b></div><div><small>Számlázás</small><b>{result?.invoice_provider||invoiceProvider}</b></div>{result?.pickup_point&&<div><small>Átvételi pont</small><b>{result.pickup_point.name}</b></div>}</div><div className="success-actions"><Link to="/" className="btn btn-primary">Főoldal</Link><a href="/admin" className="btn btn-ghost">Rendelés megnyitása az adminban →</a><Link to="/termekek" search={{}} className="btn btn-ghost">Tovább vásárolok</Link></div></div></div>
 
  if(!shop.cart.length)return <div className="container section"><div className="empty-state large"><span>🛒</span><h1>A pénztárhoz előbb tegyél valamit a kosárba</h1><p>A demo checkout teljes folyamatát termékkel tudod kipróbálni.</p><Link to="/termekek" search={{}} className="btn btn-primary">Termékek felfedezése</Link></div></div>
 
@@ -58,7 +59,17 @@ function Checkout(){
      if(needsFoxpostPoint&&!/^(\+36|36)(20|30|31|50|51|70)\d{7}$/.test(normalizedPhone))throw new Error('FOXPOST-hoz magyar mobiltelefonszám szükséges, például +36 30 123 4567.')
      const live=shop.cart.every(line=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(line.productId))
      if(!live){
-      const order={order_number:`DEMO-${Date.now().toString().slice(-6)}`,total_huf:total,shipping_label:shippingOption.name,payment_label:paymentOption.name,invoice_provider:invoiceProvider,pickup_point:needsFoxpostPoint?foxpostPoint:null}
+      const items=shop.cart.map(line=>{const product=shop.getProduct(line.productId);if(!product)throw new Error('Egy kosárban lévő termék adatai nem találhatók.');const available=getProductStock(product,line.variantId);if(available<line.quantity)throw new Error(`${product.name}: csak ${available} db érhető el a demo készletből.`);const unitPrice=getProductPrice(product,line.variantId);return{productId:product.id,variantId:line.variantId,sku:product.variants?.find(v=>v.id===line.variantId)?.sku??product.sourceSku,name:product.name,brand:product.brand,image:getProductArt(product,line.variantId),variantLabel:getVariantLabel(product,line.variantId)||undefined,quantity:line.quantity,unitPriceHuf:unitPrice,lineTotalHuf:unitPrice*line.quantity}})
+      const demoOrder=createDemoOrder({
+       customer:{name:String(form.get('name')||''),email:String(form.get('email')||''),phone:normalizedPhone},
+       shipping:{provider:shippingOption.provider,methodId:shippingOption.id,label:shippingOption.name,feeHuf:shippingFee,address:needsFoxpostPoint?undefined:{postalCode:String(form.get('postalCode')||''),city:String(form.get('city')||''),line1:String(form.get('line1')||'')},pickupPoint:needsFoxpostPoint?foxpostPoint:null},
+       payment:{method:payment,label:paymentOption.name,feeHuf:paymentOption.fee},
+       billing:{provider:invoiceProvider,companyInvoice:invoice,companyName:invoice?String(form.get('companyName')||''):undefined,taxNumber:invoice?String(form.get('taxNumber')||''):undefined},
+       coupon:shop.appliedCoupon?{code:shop.appliedCoupon.code,discountHuf:shop.discount}:null,
+       items,
+       totals:{itemsHuf:shop.itemsSubtotal,discountHuf:shop.discount,shippingHuf:shippingFee,paymentFeeHuf:paymentOption.fee,totalHuf:total},
+      })
+      const order={order_number:demoOrder.orderNumber,total_huf:demoOrder.totals.totalHuf,shipping_label:demoOrder.shipping.label,payment_label:demoOrder.payment.label,invoice_provider:demoOrder.billing.provider,pickup_point:demoOrder.shipping.pickupPoint,order_id:demoOrder.id}
       setResult(order);shop.clearCart();setDone(true);return
      }
      const response=await fetch('/api/v1/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({
