@@ -8,9 +8,10 @@ import {activateDemoHero,deleteDemoHero,getDemoActiveHero,getDemoHeroVersions,no
 import {demoCommerceDefaults,readDemoCommercePreferences,writeDemoCommercePreferences} from '../../lib/demo-commerce'
 import {IntegrationsWorkspace} from './IntegrationsWorkspace'
 import {DemoOrdersWorkspace} from './DemoOrdersWorkspace'
+import {DemoEmailWorkspace} from './DemoEmailWorkspace'
 import {getDemoReservedStock,readDemoOrders,subscribeDemoOrders} from '../../lib/demo-orders'
 
-type View='dashboard'|'products'|'content'|'commerce'|'orders'|'media'|'integrations'|'security'
+type View='dashboard'|'products'|'content'|'commerce'|'orders'|'emails'|'media'|'integrations'|'security'
 type AdminMe={userId:string;email:string;role:string;permissions:string[]}
 type JsonRow=Record<string,any>
 
@@ -20,6 +21,7 @@ const nav:Array<{id:View;icon:string;label:string;hint:string}>=[
   {id:'content',icon:'✎',label:'Oldalak & tartalmak',hint:'Szövegek · menük · főoldal'},
   {id:'commerce',icon:'₣',label:'Vásárlási beállítások',hint:'Árak · kuponok · pénztár'},
   {id:'orders',icon:'▤',label:'Rendelések',hint:'Beérkezett vásárlások'},
+  {id:'emails',icon:'✉',label:'E-mailek',hint:'Visszaigazolás · státusz · számla'},
   {id:'media',icon:'▧',label:'Képek & fájlok',hint:'Termékképek · feltöltések'},
   {id:'integrations',icon:'⌁',label:'Integrációk',hint:'Szállítás · számlázás · SEO'},
   {id:'security',icon:'⌾',label:'Biztonság & napló',hint:'Ki mit csinált?'},
@@ -89,6 +91,7 @@ export function AdminApp(){
         {view==='content'&&<><HeroVersionsWorkspace demo={!configured} onMessage={setMessage}/><MultiResourceWorkspace demo={!configured} kind="content" simpleMode={simpleMode} onMessage={setMessage}/></>}
         {view==='commerce'&&<MultiResourceWorkspace demo={!configured} kind="commerce" simpleMode={simpleMode} onMessage={setMessage}/>}
         {view==='orders'&&<OrdersWorkspace demo={!configured} onMessage={setMessage}/>}
+        {view==='emails'&&(!configured?<DemoEmailWorkspace/>:<div className="admin2-empty"><b>Az éles e-mail központ a Resend outbox bekötése után aktiválható.</b><span>A demo sablonokat és folyamatot demó módban tudod kipróbálni.</span></div>)}
         {view==='media'&&<MediaWorkspace demo={!configured} onMessage={setMessage}/>}
         {view==='integrations'&&<IntegrationsWorkspace demo={!configured} simpleMode={simpleMode} onMessage={setMessage}/>} 
         {view==='security'&&<SecurityWorkspace demo={!configured} me={me!} onMessage={setMessage}/>}
