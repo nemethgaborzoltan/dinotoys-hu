@@ -27,9 +27,10 @@ export function track(event: string, payload: Record<string, unknown> = {}) {
   if (typeof window === 'undefined') return
   const consent = getConsent()
   if (!consent?.analytics) return
-  const w = window as typeof window & { dataLayer?: Array<Record<string, unknown>> }
+  const w = window as typeof window & { dataLayer?: unknown[]; gtag?:(...args:unknown[])=>void; __dinotoysDirectGa4?:boolean }
   w.dataLayer ||= []
   w.dataLayer.push({ event, ...payload })
+  if(w.__dinotoysDirectGa4&&w.gtag)w.gtag('event',event,payload)
 }
 
 export function trackCommerce(event: 'view_item' | 'add_to_cart' | 'add_to_wishlist', product: Product, quantity = 1) {
