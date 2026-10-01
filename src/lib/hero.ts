@@ -5,7 +5,7 @@ export type HeroChip={label:string;value:string}
 export type HeroConfig={
  version:string;mode:'legacy'|'cinematic'|'orbits'|'universe'|'showcase';eyebrow:string;title:string;emphasis:string;description:string;
  primaryCta:string;secondaryCta:string;trustItems:string[];spotlightProductId:string;orbitProductIds:string[];
- chips:HeroChip[];notes:string[];background:string
+ chips:HeroChip[];notes:string[];background:string;primaryHref?:string;secondaryHref?:string;showEyebrow?:boolean;showPrimaryCta?:boolean;showSecondaryCta?:boolean;showTrust?:boolean;showChips?:boolean;showNotes?:boolean;showPrices?:boolean;showProductNames?:boolean;showProducts?:boolean;motion?:'full'|'soft'|'off'
 }
 export type HeroVersion={id:string;sectionKey:string;name:string;content:HeroConfig;active:boolean;savedAt?:string}
 
@@ -38,6 +38,7 @@ export const showcaseHero:HeroConfig={
  orbitProductIds:['p-starwars-darth-vader-g1277','p-barbie-renee-jfx99','p-stitch-bagclip-3'],
  chips:[{label:'01',value:'Play-Doh'},{label:'02',value:'Star Wars'},{label:'03',value:'Barbie'}],
  notes:['🎁 Ajándékötlet 60 mp alatt','🟠 FOXPOST pontválasztás','♡ Kedvencek és összehasonlítás','⚡ Gyors, mobilbarát vásárlás'],
+ primaryHref:'/termekek',secondaryHref:'/ai-ajandekkereso',showEyebrow:true,showPrimaryCta:true,showSecondaryCta:true,showTrust:true,showChips:true,showNotes:true,showPrices:true,showProductNames:true,showProducts:true,motion:'full',
  background:'radial-gradient(circle at 84% 16%,rgba(255,121,181,.34),transparent 29%),radial-gradient(circle at 63% 82%,rgba(82,215,200,.28),transparent 31%),radial-gradient(circle at 16% 20%,rgba(255,214,93,.24),transparent 27%),linear-gradient(135deg,#fff8e8 0%,#f6edff 48%,#e9fbff 100%)'
 }
 
@@ -63,7 +64,7 @@ export function normalizeHero(value:unknown):HeroConfig{
   trustItems:Array.isArray(raw.trustItems)?raw.trustItems.map(String):base.trustItems,spotlightProductId:String(raw.spotlightProductId??base.spotlightProductId),
   orbitProductIds:Array.isArray(raw.orbitProductIds)?raw.orbitProductIds.map(String):base.orbitProductIds,
   chips:Array.isArray(raw.chips)?raw.chips.map((item:any)=>({label:String(item?.label??''),value:String(item?.value??'')})):base.chips,
-  notes:Array.isArray(raw.notes)?raw.notes.map(String):base.notes,background:String(raw.background??base.background),
+  notes:Array.isArray(raw.notes)?raw.notes.map(String):base.notes,background:String(raw.background??base.background),primaryHref:String(raw.primaryHref??base.primaryHref??'/termekek'),secondaryHref:String(raw.secondaryHref??base.secondaryHref??'/ai-ajandekkereso'),showEyebrow:raw.showEyebrow===undefined?(base.showEyebrow??true):Boolean(raw.showEyebrow),showPrimaryCta:raw.showPrimaryCta===undefined?(base.showPrimaryCta??true):Boolean(raw.showPrimaryCta),showSecondaryCta:raw.showSecondaryCta===undefined?(base.showSecondaryCta??true):Boolean(raw.showSecondaryCta),showTrust:raw.showTrust===undefined?(base.showTrust??true):Boolean(raw.showTrust),showChips:raw.showChips===undefined?(base.showChips??true):Boolean(raw.showChips),showNotes:raw.showNotes===undefined?(base.showNotes??true):Boolean(raw.showNotes),showPrices:raw.showPrices===undefined?(base.showPrices??true):Boolean(raw.showPrices),showProductNames:raw.showProductNames===undefined?(base.showProductNames??true):Boolean(raw.showProductNames),showProducts:raw.showProducts===undefined?(base.showProducts??true):Boolean(raw.showProducts),motion:(['full','soft','off'].includes(String(raw.motion))?String(raw.motion):(base.motion??'full')) as HeroConfig['motion'],
  }
 }
 export function heroToJson(hero:HeroConfig):Record<string,JsonValue>{return hero as unknown as Record<string,JsonValue>}
