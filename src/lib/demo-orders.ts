@@ -1,4 +1,5 @@
 import type {FoxpostPickupPoint} from './foxpost'
+import {queueDemoEmailForOrder} from './demo-emails'
 
 export type DemoOrderStatus='new'|'pending_payment'|'paid'|'processing'|'packed'|'shipped'|'delivered'|'cancelled'|'returned'|'refunded'
 export type DemoPaymentStatus='pending'|'paid'|'cod'|'failed'|'refunded'
@@ -136,6 +137,7 @@ export function createDemoOrder(input:CreateDemoOrderInput){
  }
  reserveItems(order.items)
  writeDemoOrders([order,...readDemoOrders()])
+ queueDemoEmailForOrder(order,'order_confirmation')
  return order
 }
 
@@ -163,7 +165,7 @@ export function updateDemoOrderStatus(id:string,status:DemoOrderStatus){
  if(status==='returned')order.shipment={...order.shipment,status:'returned'}
  if(terminal&&!order.stockReleased){releaseItems(order.items);order.stockReleased=true;order.events=[...order.events,event('stock','Készlet visszaállítva','A lefoglalt mennyiség visszakerült a demo készletbe.')]}
  order.events=[...order.events,event('status',statusLabels[status],`${statusLabels[previous]} → ${statusLabels[status]}`)]
- orders[index]=order;writeDemoOrders(orders);return order
+ orders[index]=order;writeDemoOrders(orders);if(status==='shipped')queueDemoEmailForOrder(order,'shipment_handed_over');if(status==='delivered')queueDemoEmailForOrder(order,'delivered');return order
 }
 
 export function setDemoPaymentStatus(id:string,status:DemoPaymentStatus){
@@ -172,7 +174,7 @@ export function setDemoPaymentStatus(id:string,status:DemoPaymentStatus){
  if(status==='paid'&&['new','pending_payment'].includes(order.status))order.status='paid'
  if(status==='refunded'){order.status='refunded';if(!order.stockReleased){releaseItems(order.items);order.stockReleased=true;order.events=[...order.events,event('stock','Készlet visszaállítva','A visszatérített rendelés készletfoglalását feloldottuk.')]}}
  order.events=[...order.events,event('payment',status==='paid'?'Fizetés sikeres':status==='failed'?'Fizetés sikertelen':status==='refunded'?'Fizetés visszatérítve':'Fizetési állapot frissült',status)]
- orders[index]=order;writeDemoOrders(orders);return order
+ orders[index]=order;writeDemoOrders(orders);if(status==='paid')queueDemoEmailForOrder(order,'payment_confirmed');if(status==='failed')queueDemoEmailForOrder(order,'payment_failed');if(status==='refunded')queueDemoEmailForOrder(order,'refund_confirmed');return order
 }
 
 export function createDemoShipment(id:string,size:'XS'|'S'|'M'|'L'|'XL'='M'){
@@ -192,7 +194,7 @@ export function issueDemoInvoice(id:string){
  const invoiceNumber=`DEMO-${order.orderNumber.replace('DT-','SZ-')}`
  order.billing={...order.billing,invoiceStatus:'issued',invoiceNumber,issuedAt};order.updatedAt=issuedAt
  order.events=[...order.events,event('invoice','Demo számla kiállítva',`${invoiceNumber} · ${order.billing.provider}`)]
- orders[index]=order;writeDemoOrders(orders);return order
+ orders[index]=order;writeDemoOrders(orders);queueDemoEmailForOrder(order,'invoice_issued');return order
 }
 
 export function addDemoOrderNote(id:string,detail:string){
