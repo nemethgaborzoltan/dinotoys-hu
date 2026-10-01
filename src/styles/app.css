@@ -1231,3 +1231,10 @@
  .foxpost-result-copy em{max-width:70vw}
  .foxpost-simple-footer{align-items:flex-start;flex-direction:column}
 }
+
+
+.foxpost-address-confirm{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;padding:13px;border:1px solid #e5e9e6;border-radius:13px;background:#fafcfb}
+.foxpost-address-confirm>span{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#e8f7ee;color:#177849;font-weight:1000}
+.foxpost-address-confirm>div{display:grid;gap:3px}
+.foxpost-address-confirm b{font-size:11px}
+.foxpost-address-confirm small{font-size:9px;color:#77817b}
