@@ -14,7 +14,7 @@ function baseUrl(config:FoxpostEnv){return config.sandbox?'https://webapi-test.f
 
 async function foxpostRequest<T>(path:string,init:RequestInit={}){
  const config=readFoxpostEnv()
- const auth=Buffer.from(`${config.username}:${config.password}`).toString('base64')
+ const auth=btoa(`${config.username}:${config.password}`)
  const headers=new Headers(init.headers);headers.set('Authorization',`Basic ${auth}`);headers.set('Api-key',config.apiKey);headers.set('Accept','application/json');if(init.body)headers.set('Content-Type','application/json')
  const response=await fetch(baseUrl(config)+path,{...init,headers})
  if(!response.ok){const body=await response.text().catch(()=>'');throw new ApiError(response.status,`FOXPOST API hiba (${response.status}).`,'FOXPOST_API_ERROR',body.slice(0,3000))}
