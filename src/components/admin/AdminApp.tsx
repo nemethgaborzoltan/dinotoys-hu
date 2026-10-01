@@ -11,9 +11,12 @@ import {DemoOrdersWorkspace} from './DemoOrdersWorkspace'
 import {DemoEmailWorkspace} from './DemoEmailWorkspace'
 import {SiteDesignWorkspace} from './SiteDesignWorkspace'
 import {DemoSupportWorkspace} from './DemoSupportWorkspace'
+import {DemoProfitWorkspace} from './DemoProfitWorkspace'
+import {DemoEngagementWorkspace} from './DemoEngagementWorkspace'
+import {DemoStorageWorkspace} from './DemoStorageWorkspace'
 import {getDemoReservedStock,readDemoOrders,subscribeDemoOrders} from '../../lib/demo-orders'
 
-type View='dashboard'|'products'|'design'|'content'|'commerce'|'orders'|'support'|'emails'|'media'|'integrations'|'security'
+type View='dashboard'|'products'|'design'|'content'|'commerce'|'profit'|'orders'|'support'|'engagement'|'emails'|'media'|'integrations'|'storage'|'security'
 type AdminMe={userId:string;email:string;role:string;permissions:string[]}
 type JsonRow=Record<string,any>
 
@@ -23,11 +26,14 @@ const nav:Array<{id:View;icon:string;label:string;hint:string}>=[
   {id:'design',icon:'✦',label:'Megjelenés',hint:'Hero · fejléc · lábléc · checkout'},
   {id:'content',icon:'✎',label:'Oldalak & tartalmak',hint:'Oldalak · blokkok · menük'},
   {id:'commerce',icon:'₣',label:'Vásárlási beállítások',hint:'Árak · kuponok · pénztár'},
+  {id:'profit',icon:'◒',label:'Profit & fedezet',hint:'Beszerzés · költség · árrés'},
   {id:'orders',icon:'▤',label:'Rendelések',hint:'Beérkezett vásárlások'},
   {id:'support',icon:'☏',label:'Ügyfélszolgálat',hint:'Kérdések · problémák · visszaküldés'},
+  {id:'engagement',icon:'★',label:'Vásárlói jelzések',hint:'Értékelések · készletértesítők'},
   {id:'emails',icon:'✉',label:'E-mailek',hint:'Visszaigazolás · státusz · számla'},
   {id:'media',icon:'▧',label:'Képek & fájlok',hint:'Termékképek · feltöltések'},
   {id:'integrations',icon:'⌁',label:'Integrációk',hint:'Szállítás · számlázás · SEO'},
+  {id:'storage',icon:'▦',label:'Helyi adatok',hint:'LocalStorage · mentés · visszaállítás'},
   {id:'security',icon:'⌾',label:'Biztonság & napló',hint:'Ki mit csinált?'},
 ]
 
@@ -95,11 +101,14 @@ export function AdminApp(){
         {view==='design'&&<SiteDesignWorkspace demo={!configured} onMessage={setMessage}/>} 
         {view==='content'&&<MultiResourceWorkspace demo={!configured} kind="content" simpleMode={simpleMode} onMessage={setMessage}/>} 
         {view==='commerce'&&<MultiResourceWorkspace demo={!configured} kind="commerce" simpleMode={simpleMode} onMessage={setMessage}/>}
+        {view==='profit'&&(!configured?<DemoProfitWorkspace/>:<div className="admin2-empty"><b>Az éles profit dashboard a beszerzési költségek adatbázisos bekötése után aktiválható.</b><span>A teljes számítási modell demó módban már használható.</span></div>)}
         {view==='orders'&&<OrdersWorkspace demo={!configured} onMessage={setMessage}/>}
         {view==='support'&&(!configured?<DemoSupportWorkspace/>:<div className="admin2-empty"><b>Az éles ügyfélszolgálati inbox adatbázisos mentés után aktiválható.</b><span>A teljes demo workflow Supabase nélkül már kipróbálható.</span></div>)}
+        {view==='engagement'&&(!configured?<DemoEngagementWorkspace/>:<div className="admin2-empty"><b>Az éles értékelések és készletértesítők adatbázisos tárolás után aktiválhatók.</b><span>A moderációs és értesítési workflow demó módban már működik.</span></div>)}
         {view==='emails'&&(!configured?<DemoEmailWorkspace/>:<div className="admin2-empty"><b>Az éles e-mail központ a Resend outbox bekötése után aktiválható.</b><span>A demo sablonokat és folyamatot demó módban tudod kipróbálni.</span></div>)}
         {view==='media'&&<MediaWorkspace demo={!configured} onMessage={setMessage}/>}
         {view==='integrations'&&<IntegrationsWorkspace demo={!configured} simpleMode={simpleMode} onMessage={setMessage}/>} 
+        {view==='storage'&&<DemoStorageWorkspace/>}
         {view==='security'&&<SecurityWorkspace demo={!configured} me={me!} onMessage={setMessage}/>}
       </div>
     </main>
