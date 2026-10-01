@@ -5,6 +5,7 @@ import { money } from '../../lib/format'
 import { adminApi, AdminApiError, jsonBody } from '../../lib/admin-api'
 import { getSupabaseBrowser, hasSupabaseBrowserConfig } from '../../lib/supabase.browser'
 import {activateDemoHero,deleteDemoHero,getDemoActiveHero,getDemoHeroVersions,normalizeHero,saveDemoHeroSnapshot} from '../../lib/hero'
+import {demoCommerceDefaults,readDemoCommercePreferences,writeDemoCommercePreferences} from '../../lib/demo-commerce'
 
 type View='dashboard'|'products'|'content'|'commerce'|'orders'|'media'|'integrations'|'security'
 type AdminMe={userId:string;email:string;role:string;permissions:string[]}
@@ -330,11 +331,10 @@ function MultiResourceWorkspace({demo,kind,simpleMode,onMessage}:{demo:boolean;k
 }
 
 function CommerceOverview({demo,completion,onOpen}:{demo:boolean;completion:number;onOpen:(resource:string)=>void}){
- const defaults={guestCheckout:true,deliveryEstimate:true,trustBadges:true,bundles:true,crossSell:true}
- const [prefs,setPrefs]=useState(defaults)
- useEffect(()=>{if(!demo)return;try{const raw=localStorage.getItem('dinotoys-admin-demo-commerce-tools');if(raw)setPrefs({...defaults,...JSON.parse(raw)})}catch{}},[demo])
- useEffect(()=>{if(!demo)return;try{localStorage.setItem('dinotoys-admin-demo-commerce-tools',JSON.stringify(prefs))}catch{}},[demo,prefs])
- const toggle=(key:keyof typeof defaults)=>setPrefs(current=>({...current,[key]:!current[key]}))
+ const [prefs,setPrefs]=useState(demoCommerceDefaults)
+ useEffect(()=>{if(demo)setPrefs(readDemoCommercePreferences())},[demo])
+ useEffect(()=>{if(demo)writeDemoCommercePreferences(prefs)},[demo,prefs])
+ const toggle=(key:keyof typeof demoCommerceDefaults)=>setPrefs(current=>({...current,[key]:!current[key]}))
  return <section className="admin-commerce-guide">
   <div className="admin-commerce-score"><div><span className="eyebrow">Bolt készültsége</span><h2>{completion}%</h2><p>A fontos alapadatok közül ennyi van már kitöltve.</p></div><div className="admin-score-ring" style={{'--score':completion} as React.CSSProperties}><b>{completion}%</b></div></div>
   <div className="admin-commerce-next"><span className="eyebrow">Ajánlott következő lépések</span><h3>{completion<100?'Töltsd ki a hiányzó hivatalos adatokat':'Az alapadatok rendben vannak'}</h3><p>{completion<100?'Ezek kellenek ahhoz, hogy az impresszum és a jogi oldalak ne maradjanak hiányosak.':'Most már az árakat, kuponokat és a vásárlási élményt érdemes finomítani.'}</p><button onClick={()=>onOpen('settings')}>Alapadatok megnyitása →</button></div>
