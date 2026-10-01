@@ -196,24 +196,41 @@ function CheckoutBuilder({value,onChange,onSave}:{value:CheckoutEditorConfig;onC
    <BuilderGroup title="Kapcsolattartás">
     <TextField label="Cím" value={value.contactTitle} onChange={v=>set('contactTitle',v)}/>
     <TextField label="Leírás" value={value.contactDescription} multiline onChange={v=>set('contactDescription',v)}/>
+    <TextField label="Név mező" value={value.nameLabel} onChange={v=>set('nameLabel',v)}/>
+    <TextField label="E-mail mező" value={value.emailLabel} onChange={v=>set('emailLabel',v)}/>
+    <TextField label="Telefon mező" value={value.phoneLabel} onChange={v=>set('phoneLabel',v)}/>
    </BuilderGroup>
    <BuilderGroup title="Szállítás">
     <TextField label="Cím" value={value.shippingTitle} onChange={v=>set('shippingTitle',v)}/>
     <TextField label="Leírás" value={value.shippingDescription} multiline onChange={v=>set('shippingDescription',v)}/>
     <TextField label="Cím blokk neve" value={value.addressTitle} onChange={v=>set('addressTitle',v)}/>
     <TextField label="Cím blokk leírás" value={value.addressDescription} multiline onChange={v=>set('addressDescription',v)}/>
+    <TextField label="Átvételi pont címe" value={value.pickupTitle} onChange={v=>set('pickupTitle',v)}/>
+    <TextField label="Átvételi pont leírása" value={value.pickupDescription} multiline onChange={v=>set('pickupDescription',v)}/>
+    <TextField label="Irányítószám mező" value={value.postalCodeLabel} onChange={v=>set('postalCodeLabel',v)}/>
+    <TextField label="Város mező" value={value.cityLabel} onChange={v=>set('cityLabel',v)}/>
+    <TextField label="Utca mező" value={value.addressLineLabel} onChange={v=>set('addressLineLabel',v)}/>
+    <TextField label="Futár megjegyzés" value={value.deliveryNoteLabel} onChange={v=>set('deliveryNoteLabel',v)}/>
+    <TextField label="Megjegyzés helykitöltő" value={value.deliveryNotePlaceholder} onChange={v=>set('deliveryNotePlaceholder',v)}/>
    </BuilderGroup>
    <BuilderGroup title="Fizetés és jogi">
     <TextField label="Fizetés címe" value={value.paymentTitle} onChange={v=>set('paymentTitle',v)}/>
     <TextField label="Fizetés leírás" value={value.paymentDescription} multiline onChange={v=>set('paymentDescription',v)}/>
     <TextField label="Céges számla felirat" value={value.companyInvoiceLabel} onChange={v=>set('companyInvoiceLabel',v)}/>
+    <TextField label="Cégnév mező" value={value.companyNameLabel} onChange={v=>set('companyNameLabel',v)}/>
+    <TextField label="Adószám mező" value={value.taxNumberLabel} onChange={v=>set('taxNumberLabel',v)}/>
     <TextField label="Elfogadó szöveg" value={value.consentText} multiline onChange={v=>set('consentText',v)}/>
+    <TextField label="ÁSZF link felirat" value={value.termsLabel} onChange={v=>set('termsLabel',v)}/>
+    <TextField label="Adatkezelés link felirat" value={value.privacyLabel} onChange={v=>set('privacyLabel',v)}/>
     <TextField label="Rendelés gomb" value={value.submitLabel} onChange={v=>set('submitLabel',v)}/>
    </BuilderGroup>
    <BuilderGroup title="Összesítő">
     <TextField label="Felső sor" value={value.summaryEyebrow} onChange={v=>set('summaryEyebrow',v)}/>
     <TextField label="Cím" value={value.summaryTitle} onChange={v=>set('summaryTitle',v)} placeholder="{{count}} termék"/>
     <TextField label="Kosár szerkesztése" value={value.editCartLabel} onChange={v=>set('editCartLabel',v)}/>
+    <TextField label="Termékek sor" value={value.itemsLabel} onChange={v=>set('itemsLabel',v)}/>
+    <TextField label="Összesen sor" value={value.totalLabel} onChange={v=>set('totalLabel',v)}/>
+    <TextField label="Átvételi pont sor" value={value.pickupLabel} onChange={v=>set('pickupLabel',v)}/>
     <SwitchField label="Bizalmi elemek" checked={value.showTrust} onChange={v=>set('showTrust',v)}/>
     <LinesField label="Bizalmi üzenetek" value={value.trustItems} onChange={v=>set('trustItems',v)}/>
    </BuilderGroup>
@@ -224,6 +241,9 @@ function CheckoutBuilder({value,onChange,onSave}:{value:CheckoutEditorConfig;onC
     <TextField label="Főoldal gomb" value={value.successPrimaryLabel} onChange={v=>set('successPrimaryLabel',v)}/>
     <TextField label="Admin gomb" value={value.successAdminLabel} onChange={v=>set('successAdminLabel',v)}/>
     <TextField label="Tovább vásárolok" value={value.successContinueLabel} onChange={v=>set('successContinueLabel',v)}/>
+    <TextField label="Üres kosár címe" value={value.emptyTitle} onChange={v=>set('emptyTitle',v)}/>
+    <TextField label="Üres kosár szöveg" value={value.emptyText} multiline onChange={v=>set('emptyText',v)}/>
+    <TextField label="Üres kosár gomb" value={value.emptyButtonLabel} onChange={v=>set('emptyButtonLabel',v)}/>
    </BuilderGroup>
    <BuilderGroup title="Megjelenés">
     <ColorField label="Kiemelő szín" value={value.accent} onChange={v=>set('accent',v)}/>
