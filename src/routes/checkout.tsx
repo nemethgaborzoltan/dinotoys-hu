@@ -1,8 +1,9 @@
 import {createFileRoute,Link} from '@tanstack/react-router'
-import {useMemo,useState} from 'react'
+import {useEffect,useMemo,useState} from 'react'
 import {money} from '../lib/format'
 import {useShop} from '../lib/shop'
 import {getProductArt,getProductPrice,getVariantLabel} from '../lib/catalog'
+import {demoCommerceDefaults,readDemoCommercePreferences} from '../lib/demo-commerce'
 
 export const Route=createFileRoute('/checkout')({
  head:()=>({meta:[{title:'Pénztár | DinoToys.hu'},{name:'robots',content:'noindex,nofollow'}]}),
@@ -26,7 +27,8 @@ const paymentOptions=[
 function Checkout(){
  const shop=useShop()
  const [done,setDone]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState<string|null>(null),[result,setResult]=useState<any>(null)
- const [shipping,setShipping]=useState<ShippingId>('courier'),[payment,setPayment]=useState<PaymentId>('card'),[invoice,setInvoice]=useState(false)
+ const [shipping,setShipping]=useState<ShippingId>('courier'),[payment,setPayment]=useState<PaymentId>('card'),[invoice,setInvoice]=useState(false),[demoPrefs,setDemoPrefs]=useState(demoCommerceDefaults)
+ useEffect(()=>{setDemoPrefs(readDemoCommercePreferences())},[])
  const shippingOption=shippingOptions.find(x=>x.id===shipping)!,paymentOption=paymentOptions.find(x=>x.id===payment)!
  const shippingFee=shipping==='pickup'||shop.subtotal>=shop.freeShippingThreshold?0:shippingOption.fee
  const total=shop.subtotal+shippingFee+paymentOption.fee
@@ -39,7 +41,7 @@ function Checkout(){
  return <div className="container section checkout-page">
   {error&&<div className="admin2-error">{error}</div>}
   <div className="checkout-header">
-   <div><span className="eyebrow">Biztonságos demo pénztár</span><h1>Rendelés véglegesítése</h1><p>Minden lépést kipróbálhatsz. A demó módban nem történik valódi terhelés vagy futármegrendelés.</p></div>
+   <div><span className="eyebrow">Biztonságos demo pénztár</span><h1>Rendelés véglegesítése</h1><p>Minden lépést kipróbálhatsz. A demó módban nem történik valódi terhelés vagy futármegrendelés.</p><div className="checkout-mode-note">{demoPrefs.guestCheckout?'✓ Vendégként is végigvihető a rendelés':'○ Fiókos vásárlásra tervezve · demóban vendégként is tesztelhető'}</div></div>
    <div className="checkout-steps" aria-label="Pénztár lépései"><span className="active"><b>1</b>Adatok</span><i/><span className="active"><b>2</b>Szállítás</span><i/><span className="active"><b>3</b>Fizetés</span></div>
   </div>
 
@@ -92,7 +94,7 @@ function Checkout(){
 
     <label className="consent checkout-consent"><input type="checkbox" required/><span>Elolvastam és elfogadom az <Link to="/jogi/$slug" params={{slug:'aszf'}}>ÁSZF-et</Link>, valamint megismertem az <Link to="/jogi/$slug" params={{slug:'adatkezeles'}}>Adatkezelési tájékoztatót</Link>.</span></label>
     <button className="btn btn-primary btn-block btn-large checkout-submit" disabled={busy}>{busy?'Rendelés feldolgozása…':`Fizetési kötelezettséggel járó megrendelés · ${money(total)}`}</button>
-    <div className="checkout-trust-row"><span>🔒 Titkosított kapcsolat</span><span>↩ 14 napos elállás</span><span>📦 Nyomon követhető szállítás</span></div>
+    {demoPrefs.trustBadges&&<div className="checkout-trust-row"><span>🔒 Titkosított kapcsolat</span><span>↩ 14 napos elállás</span>{demoPrefs.deliveryEstimate&&<span>📦 Várható kézbesítés: 1–2 munkanap</span>}</div>}
    </form>
 
    <aside className="summary-card checkout-summary checkout-summary-pro">
@@ -104,7 +106,7 @@ function Checkout(){
     {paymentOption.fee>0&&<div><span>{paymentOption.name}</span><b>{money(paymentOption.fee)}</b></div>}
     <div className="summary-total"><span>Összesen</span><b>{money(total)}</b></div>
     {shop.freeShippingLeft>0&&shipping!=='pickup'?<div className="checkout-free-shipping"><b>Még {money(shop.freeShippingLeft)} az ingyenes szállításig</b><span><i style={{width:`${Math.min(100,(shop.subtotal/shop.freeShippingThreshold)*100)}%`}}/></span></div>:<div className="secure-note">🎉 Ennél a kosárnál a választott szállítás díjmentes.</div>}
-    <div className="secure-note">🔐 Demo checkout: bankkártyaadatot nem kérünk és nem tárolunk.</div>
+    {demoPrefs.trustBadges&&<div className="secure-note">🔐 Demo checkout: bankkártyaadatot nem kérünk és nem tárolunk.</div>}
    </aside>
   </div>
  </div>
