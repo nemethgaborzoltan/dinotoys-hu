@@ -217,10 +217,10 @@ const resourceGroups={
     ['homepage_sections','Főoldal blokkok','Hero, trend, ajánló, CTA','homepage'],
   ],
   commerce:[
-    ['settings','Beállítások','Kereskedelmi és feature konfiguráció','settings'],
-    ['price_rules','Árképzési szabályok','Margin, FX buffer, inbound cost','pricing'],
-    ['promotions','Kuponok & promóciók','Kód, limit, minimum kosár, kedvezmény','promotions'],
-    ['marketing_popups','Popupok','Időzített / exit-intent / kosárérték popupok','popups'],
+    ['settings','Alap beállítások','Szállítás, ajándékkereső és hivatalos adatok','settings'],
+    ['price_rules','Árak és haszon','Mennyit keress egy terméken, milyen plusz költséggel számolj','pricing'],
+    ['promotions','Kedvezmények és kuponok','Kuponkódok, minimum kosárérték és kedvezmények','promotions'],
+    ['marketing_popups','Felugró üzenetek','Mikor és milyen ajánlat jelenjen meg a vásárlónak','popups'],
   ],
   integrations:[
     ['suppliers','Beszállítók','Feed/API/XML/CSV konfiguráció','supplier'],
