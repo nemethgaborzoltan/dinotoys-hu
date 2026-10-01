@@ -76,6 +76,18 @@ export function getDemoHeroVersions(){return readDemoVersions()}
 export function getDemoActiveHero(){if(typeof window==='undefined')return showcaseHero;let id=localStorage.getItem(demoActiveKey);if(!localStorage.getItem(demoUniverseMigrationKey)){if(!id||id==='premium'){id='universe';localStorage.setItem(demoActiveKey,id)}localStorage.setItem(demoUniverseMigrationKey,'1')}if(!localStorage.getItem(demoShowcaseMigrationKey)){if(!id||id==='universe'){id='showcase';localStorage.setItem(demoActiveKey,id)}localStorage.setItem(demoShowcaseMigrationKey,'1')}id=id||'showcase';return readDemoVersions().find(v=>v.id===id)?.content??showcaseHero}
 export function activateDemoHero(id:string){if(typeof window==='undefined')return;localStorage.setItem(demoActiveKey,id);window.dispatchEvent(new CustomEvent('dinotoys:hero-change'))}
 export function saveDemoHeroSnapshot(content:HeroConfig){if(typeof window==='undefined')return;const row:HeroVersion={id:'saved-'+Date.now(),sectionKey:'hero_saved_'+Date.now(),name:'Mentett hero '+new Date().toLocaleString('hu-HU'),content,active:false,savedAt:new Date().toISOString()};const custom=readDemoVersions().filter(v=>!builtInHeroVersions.some(b=>b.id===v.id));localStorage.setItem(demoCustomKey,JSON.stringify([row,...custom]));window.dispatchEvent(new CustomEvent('dinotoys:hero-change'))}
+export function saveAndActivateDemoHero(content:HeroConfig,name='Egyedi hero'){
+ if(typeof window==='undefined')return
+ const normalized=normalizeHero({...content,version:'builder-'+Date.now()})
+ const custom=readDemoVersions().filter(v=>!builtInHeroVersions.some(b=>b.id===v.id)&&v.id!=='builder-current')
+ const current=readDemoVersions().find(v=>v.id==='builder-current')
+ const history=current?{...current,id:'saved-'+Date.now(),sectionKey:'hero_saved_'+Date.now(),name:'Hero mentés előtti állapot '+new Date().toLocaleString('hu-HU'),active:false,savedAt:new Date().toISOString()}:null
+ const builder:HeroVersion={id:'builder-current',sectionKey:'hero_builder_current',name,content:normalized,active:true,savedAt:new Date().toISOString()}
+ localStorage.setItem(demoCustomKey,JSON.stringify([builder,...(history?[history]:[]),...custom].slice(0,30)))
+ localStorage.setItem(demoActiveKey,'builder-current')
+ window.dispatchEvent(new CustomEvent('dinotoys:hero-change'))
+}
+
 export function deleteDemoHero(id:string){if(typeof window==='undefined')return;const custom=readDemoVersions().filter(v=>!builtInHeroVersions.some(b=>b.id===v.id)&&v.id!==id);localStorage.setItem(demoCustomKey,JSON.stringify(custom));if(localStorage.getItem(demoActiveKey)===id)localStorage.setItem(demoActiveKey,'showcase');window.dispatchEvent(new CustomEvent('dinotoys:hero-change'))}
 
 export function useResolvedHero(liveContent?:Record<string,JsonValue>|null){
