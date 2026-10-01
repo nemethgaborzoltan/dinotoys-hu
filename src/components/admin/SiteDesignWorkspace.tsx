@@ -71,13 +71,25 @@ function HeroBuilder({value,onChange,onSave}:{value:HeroConfig;onChange:(value:H
     <TextField label="Kiemelt címsor" value={value.emphasis} onChange={v=>set('emphasis',v)}/>
     <TextField label="Leírás" value={value.description} multiline onChange={v=>set('description',v)}/>
    </BuilderGroup>
-   <BuilderGroup title="Gombok">
-    <TextField label="Elsődleges gomb" value={value.primaryCta} onChange={v=>set('primaryCta',v)}/>
-    <TextField label="Másodlagos gomb" value={value.secondaryCta} onChange={v=>set('secondaryCta',v)}/>
+   <BuilderGroup title="Gombok és láthatóság">
+    <SwitchField label="Felső rövid sor" checked={value.showEyebrow!==false} onChange={v=>set('showEyebrow',v)}/>
+    <SwitchField label="Elsődleges gomb" checked={value.showPrimaryCta!==false} onChange={v=>set('showPrimaryCta',v)}/>
+    <TextField label="Elsődleges gomb felirat" value={value.primaryCta} onChange={v=>set('primaryCta',v)}/>
+    <TextField label="Elsődleges gomb link" value={value.primaryHref||'/termekek'} onChange={v=>set('primaryHref',v)}/>
+    <SwitchField label="Másodlagos gomb" checked={value.showSecondaryCta!==false} onChange={v=>set('showSecondaryCta',v)}/>
+    <TextField label="Másodlagos gomb felirat" value={value.secondaryCta} onChange={v=>set('secondaryCta',v)}/>
+    <TextField label="Másodlagos gomb link" value={value.secondaryHref||'/ai-ajandekkereso'} onChange={v=>set('secondaryHref',v)}/>
+    <SwitchField label="Bizalmi elemek" checked={value.showTrust!==false} onChange={v=>set('showTrust',v)}/>
     <LinesField label="Bizalmi elemek" value={value.trustItems} onChange={v=>set('trustItems',v)}/>
    </BuilderGroup>
    <BuilderGroup title="Elrendezés és stílus">
     <label className="site-builder-field"><span>Hero stílus</span><select value={value.mode} onChange={e=>set('mode',e.target.value as HeroConfig['mode'])}><option value="showcase">DinoStage Clean 3D</option><option value="universe">DinoVerse 3D</option><option value="cinematic">Premium 3D</option><option value="orbits">Floating commerce</option><option value="legacy">Legacy</option></select></label>
+    <label className="site-builder-field"><span>Animáció</span><select value={value.motion||'full'} onChange={e=>set('motion',e.target.value as HeroConfig['motion'])}><option value="full">Látványos</option><option value="soft">Finom</option><option value="off">Kikapcsolva</option></select></label>
+    <SwitchField label="Termékek megjelenítése" checked={value.showProducts!==false} onChange={v=>set('showProducts',v)}/>
+    <SwitchField label="Terméknevek" checked={value.showProductNames!==false} onChange={v=>set('showProductNames',v)}/>
+    <SwitchField label="Árak" checked={value.showPrices!==false} onChange={v=>set('showPrices',v)}/>
+    <SwitchField label="Kis kiemelések" checked={value.showChips!==false} onChange={v=>set('showChips',v)}/>
+    <SwitchField label="Alsó üzenetek" checked={value.showNotes!==false} onChange={v=>set('showNotes',v)}/>
     <TextField label="Háttér CSS / gradient" value={value.background} multiline onChange={v=>set('background',v)}/>
    </BuilderGroup>
    <BuilderGroup title="Kiemelt termékek">
