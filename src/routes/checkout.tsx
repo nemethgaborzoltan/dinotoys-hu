@@ -27,7 +27,7 @@ function Checkout(){
  const shop=useShop(),siteEditor=useDemoSiteEditorConfig(),checkout=siteEditor.checkout
  const [done,setDone]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState<string|null>(null),[result,setResult]=useState<any>(null)
  const initialShipping=getDemoShippingMethods(demoIntegrationDefaults)
- const [shippingOptions,setShippingOptions]=useState(initialShipping),[shipping,setShipping]=useState<string>(initialShipping[0]?.id||'personal-pickup'),[payment,setPayment]=useState<PaymentId>('card'),[invoice,setInvoice]=useState(false),[demoPrefs,setDemoPrefs]=useState(demoCommerceDefaults),[integrationConfig,setIntegrationConfig]=useState(demoIntegrationDefaults),[foxpostPoint,setFoxpostPoint]=useState<FoxpostPickupPoint|null>(null),[postalCode,setPostalCode]=useState(''),[city,setCity]=useState('')
+ const [shippingOptions,setShippingOptions]=useState(initialShipping),[shipping,setShipping]=useState<string>(initialShipping[0]?.id||'personal-pickup'),[payment,setPayment]=useState<PaymentId>('card'),[invoice,setInvoice]=useState(false),[billingSameAsShipping,setBillingSameAsShipping]=useState(true),[demoPrefs,setDemoPrefs]=useState(demoCommerceDefaults),[integrationConfig,setIntegrationConfig]=useState(demoIntegrationDefaults),[foxpostPoint,setFoxpostPoint]=useState<FoxpostPickupPoint|null>(null),[postalCode,setPostalCode]=useState(''),[city,setCity]=useState('')
  useEffect(()=>{setDemoPrefs(readDemoCommercePreferences());const integrations=readDemoIntegrationConfig();setIntegrationConfig(integrations);const methods=getDemoShippingMethods(integrations);setShippingOptions(methods);setShipping(current=>methods.some(item=>item.id===current)?current:(methods[0]?.id||'personal-pickup'))},[])
  const shippingOption=shippingOptions.find(x=>x.id===shipping)??shippingOptions[0]??{id:'personal-pickup',provider:'local',name:'Személyes átvétel',description:'Demó',icon:'🏠',fee:0,freeAboveHuf:null}
  const configuredPaymentOptions=useMemo(()=>{const online=integrationConfig.payment.barion.enabled?{id:'card' as const,icon:'💳',name:'Barion bankkártya',description:`Barion ${integrationConfig.payment.barion.sandbox?'sandbox':'éles'} mód · demóban nincs terhelés`,fee:0}:integrationConfig.payment.stripe.enabled?{id:'card' as const,icon:'💳',name:'Stripe bankkártya',description:'Stripe integráció előkészítve · demóban nincs terhelés',fee:0}:paymentOptions[0];return[online,...paymentOptions.slice(1)]},[integrationConfig])
@@ -36,6 +36,7 @@ function Checkout(){
  const total=shop.subtotal+shippingFee+paymentOption.fee
  const shippingThreshold=shippingOption.freeAboveHuf
  const needsFoxpostPoint=shippingOption.provider==='foxpost'
+ const billingNeedsOwnAddress=needsFoxpostPoint||!billingSameAsShipping
  const invoiceProvider=billingProviderLabel(integrationConfig)
  const productCount=useMemo(()=>shop.cart.reduce((sum,line)=>sum+line.quantity,0),[shop.cart])
 
@@ -65,7 +66,19 @@ function Checkout(){
        customer:{name:String(form.get('name')||''),email:String(form.get('email')||''),phone:normalizedPhone},
        shipping:{provider:shippingOption.provider,methodId:shippingOption.id,label:shippingOption.name,feeHuf:shippingFee,address:needsFoxpostPoint?undefined:{postalCode:String(form.get('postalCode')||''),city:String(form.get('city')||''),line1:String(form.get('line1')||'')},pickupPoint:needsFoxpostPoint?foxpostPoint:null},
        payment:{method:payment,label:paymentOption.name,feeHuf:paymentOption.fee},
-       billing:{provider:invoiceProvider,companyInvoice:invoice,companyName:invoice?String(form.get('companyName')||''):undefined,taxNumber:invoice?String(form.get('taxNumber')||''):undefined},
+       billing:{
+        provider:invoiceProvider,
+        companyInvoice:invoice,
+        billingName:invoice?undefined:(String(form.get('billingName')||form.get('name')||'')),
+        companyName:invoice?String(form.get('companyName')||''):undefined,
+        taxNumber:invoice?String(form.get('taxNumber')||''):undefined,
+        address:{
+         countryCode:'HU',
+         postalCode:billingNeedsOwnAddress?String(form.get('billingPostalCode')||''):String(form.get('postalCode')||''),
+         city:billingNeedsOwnAddress?String(form.get('billingCity')||''):String(form.get('city')||''),
+         line1:billingNeedsOwnAddress?String(form.get('billingLine1')||''):String(form.get('line1')||'')
+        }
+       },
        coupon:shop.appliedCoupon?{code:shop.appliedCoupon.code,discountHuf:shop.discount}:null,
        items,
        totals:{itemsHuf:shop.itemsSubtotal,discountHuf:shop.discount,shippingHuf:shippingFee,paymentFeeHuf:paymentOption.fee,totalHuf:total},
@@ -108,8 +121,11 @@ function Checkout(){
     </section>
 
     <section className="checkout-section checkout-invoice">
-     <label className="invoice-toggle"><input type="checkbox" checked={invoice} onChange={e=>setInvoice(e.target.checked)}/><span><b>{checkout.companyInvoiceLabel}</b><small>{invoiceProvider} · demóban még nem készül valódi számla.</small></span></label>
-     {invoice&&<div className="form-grid invoice-fields"><label><span>{checkout.companyNameLabel}</span><input name="companyName" required={invoice}/></label><label><span>{checkout.taxNumberLabel}</span><input name="taxNumber" required={invoice}/></label></div>}
+     <div className="checkout-section-title"><b>5</b><div><h2>Számlázási adatok</h2><p>A számla nevéhez és címéhez szükséges adatok. FOXPOST átvételnél külön számlázási címet kérünk.</p></div></div>
+     <div className="invoice-type-row"><button type="button" className={!invoice?'active':''} onClick={()=>setInvoice(false)}>Magánszemély</button><button type="button" className={invoice?'active':''} onClick={()=>setInvoice(true)}>Cég / egyéni vállalkozó</button></div>
+     {invoice?<div className="form-grid invoice-fields"><label className="field-wide"><span>{checkout.companyNameLabel}</span><input name="companyName" autoComplete="organization" required/></label><label><span>{checkout.taxNumberLabel}</span><input name="taxNumber" inputMode="numeric" placeholder="12345678-1-42" pattern="[0-9]{8}-[1-5]-[0-9]{2}" required/></label><div className="invoice-provider-note"><b>{invoiceProvider}</b><small>Demo módban még nem készül valódi NAV-adatszolgáltatás.</small></div></div>:<div className="form-grid invoice-fields"><label className="field-wide"><span>Számlázási név</span><input name="billingName" autoComplete="name" placeholder="Ha eltér a kapcsolattartó nevétől"/></label></div>}
+     {!needsFoxpostPoint&&<label className="invoice-toggle billing-same-toggle"><input type="checkbox" checked={billingSameAsShipping} onChange={e=>setBillingSameAsShipping(e.target.checked)}/><span><b>Számlázási cím megegyezik a szállítási címmel</b><small>Kapcsold ki, ha más címre kéred a számlát.</small></span></label>}
+     {billingNeedsOwnAddress&&<div className="form-grid billing-address-fields"><label><span>Irányítószám</span><input name="billingPostalCode" inputMode="numeric" pattern="[0-9]{4}" autoComplete="billing postal-code" required/></label><label><span>Város</span><input name="billingCity" autoComplete="billing address-level2" required/></label><label className="field-wide"><span>Utca, házszám</span><input name="billingLine1" autoComplete="billing street-address" required/></label></div>}
     </section>
 
     <label className="consent checkout-consent"><input type="checkbox" required/><span>{checkout.consentText} <Link to="/jogi/$slug" params={{slug:'aszf'}}>{checkout.termsLabel}</Link> · <Link to="/jogi/$slug" params={{slug:'adatkezeles'}}>{checkout.privacyLabel}</Link></span></label>
