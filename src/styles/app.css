@@ -1476,3 +1476,17 @@
  .demo-email-heading-actions .btn{flex:1}
  .demo-email-preview-frame{height:460px}
 }
+
+
+.demo-order-email-list{display:grid;gap:6px}
+.demo-order-email-list>button{width:100%;display:grid;grid-template-columns:30px 1fr auto;gap:9px;align-items:center;border:1px solid #e3e8e5;background:#fafbfa;border-radius:10px;padding:9px;text-align:left;cursor:pointer}
+.demo-order-email-list>button:hover{border-color:#ff9a83;background:#fff8f5}
+.demo-order-email-list>button>span{width:28px;height:28px;border-radius:9px;background:#fff;display:grid;place-items:center}
+.demo-order-email-list>button>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.demo-order-email-list b{font-size:9px}
+.demo-order-email-list small{font-size:8px;color:#849089;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.demo-order-email-list i{font-style:normal;font-size:8px;color:#d55437;font-weight:900}
+.demo-order-email-generate{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #edf0ee}
+.demo-order-email-generate>small{font-size:8px;color:#7d8982;margin-right:2px}
+.demo-order-email-generate button{border:1px solid #dfe5e1;background:#fff;border-radius:999px;padding:6px 8px;font-size:7px;font-weight:900;color:#5f6c64;cursor:pointer}
+.demo-order-email-generate button:hover{border-color:#ff947b;color:#c54d31}
