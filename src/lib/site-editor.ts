@@ -54,18 +54,35 @@ export type CheckoutEditorConfig={
  progressLabels:[string,string,string]
  contactTitle:string
  contactDescription:string
+ nameLabel:string
+ emailLabel:string
+ phoneLabel:string
  shippingTitle:string
  shippingDescription:string
  addressTitle:string
  addressDescription:string
+ pickupTitle:string
+ pickupDescription:string
+ postalCodeLabel:string
+ cityLabel:string
+ addressLineLabel:string
+ deliveryNoteLabel:string
+ deliveryNotePlaceholder:string
  paymentTitle:string
  paymentDescription:string
  companyInvoiceLabel:string
+ companyNameLabel:string
+ taxNumberLabel:string
  consentText:string
+ termsLabel:string
+ privacyLabel:string
  submitLabel:string
  summaryEyebrow:string
  summaryTitle:string
  editCartLabel:string
+ itemsLabel:string
+ totalLabel:string
+ pickupLabel:string
  showTrust:boolean
  trustItems:string[]
  successBadge:string
@@ -74,6 +91,9 @@ export type CheckoutEditorConfig={
  successPrimaryLabel:string
  successAdminLabel:string
  successContinueLabel:string
+ emptyTitle:string
+ emptyText:string
+ emptyButtonLabel:string
  accent:string
  panelRadius:number
  compact:boolean
@@ -139,18 +159,19 @@ export const defaultSiteEditorConfig:SiteEditorConfig={
   eyebrow:'Biztonságos demo pénztár',title:'Rendelés véglegesítése',
   description:'Minden lépést kipróbálhatsz. A demó módban nem történik valódi terhelés vagy futármegrendelés.',
   showProgress:true,progressLabels:['Adatok','Szállítás','Fizetés'],
-  contactTitle:'Kapcsolattartás',contactDescription:'A neved, e-mail címed és telefonszámod kell a rendeléshez.',
+  contactTitle:'Kapcsolattartás',contactDescription:'A neved, e-mail címed és telefonszámod kell a rendeléshez.',nameLabel:'Teljes név',emailLabel:'E-mail',phoneLabel:'Telefon',
   shippingTitle:'Hogyan kéred a csomagot?',shippingDescription:'Először válassz szállítási módot. FOXPOST esetén utána csak egy átvételi pontot kell kiválasztanod.',
-  addressTitle:'Szállítási cím',addressDescription:'Add meg, hová kéred a csomagot.',
+  addressTitle:'Szállítási cím',addressDescription:'Add meg, hová kéred a csomagot.',pickupTitle:'Átvételi pont',pickupDescription:'FOXPOST-nál nem kell külön utcacímet megadnod. A kiválasztott pont lesz a kézbesítési hely.',postalCodeLabel:'Irányítószám',cityLabel:'Város',addressLineLabel:'Utca, házszám',deliveryNoteLabel:'Megjegyzés a futárnak',deliveryNotePlaceholder:'Pl. kapucsengő, emelet…',
   paymentTitle:'Fizetési mód',paymentDescription:'Demóban egyik opció sem indít valódi tranzakciót.',
-  companyInvoiceLabel:'Céges számlát kérek',
-  consentText:'Elolvastam és elfogadom az ÁSZF-et, valamint megismertem az Adatkezelési tájékoztatót.',
+  companyInvoiceLabel:'Céges számlát kérek',companyNameLabel:'Cégnév',taxNumberLabel:'Adószám',
+  consentText:'Elolvastam és elfogadom a vásárlási feltételeket, valamint megismertem az adatkezelési tájékoztatót.',termsLabel:'ÁSZF',privacyLabel:'Adatkezelési tájékoztató',
   submitLabel:'Fizetési kötelezettséggel járó megrendelés',
-  summaryEyebrow:'Rendelésed',summaryTitle:'{{count}} termék',editCartLabel:'Kosár szerkesztése',
+  summaryEyebrow:'Rendelésed',summaryTitle:'{{count}} termék',editCartLabel:'Kosár szerkesztése',itemsLabel:'Termékek',totalLabel:'Összesen',pickupLabel:'Átvételi pont',
   showTrust:true,trustItems:['🔒 Titkosított kapcsolat','↩ 14 napos elállás','📦 Várható kézbesítés: 1–2 munkanap'],
   successBadge:'DEMO RENDELÉS',successTitle:'Rendelés #{{orderNumber}}',
   successText:'Köszönjük! A demo rendelést helyben elmentettük, a készletet lefoglaltuk, és az admin Rendelések menüjében már kezelhető.',
   successPrimaryLabel:'Főoldal',successAdminLabel:'Rendelés megnyitása az adminban →',successContinueLabel:'Tovább vásárolok',
+  emptyTitle:'A pénztárhoz előbb tegyél valamit a kosárba',emptyText:'A demo checkout teljes folyamatát termékkel tudod kipróbálni.',emptyButtonLabel:'Termékek felfedezése',
   accent:'#ff5f3d',panelRadius:18,compact:false,
  },
 }
