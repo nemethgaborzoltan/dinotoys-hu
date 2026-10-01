@@ -7,61 +7,53 @@ import {getProductDisplayPrice} from '../lib/catalog'
 import {matchesProductQuery} from '../lib/product-search'
 import {PromoPopup} from './PromoPopup'
 import {CookiePreferencesButton} from './CookiePreferencesButton'
+import {useDemoSiteEditorConfig} from '../lib/site-editor'
 
 export function Layout({children,shell}:{children:React.ReactNode;shell:StorefrontShell|null}){
- const shop=useShop(),navigate=useNavigate(),[query,setQuery]=useState(''),[searchOpen,setSearchOpen]=useState(false),pathname=useRouterState({select:s=>s.location.pathname})
+ const shop=useShop(),navigate=useNavigate(),editor=useDemoSiteEditorConfig(),[query,setQuery]=useState(''),[searchOpen,setSearchOpen]=useState(false),pathname=useRouterState({select:s=>s.location.pathname})
  const sourceProducts=shell?.searchProducts?.length?shell.searchProducts:demoProducts,headerNav=shell?.navigation?.filter(i=>i.location==='header')??[],footerNav=shell?.navigation?.filter(i=>i.location==='footer')??[]
+ const header=editor.header,footer=editor.footer
+ const effectiveHeaderNav=headerNav.length?headerNav.map(i=>({id:i.id,label:i.label,href:i.href,enabled:true})):header.navItems
+ const effectiveFooterLegal=footerNav.length?footerNav.map(i=>({id:i.id,label:i.label,href:i.href,enabled:true})):footer.legalLinks
  const matches=query.trim().length>1?sourceProducts.filter(p=>matchesProductQuery(p,query)).slice(0,5):[]
  const promo=shell?.promotions?.[0]
  useEffect(()=>{const onKey=(event:KeyboardEvent)=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();setSearchOpen(true)}if(event.key==='Escape')setSearchOpen(false)};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[])
  const submitSearch=()=>{const q=query.trim();if(!q)return;navigate({to:'/termekek',search:{q}});setSearchOpen(false)}
- return <div className="site-shell">
+ return <div className={`site-shell ${header.sticky?'site-header-sticky':''} ${header.compact?'site-header-compact':''}`} style={{'--site-accent':header.accent,'--site-header-bg':header.headerBackground} as React.CSSProperties}>
   <div className="storefront-top">
-   <div className="announcement">
-    <span>🚚 <b>{shop.freeShippingThreshold.toLocaleString('hu-HU')} Ft felett ingyenes szállítás</b></span>
-    <span>•</span>
-    <span>↩ 14 napos elállás</span>
-    <span>•</span>
-    <span>🔒 Biztonságos fizetés</span>
-    {promo?.code&&<><span>•</span><span>🎟 <b>{promo.code}</b> · {promo.name}</span></>}
-   </div>
+   {header.showAnnouncement&&<div className="announcement" style={{background:header.announcementBackground}}>{header.announcementItems.map((item,index)=><span key={index}>{item}</span>)}{promo?.code&&<><span>•</span><span>🎟 <b>{promo.code}</b> · {promo.name}</span></>}</div>}
    <div className="header-main">
     <header className="header" aria-label="DinoToys fő fejléc">
      <Link to="/" className="brand" aria-label="DinoToys.hu főoldal">
-      <span className="brand-mark">D</span>
-      <span className="brand-copy"><strong>DinoToys<span className="brand-dot">.hu</span></strong><small>Játék. Élmény. Ajándék.</small></span>
+      <span className="brand-mark">{header.logoLetter||'D'}</span>
+      <span className="brand-copy"><strong>{header.brandName}<span className="brand-dot">{header.brandSuffix}</span></strong><small>{header.tagline}</small></span>
      </Link>
-     <div className="search-wrap">
+     {header.showSearch?<div className="search-wrap">
       <button className="search-box" onClick={()=>setSearchOpen(true)} aria-label="Keresés megnyitása">
-       <span className="search-icon">⌕</span><span className="search-placeholder">Keress termékre, márkára vagy korosztályra…</span><kbd>⌘ K</kbd>
+       <span className="search-icon">⌕</span><span className="search-placeholder">{header.searchPlaceholder}</span><kbd>⌘ K</kbd>
       </button>
-     </div>
+     </div>:<div/>}
      <nav className="header-actions" aria-label="Gyorsműveletek">
-      <Link to="/ai-ajandekkereso" className="icon-link"><span className="action-icon">✨</span><small>Ajándékkereső</small></Link>
-      <Link to="/kedvencek" className="icon-link"><span className="action-icon">♡</span><small>Kedvencek{shop.wishlist.length?` (${shop.wishlist.length})`:''}</small></Link>
-      <Link to="/kosar" className="icon-link cart-link"><span className="action-icon">🛒</span><small>Kosár</small>{shop.cartCount>0&&<b>{shop.cartCount}</b>}</Link>
+      {header.showGiftFinder&&<Link to="/ai-ajandekkereso" className="icon-link"><span className="action-icon">✨</span><small>{header.giftFinderLabel}</small></Link>}
+      {header.showWishlist&&<Link to="/kedvencek" className="icon-link"><span className="action-icon">♡</span><small>{header.wishlistLabel}{shop.wishlist.length?` (${shop.wishlist.length})`:''}</small></Link>}
+      {header.showCart&&<Link to="/kosar" className="icon-link cart-link"><span className="action-icon">🛒</span><small>{header.cartLabel}</small>{shop.cartCount>0&&<b>{shop.cartCount}</b>}</Link>}
      </nav>
     </header>
    </div>
    <div className="nav-shell">
     <nav className="nav-row" aria-label="Fő navigáció">
-     <Link to="/termekek" search={{}} className={`nav-all ${pathname.startsWith('/termekek')?'active':''}`}><span>☰</span> Összes termék</Link>
-     {headerNav.length?headerNav.map(i=><a key={i.id} href={i.href}>{i.label}</a>):<>
-      <Link to="/termekek" search={{category:'Plüss & kulcstartó'}}>Plüss</Link>
-      <Link to="/termekek" search={{category:'Dínók & figurák'}}>Dínók</Link>
-      <Link to="/termekek" search={{category:'Járművek'}}>Járművek</Link>
-      <Link to="/termekek" search={{category:'Puzzle & játék'}}>Játékok</Link>
-      <Link to="/termekek" search={{category:'Back to School'}}>Iskola</Link>
-     </>}
-     <details className="brand-menu"><summary>Márkák ▾</summary><div className="brand-menu-panel"><span>Kiemelt márkavilágok</span><Link to="/marka/star-wars" className="brand-menu-starwars">✦ <b>Star Wars</b><small>Galaktikus akciófigurák</small></Link><Link to="/marka/play-doh" className="brand-menu-playdoh">● <b>Play-Doh</b><small>Kreatív gyurmavilág</small></Link><Link to="/termekek" search={{q:'Barbie'}}>◉ <b>Barbie</b><small>Divat és szerepjáték</small></Link><Link to="/termekek" search={{q:'Marvel'}}>◆ <b>Marvel</b><small>Szuperhősök</small></Link></div></details>
-     <Link to="/ai-ajandekkereso" className="nav-highlight">✨ Ajándékkereső</Link>
-     <Link to="/osszehasonlitas" className="nav-muted">Összehasonlítás {shop.compare.length?`(${shop.compare.length})`:''}</Link>
+     {effectiveHeaderNav.filter(i=>i.enabled).map((i,index)=><a key={i.id} href={i.href} className={index===0?`nav-all ${pathname.startsWith('/termekek')?'active':''}`:undefined}>{index===0&&<span>☰</span>} {i.label}</a>)}
+     {header.showBrandMenu&&<details className="brand-menu"><summary>{header.brandMenuLabel} ▾</summary><div className="brand-menu-panel"><span>Kiemelt márkák</span>{header.brandLinks.filter(i=>i.enabled).map(i=><a key={i.id} href={i.href}><b>{i.label}</b></a>)}</div></details>}
+     {header.showGiftFinder&&<Link to="/ai-ajandekkereso" className="nav-highlight">✨ {header.giftFinderLabel}</Link>}
+     {header.showCompare&&<Link to="/osszehasonlitas" className="nav-muted">{header.compareLabel} {shop.compare.length?`(${shop.compare.length})`:''}</Link>}
     </nav>
    </div>
   </div>
   <main>{children}</main>
-  <footer className="footer"><div><div className="brand footer-brand"><span className="brand-mark">D</span><span>DinoToys<span className="brand-dot">.hu</span></span></div><p>Modern magyar játékwebshop, Dino Toys nagykereskedelmi forrásra tervezve.</p><small className="footer-legal-note">Az üzemeltető pontos cégadatai az admin jogi profiljából kerülnek a publikus dokumentumokba.</small></div><div><strong>Vásárlás</strong><Link to="/termekek" search={{}}>Termékek</Link><Link to="/ai-ajandekkereso">Ajándékkereső</Link><Link to="/kedvencek">Kedvencek</Link><Link to="/jogi/$slug" params={{slug:'elallas'}}>Elállás & visszaküldés</Link></div><div><strong>Ügyfélszolgálat</strong><Link to="/szallitas">Szállítás és fizetés</Link><Link to="/visszakuldes">Visszaküldés</Link><Link to="/kapcsolat">Kapcsolat</Link><Link to="/jogi/$slug" params={{slug:'panaszkezeles'}}>Panaszkezelés</Link><Link to="/jogi/$slug" params={{slug:'szavatossag'}}>Szavatosság / jótállás</Link></div><div><strong>Jogi / adatvédelem</strong>{footerNav.length?footerNav.map(i=><a key={i.id} href={i.href}>{i.label}</a>):<><Link to="/jogi/$slug" params={{slug:'impresszum'}}>Impresszum</Link><Link to="/jogi/$slug" params={{slug:'aszf'}}>ÁSZF</Link><Link to="/jogi/$slug" params={{slug:'adatkezeles'}}>Adatkezelés</Link><Link to="/jogi/$slug" params={{slug:'cookie'}}>Cookie tájékoztató</Link></>}<CookiePreferencesButton/></div></footer>
-  {searchOpen&&<div className="modal-backdrop" onMouseDown={()=>setSearchOpen(false)}><div className="search-modal" onMouseDown={e=>e.stopPropagation()}><div className="search-input-row"><span>⌕</span><input autoFocus value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')submitSearch()}} placeholder="Keresés termékre, márkára, korosztályra…"/><button onClick={()=>setSearchOpen(false)}>Esc</button></div><div className="search-suggestions">{query.length<=1&&<><p className="eyebrow">Népszerű keresések</p><div className="chips"><button onClick={()=>setQuery('Stitch')}>Stitch</button><button onClick={()=>setQuery('dínó')}>Dínó</button><button onClick={()=>setQuery('Hot Wheels')}>Hot Wheels</button></div></>}{matches.map(p=><Link key={p.id} to="/termek/$slug" params={{slug:p.slug}} onClick={()=>setSearchOpen(false)} className="search-result"><img src={p.art} onError={e=>{e.currentTarget.src='/favicon.svg'}}/><span><b>{p.name}</b><small>{p.brand} • {p.category}</small></span><strong>{new Intl.NumberFormat('hu-HU').format(getProductDisplayPrice(p))} Ft</strong></Link>)}{query.trim().length>1&&matches.length===0&&<div className="search-empty"><b>Nincs pontos találat</b><span>Nyomj Entert a teljes katalógus kereséséhez.</span></div>}{query.trim().length>1&&<button className="search-all" onClick={submitSearch}>Összes találat erre: „{query.trim()}” →</button>}</div></div></div>}
+  {footer.enabled&&<footer className="footer editor-footer" style={{background:footer.background,color:footer.textColor}}><div><div className="brand footer-brand"><span className="brand-mark">{header.logoLetter||'D'}</span><span>{footer.brandName}<span className="brand-dot">{footer.brandSuffix}</span></span></div><p>{footer.intro}</p><small className="footer-legal-note">{footer.legalNote}</small><small className="footer-copyright">{footer.copyright}</small></div><FooterColumn title={footer.shoppingTitle} links={footer.shoppingLinks}/><FooterColumn title={footer.supportTitle} links={footer.supportLinks}/><div><strong>{footer.legalTitle}</strong>{effectiveFooterLegal.filter(i=>i.enabled).map(i=><a key={i.id} href={i.href}>{i.label}</a>)}{footer.showCookieButton&&<CookiePreferencesButton label={footer.cookieLabel}/>}</div></footer>}
+  {searchOpen&&<div className="modal-backdrop" onMouseDown={()=>setSearchOpen(false)}><div className="search-modal" onMouseDown={e=>e.stopPropagation()}><div className="search-input-row"><span>⌕</span><input autoFocus value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')submitSearch()}} placeholder={header.searchPlaceholder}/><button onClick={()=>setSearchOpen(false)}>Esc</button></div><div className="search-suggestions">{query.length<=1&&<><p className="eyebrow">Népszerű keresések</p><div className="chips"><button onClick={()=>setQuery('Stitch')}>Stitch</button><button onClick={()=>setQuery('dínó')}>Dínó</button><button onClick={()=>setQuery('Hot Wheels')}>Hot Wheels</button></div></>}{matches.map(p=><Link key={p.id} to="/termek/$slug" params={{slug:p.slug}} onClick={()=>setSearchOpen(false)} className="search-result"><img src={p.art} onError={e=>{e.currentTarget.src='/favicon.svg'}}/><span><b>{p.name}</b><small>{p.brand} • {p.category}</small></span><strong>{new Intl.NumberFormat('hu-HU').format(getProductDisplayPrice(p))} Ft</strong></Link>)}{query.trim().length>1&&matches.length===0&&<div className="search-empty"><b>Nincs pontos találat</b><span>Nyomj Entert a teljes katalógus kereséséhez.</span></div>}{query.trim().length>1&&<button className="search-all" onClick={submitSearch}>Összes találat erre: „{query.trim()}” →</button>}</div></div></div>}
   <PromoPopup popup={shell?shell.popup:undefined}/>
  </div>
 }
+
+function FooterColumn({title,links}:{title:string;links:Array<{id:string;label:string;href:string;enabled:boolean}>}){return <div><strong>{title}</strong>{links.filter(link=>link.enabled).map(link=><a key={link.id} href={link.href}>{link.label}</a>)}</div>}
