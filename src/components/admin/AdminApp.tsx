@@ -298,18 +298,27 @@ function resourceRowSubtitle(resource:string,row:JsonRow){
 }
 function isPlaceholderValue(value:any){return typeof value==='string'&&(/KITÖLTENDŐ/i.test(value)||value.trim()==='')}
 
+function readDemoResource(resource:string){
+ if(typeof window==='undefined')return demoResource(resource)
+ try{const raw=localStorage.getItem('dinotoys-admin-demo-resource-'+resource);if(raw)return JSON.parse(raw) as JsonRow[]}catch{}
+ return demoResource(resource)
+}
+function writeDemoResource(resource:string,rows:JsonRow[]){
+ if(typeof window==='undefined')return
+ try{localStorage.setItem('dinotoys-admin-demo-resource-'+resource,JSON.stringify(rows))}catch{}
+}
 function MultiResourceWorkspace({demo,kind,simpleMode,onMessage}:{demo:boolean;kind:keyof typeof resourceGroups;simpleMode:boolean;onMessage:(s:string|null)=>void}){
   const choices=resourceGroups[kind], [resource,setResource]=useState<string>(choices[0][0]), [rows,setRows]=useState<JsonRow[]>([]),[edit,setEdit]=useState<JsonRow|null>(null),[isNew,setIsNew]=useState(false),[loading,setLoading]=useState(false)
   const def=choices.find(x=>x[0]===resource)!,fieldKey=def[3],fields=fieldSets[fieldKey]
-  const load=async()=>{if(demo){setRows(demoResource(resource));return}setLoading(true);try{setRows(await adminApi<JsonRow[]>(`/api/v1/admin/resources/${resource}`))}catch(e){onMessage((e as Error).message)}finally{setLoading(false)}}
+  const load=async()=>{if(demo){setRows(readDemoResource(resource));return}setLoading(true);try{setRows(await adminApi<JsonRow[]>(`/api/v1/admin/resources/${resource}`))}catch(e){onMessage((e as Error).message)}finally{setLoading(false)}}
   useEffect(()=>{void load()},[resource,demo])
-  const settingRows=demo?demoResource('settings'):(resource==='settings'?rows:[])
+  const settingRows=demo?readDemoResource('settings'):(resource==='settings'?rows:[])
   const completionItems=settingRows.filter(row=>settingGuides[String(row.key)])
   const completed=completionItems.filter(row=>!isPlaceholderValue(row.value)&&row.value!==null&&row.value!==undefined).length
   const completion=completionItems.length?Math.round(completed/completionItems.length*100):0
   const heading=kind==='content'?'Oldalak és tartalmak':kind==='commerce'?'Vásárlási beállítások':'Külső kapcsolatok'
   const intro=kind==='content'?'Itt szerkesztheted, mit lát és mit olvas a vásárló.':kind==='commerce'?'Itt állítod be, hogyan működjön a vásárlás, az ár, a kedvezmény és a pénztár.':'Itt kapcsolhatod össze a webshopot külső szolgáltatásokkal.'
-  return <><div className="admin2-heading row"><div><span className="eyebrow">{simpleMode?'Egyszerű kezelőfelület':'Haladó beállítások'}</span><h1>{heading}</h1><p>{intro}</p></div><button className="btn btn-primary" onClick={()=>{setIsNew(true);setEdit(blankFor(fields))}}>+ Új elem</button></div>
+  return <><div className="admin2-heading row"><div><span className="eyebrow">{simpleMode?'Egyszerű kezelőfelület':'Haladó beállítások'}</span><h1>{heading}</h1><p>{intro}</p></div>{(!simpleMode||resource!=='settings')&&<button className="btn btn-primary" onClick={()=>{setIsNew(true);setEdit(blankFor(fields))}}>+ Új elem</button>}</div>
   {kind==='commerce'&&<CommerceOverview demo={demo} completion={completion} onOpen={next=>{setResource(next);setEdit(null)}}/>}
   <div className="admin2-resource-tabs">{choices.map(choice=><button key={choice[0]} className={resource===choice[0]?'active':''} onClick={()=>setResource(choice[0])}><b>{choice[1]}</b><small>{choice[2]}</small></button>)}</div>
   <div className="admin2-list">{loading?<div className="admin2-empty">Betöltés…</div>:rows.length===0?<div className="admin2-empty"><b>Még nincs adat.</b><span>Az első elemet a + Új elem gombbal hozhatod létre.</span></div>:rows.map(row=>{
@@ -317,7 +326,7 @@ function MultiResourceWorkspace({demo,kind,simpleMode,onMessage}:{demo:boolean;k
     const needsAttention=guide&&isPlaceholderValue(row.value)
     return <div className={`admin2-list-row ${guide?'guided':''}`} key={row.id||row.key||row.slug}><div className="admin2-row-main"><b>{resourceRowTitle(resource,row)}</b><small>{resourceRowSubtitle(resource,row)}</small>{guide&&<div className="admin2-row-help"><span><b>Hol látszik?</b> {guide.where}</span><span><b>Példa:</b> {guide.example}</span>{!simpleMode&&<code>{row.key}</code>}</div>}</div><div className="admin2-row-tags">{needsAttention&&<span className="admin2-pill warn">kitöltendő</span>}{guide&&!needsAttention&&<span className="admin2-pill ok">rendben</span>}{typeof row.active==='boolean'&&<span className={row.active?'admin2-pill ok':'admin2-pill'}>{row.active?'aktív':'inaktív'}</span>}{typeof row.published==='boolean'&&<span className={row.published?'admin2-pill ok':'admin2-pill'}>{row.published?'publikált':'piszkozat'}</span>}</div><div className="admin2-row-actions">{guide?.preview&&<a className="admin2-link" href={guide.preview} target="_blank" rel="noreferrer">Előnézet ↗</a>}<button className="admin2-link" onClick={()=>{setIsNew(false);setEdit({...row})}}>Szerkesztés →</button></div></div>
   })}</div>
-  {edit&&<ResourceDrawer title={resource==='settings'?(guideForSetting(edit)?.label||def[1]):def[1]} resourceKey={fieldKey} simpleMode={simpleMode} row={edit} fields={fields} onClose={()=>setEdit(null)} onSave={async row=>{try{if(demo){setRows(cur=>isNew?[{...row,id:crypto.randomUUID()},...cur]:cur.map(x=>x.id===row.id?row:x));setEdit(null);return}const path=isNew?`/api/v1/admin/resources/${resource}`:`/api/v1/admin/resources/${resource}/${row.id}`;await adminApi(path,{method:isNew?'POST':'PATCH',body:jsonBody(row)});setEdit(null);await load()}catch(e){onMessage((e as Error).message)}}} onDelete={!isNew?async()=>{try{if(demo){setRows(cur=>cur.filter(x=>x.id!==edit.id));setEdit(null);return}await adminApi(`/api/v1/admin/resources/${resource}/${edit.id}`,{method:'DELETE'});setEdit(null);await load()}catch(e){onMessage((e as Error).message)}}:undefined}/>}</>
+  {edit&&<ResourceDrawer title={resource==='settings'?(guideForSetting(edit)?.label||def[1]):def[1]} resourceKey={fieldKey} simpleMode={simpleMode} row={edit} fields={fields} onClose={()=>setEdit(null)} onSave={async row=>{try{if(demo){setRows(cur=>{const next=isNew?[{...row,id:crypto.randomUUID()},...cur]:cur.map(x=>x.id===row.id?row:x);writeDemoResource(resource,next);return next});setEdit(null);return}const path=isNew?`/api/v1/admin/resources/${resource}`:`/api/v1/admin/resources/${resource}/${row.id}`;await adminApi(path,{method:isNew?'POST':'PATCH',body:jsonBody(row)});setEdit(null);await load()}catch(e){onMessage((e as Error).message)}}} onDelete={(!simpleMode||resource!=='settings')&&!isNew?async()=>{try{if(demo){setRows(cur=>{const next=cur.filter(x=>x.id!==edit.id);writeDemoResource(resource,next);return next});setEdit(null);return}await adminApi(`/api/v1/admin/resources/${resource}/${edit.id}`,{method:'DELETE'});setEdit(null);await load()}catch(e){onMessage((e as Error).message)}}:undefined}/>}</>
 }
 
 function CommerceOverview({demo,completion,onOpen}:{demo:boolean;completion:number;onOpen:(resource:string)=>void}){
