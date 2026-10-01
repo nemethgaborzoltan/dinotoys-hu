@@ -1,5 +1,5 @@
 import type {FoxpostPickupPoint} from './foxpost'
-import {queueDemoEmailForOrder} from './demo-emails'
+import {clearDemoEmails,queueDemoEmailForOrder} from './demo-emails'
 
 export type DemoOrderStatus='new'|'pending_payment'|'paid'|'processing'|'packed'|'shipped'|'delivered'|'cancelled'|'returned'|'refunded'
 export type DemoPaymentStatus='pending'|'paid'|'cod'|'failed'|'refunded'
@@ -208,6 +208,7 @@ export function clearDemoOrders(){
  const orders=readDemoOrders()
  for(const order of orders)if(!order.stockReleased)releaseItems(order.items)
  if(typeof window!=='undefined'){localStorage.removeItem(ordersKey);localStorage.removeItem(sequenceKey)}
+ clearDemoEmails()
  emit()
 }
 
