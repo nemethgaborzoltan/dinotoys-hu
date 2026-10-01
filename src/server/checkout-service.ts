@@ -7,6 +7,7 @@ const checkoutSchema=z.object({
   email:z.string().email(),
   phone:z.string().min(6).max(40),
   couponCode:z.string().max(80).nullish(),
+  shippingMethod:z.object({provider:z.string().min(1).max(40),methodId:z.string().min(1).max(80),feeHuf:z.number().int().min(0),pickupPoint:z.object({place_id:z.union([z.string(),z.number()]),operator_id:z.string().optional(),name:z.string(),address:z.string(),zip:z.string(),city:z.string(),street:z.string().optional(),findme:z.string().optional(),geolat:z.number().optional(),geolng:z.number().optional(),variant:z.string().optional(),service:z.string().optional(),serviceString:z.string().optional(),paymentOptionsString:z.string().optional(),isOutdoor:z.boolean().optional()}).nullish()}).optional(),
   shippingAddress:z.object({name:z.string().min(2).max(160),countryCode:z.string().length(2).default('HU'),postalCode:z.string().min(3).max(20),city:z.string().min(1).max(120),line1:z.string().min(2).max(240),line2:z.string().max(240).optional()}),
   items:z.array(z.object({productId:z.string().uuid(),variantId:z.string().uuid().optional(),quantity:z.number().int().min(1).max(99)})).min(1).max(100),
 })
