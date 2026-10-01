@@ -40,7 +40,7 @@ export function buildFoxpostParcel(input:FoxpostParcelInput){
   destination:foxpostDestination(input.pickupPoint),
   recipientName:input.recipientName,recipientEmail:input.recipientEmail,recipientPhone:normalizeFoxpostPhone(input.recipientPhone),
   refCode:input.orderNumber.slice(0,30),size:input.size||'M',cod:Math.max(0,Math.round(input.codHuf||0)),
-  ...(input.comment?{comment:input.comment.slice(0,200)}:{}),
+  ...(input.comment?{comment:input.comment.slice(0,50)}:{}),
  }
 }
 
@@ -51,7 +51,8 @@ export async function testFoxpostConnection(){
 }
 
 export async function createFoxpostParcel(input:FoxpostParcelInput){
- return foxpostRequest<unknown>('/parcel',{method:'POST',body:JSON.stringify(buildFoxpostParcel(input))})
+ const config=readFoxpostEnv()
+ return foxpostRequest<unknown>(`/parcel?isWeb=${config.sandbox?'false':'true'}`,{method:'POST',body:JSON.stringify([buildFoxpostParcel(input)])})
 }
 
 export async function updateFoxpostParcel(payload:unknown){
@@ -70,6 +71,6 @@ export async function getFoxpostTrackingHistory(barcode:string){
  return foxpostRequest<unknown>('/tracking/tracks/'+encodeURIComponent(barcode),{method:'GET'})
 }
 
-export async function getFoxpostLabel(barcodes:string[],pageSize:'A6'|'A7'|'85X85'='A6'){
+export async function getFoxpostLabel(barcodes:string[],pageSize:'A6'|'A7'|'_85X85'='A6'){
  return foxpostRequest<ArrayBuffer>('/label/'+pageSize,{method:'POST',body:JSON.stringify(barcodes)})
 }
