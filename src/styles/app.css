@@ -1490,3 +1490,495 @@
 .demo-order-email-generate>small{font-size:8px;color:#7d8982;margin-right:2px}
 .demo-order-email-generate button{border:1px solid #dfe5e1;background:#fff;border-radius:999px;padding:6px 8px;font-size:7px;font-weight:900;color:#5f6c64;cursor:pointer}
 .demo-order-email-generate button:hover{border-color:#ff947b;color:#c54d31}
+
+
+/* ===== DinoToys visual system refresh + DinoVerse 3D hero ===== */
+.site-shell{
+  position:relative;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 8% 14%,rgba(255,105,72,.08),transparent 24%),
+    radial-gradient(circle at 92% 26%,rgba(106,140,255,.09),transparent 24%),
+    linear-gradient(180deg,#fff 0,#fbfcff 38%,#f8faf9 100%);
+  color:#17211b;
+}
+.site-shell main{position:relative;overflow:clip}
+.site-shell main:before{
+  content:"";position:absolute;z-index:-1;inset:0;
+  background:
+    radial-gradient(circle at 18% 42%,rgba(255,214,81,.065),transparent 20%),
+    radial-gradient(circle at 82% 68%,rgba(95,219,190,.07),transparent 21%);
+  pointer-events:none;
+}
+.site-shell .storefront-top{
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(18px) saturate(1.18);
+  box-shadow:0 10px 40px rgba(23,33,27,.055);
+}
+.site-shell .announcement{
+  background:linear-gradient(90deg,#111820 0%,#1c1a31 45%,#0e2631 100%);
+  color:#eef7f2;
+}
+.site-shell .header-main{background:rgba(255,255,255,.8)}
+.site-shell .header{position:relative}
+.site-shell .brand-mark{
+  background:linear-gradient(145deg,#ff6948,#ff3f7a 55%,#735cff);
+  box-shadow:0 12px 25px rgba(255,83,92,.22),inset 0 1px 0 rgba(255,255,255,.35);
+}
+.site-shell .brand-copy strong{letter-spacing:-.035em}
+.site-shell .brand-dot{color:#ff5d48}
+.site-shell .search-box{
+  border-color:#e2e7e4;
+  background:linear-gradient(180deg,#fff,#fbfcfb);
+  box-shadow:0 7px 20px rgba(23,33,27,.035);
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+}
+.site-shell .search-box:hover{
+  border-color:#ff9c87;
+  box-shadow:0 10px 26px rgba(255,105,72,.09);
+  transform:translateY(-1px);
+}
+.site-shell .nav-shell{
+  background:rgba(255,255,255,.74);
+  backdrop-filter:blur(16px);
+}
+.site-shell .nav-row a,.site-shell .brand-menu summary{transition:color .2s,background .2s,transform .2s}
+.site-shell .nav-row a:hover,.site-shell .brand-menu summary:hover{transform:translateY(-1px)}
+.site-shell .btn{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease,border-color .2s}
+.site-shell .btn:hover{transform:translateY(-2px)}
+.site-shell .btn-primary{
+  border:0;
+  background:linear-gradient(135deg,#ff6948 0%,#ff477d 54%,#7a5cff 130%);
+  box-shadow:0 14px 28px rgba(255,82,94,.19);
+}
+.site-shell .btn-primary:hover{box-shadow:0 18px 34px rgba(255,82,94,.25);filter:saturate(1.06)}
+.site-shell .section{position:relative}
+.site-shell .section-head h2{
+  letter-spacing:-.045em;
+  text-wrap:balance;
+}
+.site-shell .category-card{
+  position:relative;overflow:hidden;
+  background:rgba(255,255,255,.86);
+  box-shadow:0 12px 34px rgba(23,33,27,.045);
+  transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;
+}
+.site-shell .category-card:after{
+  content:"";position:absolute;inset:auto -30% -80% 30%;height:120%;
+  background:radial-gradient(circle,rgba(255,105,72,.12),transparent 64%);
+  opacity:0;transition:.25s;pointer-events:none;
+}
+.site-shell .category-card:hover{
+  transform:translateY(-5px);
+  border-color:#ffae9b;
+  box-shadow:0 20px 42px rgba(23,33,27,.085);
+}
+.site-shell .category-card:hover:after{opacity:1}
+.site-shell .product-card{
+  border-color:#e5e9e7;
+  background:rgba(255,255,255,.94);
+  box-shadow:0 12px 34px rgba(23,33,27,.045);
+  transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s,border-color .28s;
+}
+.site-shell .product-card:hover{
+  transform:translateY(-7px);
+  border-color:#e8c8be;
+  box-shadow:0 26px 55px rgba(23,33,27,.11);
+}
+.site-shell .product-media{overflow:hidden}
+.site-shell .product-media img{transition:transform .45s cubic-bezier(.2,.8,.2,1),filter .45s}
+.site-shell .product-card:hover .product-media img{transform:scale(1.045) rotate(-.5deg);filter:saturate(1.05)}
+.site-shell .feature-strip{
+  position:relative;overflow:hidden;
+  border:1px solid rgba(255,255,255,.72);
+  background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(246,249,255,.84));
+  box-shadow:0 18px 55px rgba(23,33,27,.06);
+  backdrop-filter:blur(18px);
+}
+.site-shell .ai-banner{
+  position:relative;overflow:hidden;
+  box-shadow:0 30px 70px rgba(20,29,45,.14);
+}
+.site-shell .footer{
+  background:
+    radial-gradient(circle at 15% 0,rgba(255,105,72,.12),transparent 28%),
+    radial-gradient(circle at 88% 100%,rgba(101,111,255,.1),transparent 30%),
+    #121916;
+}
+
+/* DinoVerse 3D hero — version dinoverse-v3-20261001 */
+.hero-universe{
+  --hero-rx:0deg;--hero-ry:0deg;--hero-x:0px;--hero-y:0px;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  min-height:720px;
+  display:grid;
+  grid-template-columns:minmax(0,.9fr) minmax(540px,1.1fr);
+  gap:18px;
+  align-items:center;
+  padding:clamp(34px,4vw,66px) clamp(26px,5vw,76px) 58px;
+  margin-top:18px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:clamp(28px,3vw,44px);
+  box-shadow:0 34px 90px rgba(15,19,31,.2),inset 0 1px 0 rgba(255,255,255,.08);
+  color:#fff;
+}
+.hero-universe:before{
+  content:"";position:absolute;inset:0;z-index:-2;
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.025),transparent 35%),
+    radial-gradient(circle at 54% 38%,rgba(124,91,255,.08),transparent 32%);
+}
+.hero-universe:after{
+  content:"";position:absolute;z-index:-1;inset:0;
+  opacity:.22;pointer-events:none;
+  background-image:
+    radial-gradient(circle at 18% 24%,rgba(255,255,255,.8) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 78% 12%,rgba(255,255,255,.6) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 62% 72%,rgba(255,255,255,.55) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 34% 82%,rgba(255,255,255,.5) 0 1px,transparent 1.5px);
+  background-size:190px 190px,250px 250px,220px 220px,300px 300px;
+  animation:dinoverseStars 28s linear infinite;
+}
+.dinoverse-atmosphere{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.dinoverse-aurora{
+  position:absolute;border-radius:50%;filter:blur(10px);opacity:.7;
+  animation:dinoverseAurora 9s ease-in-out infinite;
+}
+.dinoverse-aurora.a{width:440px;height:440px;right:-90px;top:-110px;background:radial-gradient(circle,rgba(255,73,132,.28),rgba(255,73,132,.04) 60%,transparent 72%)}
+.dinoverse-aurora.b{width:430px;height:430px;left:32%;bottom:-240px;background:radial-gradient(circle,rgba(59,219,197,.24),rgba(59,219,197,.03) 62%,transparent 72%);animation-delay:-4s}
+.dinoverse-orbit-line{
+  position:absolute;border:1px solid rgba(255,255,255,.09);border-radius:50%;
+  animation:dinoverseOrbit 32s linear infinite;
+}
+.dinoverse-orbit-line.one{width:620px;height:620px;right:-70px;top:15px;transform:rotateX(68deg) rotateZ(16deg)}
+.dinoverse-orbit-line.two{width:780px;height:780px;right:-160px;top:-70px;transform:rotateX(68deg) rotateZ(-10deg);animation-direction:reverse;animation-duration:42s}
+.dinoverse-spark{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:0 0 18px #fff;animation:dinoverseSpark 4s ease-in-out infinite}
+.dinoverse-spark.s1{right:13%;top:16%}.dinoverse-spark.s2{right:39%;top:29%;animation-delay:-1.1s}.dinoverse-spark.s3{right:8%;bottom:25%;animation-delay:-2.3s}.dinoverse-spark.s4{left:44%;bottom:17%;animation-delay:-3s}
+
+.dinoverse-copy{color:#fff;max-width:660px}
+.dinoverse-kicker{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:20px}
+.dinoverse-kicker .pill{
+  color:#fff;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09);
+  backdrop-filter:blur(12px);
+}
+.dinoverse-live{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:9px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:#b7c6c1;
+}
+.dinoverse-live i{width:7px;height:7px;border-radius:50%;background:#4fe3a2;box-shadow:0 0 0 5px rgba(79,227,162,.1),0 0 18px rgba(79,227,162,.7);animation:dinoverseLive 2s ease-in-out infinite}
+.hero-universe .dinoverse-copy h1{
+  margin:0;
+  max-width:760px;
+  font:900 clamp(48px,5.5vw,88px)/.9 Manrope,sans-serif;
+  letter-spacing:-.072em;
+  color:#fff;
+  text-wrap:balance;
+}
+.hero-universe .dinoverse-copy h1>span{
+  display:inline-block;
+  color:transparent;
+  background:linear-gradient(90deg,#ffd45f 0%,#ff8f68 26%,#ff6da8 52%,#9d86ff 76%,#62e1d0 100%);
+  -webkit-background-clip:text;background-clip:text;
+  filter:drop-shadow(0 8px 24px rgba(255,105,132,.13));
+}
+.hero-universe .dinoverse-copy>p{
+  max-width:630px;
+  margin:22px 0 0;
+  color:#c5ceca;
+  font-size:clamp(14px,1.25vw,17px);
+  line-height:1.72;
+}
+.dinoverse-actions{margin-top:27px}
+.hero-universe .dinoverse-actions .btn-primary{
+  background:linear-gradient(135deg,#ff7555,#ff4f88 55%,#8a68ff 130%);
+  box-shadow:0 18px 42px rgba(255,72,117,.27);
+}
+.hero-universe .dinoverse-actions .btn-ghost{
+  color:#fff;background:rgba(255,255,255,.07);
+  border-color:rgba(255,255,255,.14);
+  backdrop-filter:blur(12px);
+}
+.hero-universe .dinoverse-actions .btn-ghost:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.22)}
+.dinoverse-brand-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:22px}
+.dinoverse-brand-row a{
+  display:inline-flex;align-items:center;gap:7px;
+  min-height:34px;padding:7px 10px;border-radius:999px;
+  color:#eef4f1;text-decoration:none;font-size:9px;font-weight:900;
+  background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.095);
+  transition:.2s;
+}
+.dinoverse-brand-row a:hover{transform:translateY(-2px);background:rgba(255,255,255,.11)}
+.dinoverse-brand-row .brand-dot{width:8px;height:8px;border-radius:50%;box-shadow:0 0 12px currentColor}
+.dinoverse-brand-row .playdoh{background:#ffcf2f;color:#ffcf2f}
+.dinoverse-brand-row .starwars{background:#8fdcff;color:#8fdcff}
+.dinoverse-brand-row .barbie{background:#ff63b2;color:#ff63b2}
+.dinoverse-brand-row .disney{background:#8e81ff;color:#8e81ff}
+.hero-universe .dinoverse-trust{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.hero-universe .dinoverse-trust span{
+  color:#b9c6c0;font-size:9px;font-weight:800;
+  background:none;border:0;padding:0;
+}
+.dinoverse-stats{margin-top:19px;max-width:600px}
+.hero-universe .dinoverse-stats .hero-chip{
+  background:rgba(255,255,255,.065);
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:none;
+  backdrop-filter:blur(12px);
+}
+.hero-universe .dinoverse-stats .hero-chip small{color:#82918a}
+.hero-universe .dinoverse-stats .hero-chip b{color:#fff;font-size:11px}
+
+.dinoverse-stage{
+  position:relative;
+  min-height:585px;
+  perspective:1800px;
+  transform-style:preserve-3d;
+  transform:perspective(1800px) rotateX(var(--hero-rx)) rotateY(var(--hero-ry)) translate3d(var(--hero-x),var(--hero-y),0);
+  transition:transform .18s ease-out;
+}
+.dinoverse-depth-grid{
+  position:absolute;inset:58px 20px 55px;
+  border-radius:48px;
+  background:
+    linear-gradient(to right,rgba(255,255,255,.05) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:32px 32px;
+  mask-image:radial-gradient(circle at center,#000 38%,rgba(0,0,0,.7) 60%,transparent 86%);
+  transform:rotateX(73deg) translateZ(-180px) translateY(70px);
+  opacity:.55;
+}
+.dinoverse-ring{
+  position:absolute;left:50%;top:49%;border-radius:50%;transform-style:preserve-3d;pointer-events:none;
+}
+.dinoverse-ring.r1{
+  width:330px;height:330px;border:1px solid rgba(255,119,159,.28);
+  box-shadow:0 0 40px rgba(255,93,146,.07);
+  transform:translate(-50%,-50%) rotateX(72deg) rotateZ(7deg);
+  animation:dinoverseRingA 18s linear infinite;
+}
+.dinoverse-ring.r2{
+  width:455px;height:455px;border:1px solid rgba(99,225,208,.19);
+  transform:translate(-50%,-50%) rotateX(67deg) rotateZ(-16deg);
+  animation:dinoverseRingB 25s linear infinite;
+}
+.dinoverse-ring.r3{
+  width:570px;height:570px;border:1px dashed rgba(255,255,255,.085);
+  transform:translate(-50%,-50%) rotateX(69deg) rotateZ(25deg);
+  animation:dinoverseRingA 34s linear infinite reverse;
+}
+.dinoverse-pedestal{
+  position:absolute;left:50%;bottom:36px;width:370px;height:105px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,255,255,.18),rgba(139,104,255,.13) 30%,rgba(65,222,201,.05) 54%,transparent 72%);
+  transform:translateX(-50%) rotateX(72deg);
+  filter:blur(1px);
+}
+.dinoverse-main-product{
+  position:absolute;z-index:5;left:50%;top:48%;
+  width:min(360px,56%);
+  padding:13px;
+  border-radius:30px;
+  text-decoration:none;color:#17211b;
+  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(248,250,255,.88));
+  border:1px solid rgba(255,255,255,.72);
+  box-shadow:0 38px 95px rgba(4,9,18,.36),0 0 0 1px rgba(255,255,255,.06);
+  transform:translate(-50%,-50%) translateZ(90px) rotateX(7deg) rotateY(-7deg);
+  transform-style:preserve-3d;
+  animation:dinoverseMainFloat 7.5s ease-in-out infinite;
+  transition:box-shadow .3s,filter .3s;
+}
+.dinoverse-main-product:hover{box-shadow:0 48px 115px rgba(4,9,18,.45),0 0 42px rgba(255,88,143,.12);filter:saturate(1.04)}
+.dinoverse-main-badge{
+  position:absolute;z-index:5;left:16px;top:-13px;
+  padding:7px 10px;border-radius:999px;
+  background:linear-gradient(90deg,#ff6551,#ff4e91);
+  color:#fff;font-size:8px;font-weight:1000;letter-spacing:.12em;
+  box-shadow:0 10px 24px rgba(255,80,102,.28);
+}
+.dinoverse-main-image{
+  position:relative;overflow:hidden;display:grid;place-items:center;
+  min-height:315px;border-radius:23px;
+  background:
+    radial-gradient(circle at 50% 45%,#fff 0 31%,#f5f7fb 66%,#edf1f6 100%);
+}
+.dinoverse-image-halo{
+  position:absolute;width:220px;height:220px;border-radius:50%;
+  border:1px solid rgba(255,91,150,.19);
+  box-shadow:0 0 0 34px rgba(255,91,150,.035),0 0 0 74px rgba(107,96,255,.025);
+  animation:dinoverseHalo 4.5s ease-in-out infinite;
+}
+.dinoverse-main-image img{
+  position:relative;z-index:2;width:88%;height:285px;object-fit:contain;
+  filter:drop-shadow(0 23px 20px rgba(24,32,54,.18));
+  transition:transform .4s ease;
+}
+.dinoverse-main-product:hover .dinoverse-main-image img{transform:scale(1.045) rotate(-1deg)}
+.dinoverse-main-meta{padding:12px 5px 4px;display:grid;gap:5px}
+.dinoverse-main-meta>span{font-size:8px;font-weight:1000;letter-spacing:.1em;text-transform:uppercase;color:#ff5c75}
+.dinoverse-main-meta>b{font:900 17px/1.16 Manrope,sans-serif;letter-spacing:-.025em}
+.dinoverse-main-meta>div{display:flex;justify-content:space-between;align-items:end;gap:12px}
+.dinoverse-main-meta small{color:#78837c;font-size:9px}
+.dinoverse-main-meta strong{font:900 14px Manrope;color:#17211b;white-space:nowrap}
+
+.dinoverse-satellite{
+  position:absolute;z-index:7;
+  width:174px;
+  padding:8px;border-radius:19px;
+  text-decoration:none;color:#17211b;
+  background:rgba(255,255,255,.9);
+  border:1px solid rgba(255,255,255,.76);
+  box-shadow:0 24px 55px rgba(4,9,18,.25);
+  backdrop-filter:blur(14px);
+  transform-style:preserve-3d;
+  transition:box-shadow .25s,filter .25s;
+}
+.dinoverse-satellite:hover{box-shadow:0 30px 70px rgba(4,9,18,.36);filter:saturate(1.08)}
+.dinoverse-satellite .sat-glow{
+  position:absolute;z-index:-1;inset:12px;border-radius:50%;filter:blur(28px);opacity:.15;
+}
+.dinoverse-satellite img{width:100%;height:112px;object-fit:contain;border-radius:13px;background:#f8faf9}
+.dinoverse-satellite>div{display:grid;gap:2px;padding:7px 3px 2px}
+.dinoverse-satellite small{font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:#ff5e76;font-weight:1000}
+.dinoverse-satellite b{font-size:9px;line-height:1.28;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dinoverse-satellite strong{font-size:9px;margin-top:2px}
+.dinoverse-satellite.sat-1{left:-8px;top:16%;transform:translateZ(20px) rotate(-8deg);animation:dinoverseSat1 8.5s ease-in-out infinite}
+.dinoverse-satellite.sat-2{right:-3px;top:10%;transform:translateZ(5px) rotate(8deg);animation:dinoverseSat2 9.5s ease-in-out infinite}
+.dinoverse-satellite.sat-3{left:2%;bottom:13%;transform:translateZ(25px) rotate(7deg);animation:dinoverseSat3 10.5s ease-in-out infinite}
+.dinoverse-satellite.sat-4{right:-2px;bottom:17%;transform:translateZ(12px) rotate(-8deg);animation:dinoverseSat4 9s ease-in-out infinite}
+
+.dinoverse-float-label{
+  position:absolute;z-index:9;display:flex;gap:8px;align-items:center;
+  padding:9px 11px;border-radius:14px;
+  background:rgba(14,20,28,.62);border:1px solid rgba(255,255,255,.11);
+  box-shadow:0 18px 40px rgba(4,9,18,.2);backdrop-filter:blur(14px);
+  color:#fff;pointer-events:none;
+}
+.dinoverse-float-label>span{font-size:17px}
+.dinoverse-float-label>div{display:grid;gap:1px}
+.dinoverse-float-label b{font-size:9px}.dinoverse-float-label small{font-size:7px;color:#a9b6b0}
+.dinoverse-float-label.label-gift{left:17%;top:3%;animation:dinoverseLabel 7s ease-in-out infinite}
+.dinoverse-float-label.label-delivery{right:16%;top:48%;animation:dinoverseLabel 8.5s ease-in-out infinite reverse}
+.dinoverse-float-label.label-love{left:19%;bottom:4%;animation:dinoverseLabel 9s ease-in-out infinite}
+
+.dinoverse-ticker{
+  position:absolute;z-index:12;left:0;right:0;bottom:0;height:37px;overflow:hidden;
+  border-top:1px solid rgba(255,255,255,.08);
+  background:rgba(7,11,17,.28);
+  backdrop-filter:blur(10px);
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+}
+.dinoverse-ticker>div{
+  width:max-content;height:100%;display:flex;align-items:center;gap:28px;
+  animation:dinoverseTicker 25s linear infinite;
+}
+.dinoverse-ticker span{
+  color:#aebbb5;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;
+}
+.dinoverse-ticker span:after{content:"✦";margin-left:28px;color:#ff6f84}
+
+@keyframes dinoverseStars{to{background-position:190px 190px,-250px 250px,220px -220px,-300px -300px}}
+@keyframes dinoverseAurora{0%,100%{transform:translate3d(0,0,0) scale(.95);opacity:.58}50%{transform:translate3d(18px,-16px,0) scale(1.06);opacity:.82}}
+@keyframes dinoverseOrbit{to{rotate:360deg}}
+@keyframes dinoverseSpark{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.35)}}
+@keyframes dinoverseLive{0%,100%{opacity:.65;transform:scale(.88)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes dinoverseRingA{to{transform:translate(-50%,-50%) rotateX(72deg) rotateZ(367deg)}}
+@keyframes dinoverseRingB{to{transform:translate(-50%,-50%) rotateX(67deg) rotateZ(-376deg)}}
+@keyframes dinoverseMainFloat{0%,100%{transform:translate(-50%,-50%) translateZ(90px) translateY(0) rotateX(7deg) rotateY(-7deg)}50%{transform:translate(-50%,-50%) translateZ(110px) translateY(-13px) rotateX(4deg) rotateY(-2deg)}}
+@keyframes dinoverseHalo{0%,100%{transform:scale(.93);opacity:.6}50%{transform:scale(1.05);opacity:1}}
+@keyframes dinoverseSat1{0%,100%{translate:0 0;rotate:0deg}50%{translate:7px -13px;rotate:2deg}}
+@keyframes dinoverseSat2{0%,100%{translate:0 0;rotate:0deg}50%{translate:-7px -16px;rotate:-2deg}}
+@keyframes dinoverseSat3{0%,100%{translate:0 0;rotate:0deg}50%{translate:6px -11px;rotate:-2deg}}
+@keyframes dinoverseSat4{0%,100%{translate:0 0;rotate:0deg}50%{translate:-8px -14px;rotate:2deg}}
+@keyframes dinoverseLabel{0%,100%{translate:0 0}50%{translate:0 -10px}}
+@keyframes dinoverseTicker{to{transform:translateX(-50%)}}
+
+/* Slightly richer home rhythm without changing existing brand sections */
+.site-shell .barbie-launch,.site-shell .starwars-home,.site-shell .playdoh-home{
+  box-shadow:0 28px 70px rgba(23,33,27,.09);
+}
+.site-shell .barbie-launch,.site-shell .starwars-home,.site-shell .playdoh-home,.site-shell .ai-banner{
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;
+}
+.site-shell .barbie-launch:hover,.site-shell .starwars-home:hover,.site-shell .playdoh-home:hover{
+  transform:translateY(-3px);
+  box-shadow:0 34px 78px rgba(23,33,27,.12);
+}
+
+@media(max-width:1180px){
+  .hero-universe{grid-template-columns:1fr 1fr;padding-left:38px;padding-right:38px}
+  .dinoverse-main-product{width:min(330px,61%)}
+  .dinoverse-satellite{width:155px}
+}
+@media(max-width:1020px){
+  .hero-universe{grid-template-columns:1fr;min-height:auto;padding:44px 28px 54px}
+  .dinoverse-copy{max-width:760px}
+  .hero-universe .dinoverse-copy h1{font-size:clamp(48px,8vw,76px)}
+  .dinoverse-stage{min-height:540px;margin-top:10px}
+  .dinoverse-stats{max-width:620px}
+}
+@media(max-width:760px){
+  .hero-universe{margin-top:10px;border-radius:28px;padding:34px 18px 48px}
+  .hero-universe .dinoverse-copy h1{font-size:clamp(42px,11vw,64px);line-height:.94}
+  .hero-universe .dinoverse-copy>p{font-size:14px;line-height:1.6}
+  .dinoverse-actions{display:grid}
+  .dinoverse-actions .btn{width:100%}
+  .dinoverse-brand-row{gap:6px}
+  .dinoverse-brand-row a{font-size:8px}
+  .dinoverse-stats{grid-template-columns:repeat(3,1fr)!important}
+  .dinoverse-stage{min-height:475px}
+  .dinoverse-main-product{width:min(295px,65%)}
+  .dinoverse-main-image{min-height:255px}
+  .dinoverse-main-image img{height:230px}
+  .dinoverse-satellite{width:135px}
+  .dinoverse-satellite img{height:90px}
+  .dinoverse-satellite.sat-1{left:-4px}.dinoverse-satellite.sat-2{right:-5px}
+  .dinoverse-satellite.sat-3{left:0}.dinoverse-satellite.sat-4{right:-4px}
+  .dinoverse-float-label.label-delivery{right:5%;top:49%}
+  .dinoverse-float-label.label-gift{left:7%}
+  .dinoverse-float-label.label-love{left:7%}
+  .site-shell .product-card:hover,.site-shell .category-card:hover{transform:none}
+}
+@media(max-width:560px){
+  .hero-universe{padding:29px 14px 45px}
+  .dinoverse-kicker{margin-bottom:16px}
+  .dinoverse-live{display:none}
+  .hero-universe .dinoverse-copy h1{font-size:clamp(38px,12vw,54px)}
+  .dinoverse-brand-row a:nth-child(4){display:none}
+  .hero-universe .dinoverse-trust{display:grid;grid-template-columns:1fr 1fr}
+  .hero-universe .dinoverse-trust span:last-child{grid-column:1/-1}
+  .dinoverse-stats{grid-template-columns:1fr 1fr 1fr!important;gap:6px}
+  .hero-universe .dinoverse-stats .hero-chip{padding:9px 8px;border-radius:12px}
+  .hero-universe .dinoverse-stats .hero-chip small{font-size:7px}
+  .hero-universe .dinoverse-stats .hero-chip b{font-size:9px}
+  .dinoverse-stage{min-height:390px;margin-inline:-4px}
+  .dinoverse-depth-grid,.dinoverse-ring.r3,.dinoverse-satellite.sat-4,.dinoverse-float-label.label-love{display:none}
+  .dinoverse-ring.r1{width:245px;height:245px}
+  .dinoverse-ring.r2{width:330px;height:330px}
+  .dinoverse-main-product{width:min(245px,66%);padding:9px;border-radius:23px}
+  .dinoverse-main-image{min-height:205px;border-radius:18px}
+  .dinoverse-main-image img{height:188px}
+  .dinoverse-main-meta>b{font-size:13px}
+  .dinoverse-main-meta strong{font-size:11px}
+  .dinoverse-satellite{width:105px;padding:5px;border-radius:14px}
+  .dinoverse-satellite img{height:67px;border-radius:10px}
+  .dinoverse-satellite>div{padding:5px 2px 1px}
+  .dinoverse-satellite b{font-size:7px}
+  .dinoverse-satellite strong{font-size:7px}
+  .dinoverse-satellite.sat-1{left:-4px;top:13%}
+  .dinoverse-satellite.sat-2{right:-5px;top:10%}
+  .dinoverse-satellite.sat-3{left:0;bottom:12%}
+  .dinoverse-float-label{padding:7px 8px}
+  .dinoverse-float-label>span{font-size:13px}
+  .dinoverse-float-label b{font-size:7px}.dinoverse-float-label small{display:none}
+  .dinoverse-float-label.label-gift{left:5%;top:0}
+  .dinoverse-float-label.label-delivery{right:4%;top:52%}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-universe:after,.dinoverse-aurora,.dinoverse-orbit-line,.dinoverse-spark,.dinoverse-live,.dinoverse-ring,.dinoverse-main-product,.dinoverse-image-halo,.dinoverse-satellite,.dinoverse-float-label,.dinoverse-ticker>div{animation:none!important}
+  .dinoverse-stage{transform:none!important;transition:none!important}
+  .site-shell .product-card,.site-shell .category-card,.site-shell .barbie-launch,.site-shell .starwars-home,.site-shell .playdoh-home{transition:none!important}
+}
