@@ -50,9 +50,9 @@ function compactPersistedState(state:PersistedState):PersistedState{
 
 export function ShopProvider({children,freeShippingThreshold=15000,promotions}:{children:React.ReactNode;freeShippingThreshold?:number;promotions?:StorefrontPromotion[]}){
  const availablePromotions=promotions===undefined?demoPromotions:promotions
- const [state,setState]=useState<PersistedState>(initial)
- useEffect(()=>{setState(readPersistedState());const sync=(event:StorageEvent)=>{if(event.key===storageKey)setState(readPersistedState())};window.addEventListener('storage',sync);return()=>window.removeEventListener('storage',sync)},[])
- useEffect(()=>{if(typeof window==='undefined')return;const compact=compactPersistedState(state),result=writeLocalVersioned(storageKey,storageVersion,compact);if(!result.ok){const emergency={...compact,snapshots:{},recentlyViewed:[]};writeLocalVersioned(storageKey,storageVersion,emergency)}},[state])
+ const [state,setState]=useState<PersistedState>(initial),[storageReady,setStorageReady]=useState(false)
+ useEffect(()=>{setState(readPersistedState());setStorageReady(true);const sync=(event:StorageEvent)=>{if(event.key===storageKey)setState(readPersistedState())};window.addEventListener('storage',sync);return()=>window.removeEventListener('storage',sync)},[])
+ useEffect(()=>{if(typeof window==='undefined'||!storageReady)return;const compact=compactPersistedState(state),result=writeLocalVersioned(storageKey,storageVersion,compact);if(!result.ok){const emergency={...compact,snapshots:{},recentlyViewed:[]};writeLocalVersioned(storageKey,storageVersion,emergency)}},[state,storageReady])
  const value=useMemo<ShopState>(()=>{
   const remember=(current:PersistedState,product?:ProductSnapshot)=>product?{...current.snapshots,[product.id]:product}:current.snapshots
   const rememberProduct=(product:ProductSnapshot)=>setState(c=>({...c,snapshots:remember(c,product)}))
