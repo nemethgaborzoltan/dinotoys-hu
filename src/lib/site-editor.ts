@@ -104,7 +104,7 @@ export type SiteEditorVersion={id:string;name:string;savedAt:string;config:SiteE
 export const defaultSiteEditorConfig:SiteEditorConfig={
  header:{
   showAnnouncement:true,
-  announcementItems:['🚚 15 000 Ft felett ingyenes szállítás','↩ 14 napos elállás','🔒 Biztonságos fizetés'],
+  announcementItems:['🚚 {{freeShippingThreshold}} Ft felett ingyenes szállítás','↩ 14 napos elállás','🔒 Biztonságos fizetés'],
   logoLetter:'D',brandName:'DinoToys',brandSuffix:'.hu',tagline:'Játék. Élmény. Ajándék.',
   showSearch:true,searchPlaceholder:'Keress termékre, márkára vagy korosztályra…',
   showGiftFinder:true,giftFinderLabel:'Ajándékkereső',showWishlist:true,wishlistLabel:'Kedvencek',showCart:true,cartLabel:'Kosár',
