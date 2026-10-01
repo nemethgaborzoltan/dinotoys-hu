@@ -500,3 +500,334 @@
  .sw-mission-strip>div{border-right:0;border-bottom:1px solid rgba(255,255,255,.07)}
  .sw-mission-strip>div:last-child{border-bottom:0}
 }
+
+
+/* ===== PLAY-DOH creative merchandising universe ===== */
+.storefront-top .nav-playdoh{
+  position:relative;
+  color:#d32f2f;
+  font-weight:1000;
+  letter-spacing:.03em;
+}
+.storefront-top .nav-playdoh:before{
+  content:"";position:absolute;left:-6px;right:-6px;bottom:-9px;height:3px;border-radius:99px;
+  background:linear-gradient(90deg,#ef4444 0 28%,#facc15 28% 55%,#22c55e 55% 76%,#38bdf8 76%);
+  transform:scaleX(.25);opacity:.55;transition:.2s ease;
+}
+.storefront-top .nav-playdoh:hover:before{transform:scaleX(1);opacity:1}
+
+.playdoh-home{
+  position:relative;isolation:isolate;overflow:hidden;
+  min-height:430px;margin-top:34px;margin-bottom:34px;padding:clamp(28px,5vw,58px);
+  display:grid;grid-template-columns:.88fr 1.12fr;gap:32px;align-items:center;
+  border-radius:36px;
+  background:
+    radial-gradient(circle at 85% 20%,rgba(56,189,248,.22),transparent 26%),
+    radial-gradient(circle at 12% 78%,rgba(239,68,68,.17),transparent 28%),
+    linear-gradient(125deg,#ffe94c 0%,#ffd91c 54%,#ffc107 100%);
+  box-shadow:0 30px 70px rgba(180,116,0,.20);
+}
+.playdoh-home:before{
+  content:"";position:absolute;inset:0;z-index:-2;opacity:.36;
+  background-image:
+   radial-gradient(circle at 12% 20%,#fff 0 6px,transparent 7px),
+   radial-gradient(circle at 28% 72%,#ef4444 0 7px,transparent 8px),
+   radial-gradient(circle at 48% 17%,#38bdf8 0 5px,transparent 6px),
+   radial-gradient(circle at 69% 82%,#22c55e 0 8px,transparent 9px),
+   radial-gradient(circle at 90% 38%,#fff 0 5px,transparent 6px);
+  background-size:220px 190px;
+}
+.playdoh-home-copy{position:relative;z-index:3}
+.playdoh-home-copy>span,.pd-brand-copy>span,.pd-story-card>span,.pd-bundle-lab>div>span,.pd-product-lab-copy>span{
+  color:#c62828;font-size:10px;font-weight:1000;letter-spacing:.19em;text-transform:uppercase;
+}
+.playdoh-home-copy h2{
+  font:1000 clamp(42px,5.6vw,72px)/.93 Manrope,sans-serif;
+  letter-spacing:-.055em;margin:14px 0 20px;color:#17211b;
+}
+.playdoh-home-copy h2 em{font-style:normal;color:#d62828}
+.playdoh-home-copy p{max-width:580px;color:#4b4d27;line-height:1.75;font-weight:600}
+.playdoh-home-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:25px}
+.playdoh-home-actions small{font-weight:900;color:#756a28}
+.pd-btn-red{background:linear-gradient(115deg,#ef4444,#c62828);color:#fff;box-shadow:0 12px 28px rgba(198,40,40,.24)}
+.pd-btn-yellow{background:#fff;color:#17211b;border:2px solid rgba(23,33,27,.08)}
+.playdoh-home-stage{
+  position:relative;min-height:330px;
+  perspective:1200px;transform-style:preserve-3d;
+}
+.playdoh-home-card{
+  position:absolute;display:block;padding:10px;background:#fff;border-radius:26px;
+  box-shadow:0 22px 50px rgba(96,65,0,.22);transform-style:preserve-3d;
+  transition:.28s cubic-bezier(.2,.7,.2,1);
+}
+.playdoh-home-card img{width:100%;height:100%;object-fit:contain;border-radius:18px;background:#fff}
+.playdoh-home-card b{
+  position:absolute;left:14px;bottom:14px;padding:7px 10px;border-radius:999px;
+  background:#17211b;color:#fff;font-size:9px;letter-spacing:.1em;
+}
+.playdoh-home-card.hero{width:56%;height:300px;left:20%;top:12px;z-index:3;animation:pdFloatMain 5s ease-in-out infinite}
+.playdoh-home-card.pack{width:34%;height:205px;left:0;bottom:0;z-index:2;transform:rotateY(12deg) rotateZ(-5deg);animation:pdFloatLeft 6s ease-in-out infinite}
+.playdoh-home-card.cup{width:34%;height:205px;right:0;top:18px;z-index:4;transform:rotateY(-12deg) rotateZ(5deg);animation:pdFloatRight 5.6s ease-in-out infinite}
+.playdoh-home-card:hover{z-index:9;transform:translateY(-10px) rotate(0) scale(1.04)!important}
+.pd-home-blob{position:absolute;z-index:-1;border-radius:46% 54% 62% 38%/45% 37% 63% 55%;filter:blur(.2px);opacity:.9}
+.pd-home-blob.a{width:190px;height:150px;right:6%;bottom:-55px;background:#ef4444;rotate:-14deg}
+.pd-home-blob.b{width:160px;height:130px;right:37%;top:-65px;background:#38bdf8;rotate:18deg}
+
+.playdoh-brand-page{
+  position:relative;min-height:100vh;padding:28px 0 86px;
+  background:
+   radial-gradient(circle at 8% 17%,rgba(239,68,68,.12),transparent 20%),
+   radial-gradient(circle at 91% 27%,rgba(56,189,248,.14),transparent 22%),
+   linear-gradient(180deg,#fff8c7 0,#fffdf2 45%,#fff 100%);
+  overflow:hidden;
+}
+.playdoh-brand-page:before,.playdoh-brand-page:after{
+  content:"";position:absolute;z-index:0;width:280px;height:680px;top:340px;pointer-events:none;opacity:.9;
+}
+.playdoh-brand-page:before{
+  left:-210px;border-radius:45% 55% 52% 48%/58% 42% 58% 42%;
+  background:linear-gradient(#ef4444,#ffb300);transform:rotate(12deg);
+}
+.playdoh-brand-page:after{
+  right:-220px;border-radius:55% 45% 40% 60%/43% 62% 38% 57%;
+  background:linear-gradient(#38bdf8,#22c55e);transform:rotate(-9deg);
+}
+.pd-brand-hero{
+  position:relative;z-index:1;isolation:isolate;overflow:hidden;
+  width:min(1320px,calc(100% - 40px));min-height:650px;margin:auto;
+  padding:clamp(32px,5vw,70px);
+  display:grid;grid-template-columns:.9fr 1.1fr;gap:35px;align-items:center;
+  border-radius:40px;
+  background:
+   radial-gradient(circle at 78% 30%,rgba(255,255,255,.55),transparent 25%),
+   linear-gradient(128deg,#ffd91c 0%,#ffeb55 55%,#fff1a8 100%);
+  border:1px solid rgba(208,150,0,.14);
+  box-shadow:0 34px 90px rgba(170,115,0,.18);
+}
+.pd-brand-hero:before{
+  content:"PLAY-DOH";position:absolute;z-index:-2;right:-35px;bottom:-35px;
+  font:1000 clamp(100px,18vw,240px)/.75 Manrope,sans-serif;letter-spacing:-.08em;
+  color:rgba(198,40,40,.055);rotate:-5deg;
+}
+.pd-brand-copy{position:relative;z-index:3}
+.pd-brand-copy h1{
+  font:1000 clamp(56px,7.7vw,108px)/.82 Manrope,sans-serif;
+  letter-spacing:-.07em;margin:15px 0 26px;color:#162019;
+}
+.pd-brand-copy h1 em{font-style:normal;color:#d62828}
+.pd-brand-copy p{max-width:650px;color:#5f5b2b;line-height:1.8;font-size:16px;font-weight:600}
+.pd-brand-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.pd-brand-trust{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
+.pd-brand-trust b{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.65);border:1px solid rgba(23,33,27,.08);font-size:10px}
+.pd-brand-stage{position:relative;min-height:480px;perspective:1300px;transform-style:preserve-3d}
+.pd-hero-product{
+  display:block;position:absolute;padding:12px;border-radius:30px;background:#fff;
+  box-shadow:0 30px 70px rgba(120,75,0,.24);
+  transform-style:preserve-3d;transition:.26s ease;
+}
+.pd-hero-product img{width:100%;height:100%;object-fit:contain;border-radius:20px}
+.pd-hero-main{width:65%;height:380px;left:16%;top:45px;z-index:3;animation:pdHeroOrbit 6s ease-in-out infinite}
+.pd-hero-main>span{position:absolute;right:14px;top:14px;padding:8px 11px;border-radius:999px;background:#ef4444;color:#fff;font-size:9px;font-weight:1000;letter-spacing:.1em}
+.pd-hero-float{width:31%;height:190px;z-index:4}
+.pd-float-one{right:0;top:0;transform:rotateY(-16deg) rotateZ(5deg);animation:pdFloatRight 5.2s ease-in-out infinite}
+.pd-float-two{left:0;bottom:0;transform:rotateY(16deg) rotateZ(-5deg);animation:pdFloatLeft 6.2s ease-in-out infinite}
+.pd-hero-product:hover{z-index:8;transform:translateY(-10px) rotateX(2deg) rotateY(0) scale(1.04)!important}
+.pd-shadow{position:absolute;left:18%;right:18%;bottom:12px;height:45px;border-radius:50%;background:rgba(120,75,0,.16);filter:blur(20px);animation:pdShadow 6s ease-in-out infinite}
+.pd-blob{position:absolute;z-index:-1;border-radius:50%}
+.pd-blob-a{width:230px;height:190px;background:#ef4444;right:-85px;top:-50px;animation:pdBlob 9s ease-in-out infinite}
+.pd-blob-b{width:160px;height:130px;background:#38bdf8;left:44%;bottom:-60px;animation:pdBlob 8s ease-in-out infinite reverse}
+.pd-blob-c{width:110px;height:95px;background:#22c55e;left:-45px;top:16%;animation:pdBlob 7s ease-in-out infinite}
+
+.pd-benefit-strip{
+  position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);
+  margin-top:25px;border-radius:26px;overflow:hidden;border:1px solid #f0df8f;background:#fff;
+  box-shadow:0 18px 45px rgba(147,104,0,.08);
+}
+.pd-benefit-strip>div{padding:26px;border-right:1px solid #f3ebc6}
+.pd-benefit-strip>div:last-child{border-right:0}
+.pd-benefit-strip span{font-size:26px}
+.pd-benefit-strip b{display:block;margin:10px 0 5px;font:900 15px Manrope}
+.pd-benefit-strip small{color:#7b7451;line-height:1.55}
+.pd-product-section{position:relative;z-index:2}
+.playdoh-brand-page .section-head h2{color:#17211b}
+.playdoh-brand-page .section-head>a{color:#c62828}
+.playdoh-brand-page .product-card{box-shadow:0 14px 36px rgba(96,75,0,.08)}
+.playdoh-brand-page .product-card:hover{transform:translateY(-8px) rotateX(2deg);box-shadow:0 24px 48px rgba(96,75,0,.14)}
+.pd-story-grid{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pd-story-card{
+  position:relative;overflow:hidden;min-height:320px;padding:42px;border-radius:30px;color:#fff;
+  box-shadow:0 20px 50px rgba(30,30,30,.12);
+}
+.pd-story-card:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-70px;bottom:-90px;background:rgba(255,255,255,.12)}
+.pd-story-red{background:linear-gradient(130deg,#ef4444,#c62828)}
+.pd-story-blue{background:linear-gradient(130deg,#38bdf8,#0879b7)}
+.pd-story-card>span{color:#fff9a8}
+.pd-story-card h2{font:1000 clamp(30px,4vw,48px)/1 Manrope;margin:12px 0 18px}
+.pd-story-card p{max-width:610px;color:rgba(255,255,255,.85);line-height:1.72}
+.pd-story-card a{display:inline-block;margin-top:15px;padding:10px 14px;border-radius:12px;background:#fff;color:#17211b;font-weight:900}
+.pd-bundle-lab{
+  position:relative;z-index:2;overflow:hidden;
+  display:grid;grid-template-columns:1fr 330px;gap:30px;align-items:center;
+  margin-top:20px;padding:48px;border-radius:32px;background:#17211b;color:#fff;
+}
+.pd-bundle-lab h2{font:1000 clamp(34px,4vw,54px)/1 Manrope;margin:12px 0 18px}
+.pd-bundle-lab p{color:#c7d0c9;line-height:1.75;max-width:720px}
+.pd-bundle-orbit{position:relative;width:240px;height:240px;margin:auto;display:grid;place-items:center}
+.pd-bundle-orbit:before,.pd-bundle-orbit:after{content:"";position:absolute;border:1px dashed rgba(255,255,255,.25);border-radius:50%;inset:15px;animation:pdSpin 12s linear infinite}
+.pd-bundle-orbit:after{inset:52px;animation-direction:reverse;animation-duration:8s}
+.pd-bundle-orbit i{position:absolute;width:48px;height:48px;border-radius:50%;box-shadow:0 12px 30px rgba(0,0,0,.2)}
+.pd-bundle-orbit i:nth-child(1){background:#ef4444;left:12px;top:92px}
+.pd-bundle-orbit i:nth-child(2){background:#facc15;right:26px;top:15px}
+.pd-bundle-orbit i:nth-child(3){background:#22c55e;right:8px;bottom:45px}
+.pd-bundle-orbit i:nth-child(4){background:#38bdf8;left:50px;bottom:5px}
+.pd-bundle-orbit b{font:1000 28px/.85 Manrope;text-align:center;color:#fff}
+
+.playdoh-product-page{
+  position:relative;isolation:isolate;
+}
+.playdoh-product-page:before{
+  content:"";position:fixed;z-index:-4;inset:0;
+  background:
+   radial-gradient(circle at 8% 24%,rgba(239,68,68,.10),transparent 25%),
+   radial-gradient(circle at 92% 18%,rgba(250,204,21,.18),transparent 23%),
+   radial-gradient(circle at 80% 78%,rgba(56,189,248,.10),transparent 28%),
+   linear-gradient(#fffdf3,#fff 62%);
+}
+.playdoh-product-page:after{
+  content:"";position:fixed;z-index:-3;left:-95px;top:270px;width:190px;height:520px;
+  border-radius:50% 45% 52% 48%;background:linear-gradient(#ef4444,#facc15);opacity:.88;transform:rotate(13deg);
+  box-shadow:calc(100vw + 0px) 230px 0 -20px rgba(56,189,248,.75);
+}
+.pd-product-signal{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  margin-bottom:16px;padding:11px 14px;border-radius:14px;
+  background:linear-gradient(90deg,#fff7a8,#fff);border:1px solid #f3d84f;
+  font-size:10px;font-weight:1000;letter-spacing:.12em;
+}
+.pd-product-signal span{color:#c62828}
+.pd-product-signal a{color:#0f6aa8}
+.playdoh-product-page .product-detail{
+  background:rgba(255,255,255,.96);
+  border:1px solid #f0e3a3;
+  box-shadow:0 30px 75px rgba(135,91,0,.13);
+}
+.playdoh-product-page .gallery{perspective:1200px}
+.playdoh-product-page .gallery-main{
+  background:linear-gradient(145deg,#fff,#fffbee);
+  border:1px solid #efe4b5;
+  transform-style:preserve-3d;
+  overflow:visible;
+}
+.playdoh-product-page .gallery-main:before,.playdoh-product-page .gallery-main:after{
+  content:"";position:absolute;z-index:-1;border-radius:50%;filter:blur(.2px);
+}
+.playdoh-product-page .gallery-main:before{width:105px;height:85px;background:#facc15;right:-24px;top:-18px}
+.playdoh-product-page .gallery-main:after{width:78px;height:64px;background:#ef4444;left:-20px;bottom:16%}
+.playdoh-product-page .gallery-main>img{
+  object-fit:contain!important;
+  transform:translateZ(22px) rotateX(1deg);
+  filter:drop-shadow(0 25px 22px rgba(89,63,0,.16));
+  animation:pdProductFloat 5.3s ease-in-out infinite;
+}
+.playdoh-product-page .detail-info:before{
+  content:"PLAY-DOH · KREATÍV KALAND";display:block;margin-bottom:6px;
+  color:#c62828;font-size:9px;font-weight:1000;letter-spacing:.19em;
+}
+.playdoh-product-page .detail-info h1{color:#17211b}
+.playdoh-product-page .detail-price strong{color:#c62828}
+.playdoh-product-page .detail-price>span{background:#fff4b8;color:#a65a00}
+.playdoh-product-page .availability-card{background:#f4fff7;border-color:#bde7c8}
+.playdoh-product-page .availability-dot{background:#22c55e}
+.playdoh-product-page .btn-buy{
+  background:linear-gradient(110deg,#ef4444,#d32f2f);color:#fff;
+  box-shadow:0 12px 28px rgba(211,47,47,.22);
+}
+.playdoh-product-page .btn-buy:hover{transform:translateY(-2px) scale(1.01)}
+.playdoh-product-page .highlight-list li{padding:6px 9px;border-radius:9px;background:#fffdf0}
+.playdoh-product-page .gallery-thumbs button.active{border-color:var(--pd-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--pd-accent) 15%,transparent)}
+.playdoh-product-page .detail-panels>div{background:#fff;border-color:#efe5b7}
+.playdoh-product-page .safety-card{background:#fffbea}
+.playdoh-product-page>.section .product-card{background:#fff}
+.pd-product-lab{
+  position:relative;overflow:hidden;display:grid;grid-template-columns:1fr 46%;gap:26px;align-items:center;
+  margin:28px 0;padding:38px;border-radius:30px;
+  background:
+   radial-gradient(circle at 88% 10%,rgba(56,189,248,.17),transparent 29%),
+   linear-gradient(125deg,#ffe44d,#ffd21f);
+  border:1px solid #e6c936;box-shadow:0 24px 55px rgba(140,93,0,.14);
+}
+.pd-product-lab:before{
+  content:"";position:absolute;width:180px;height:145px;border-radius:48% 52% 42% 58%;
+  left:-70px;bottom:-65px;background:#ef4444;rotate:14deg;
+}
+.pd-product-lab-copy{position:relative;z-index:2}
+.pd-product-lab-copy h2{font:1000 clamp(30px,4vw,48px)/1 Manrope;margin:12px 0 16px;color:#17211b}
+.pd-product-lab-copy p{max-width:590px;color:#5e572e;line-height:1.72;font-weight:600}
+.pd-lab-btn{margin-top:10px;background:#17211b;color:#fff}
+.pd-product-lab-cards{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:12px;perspective:1000px}
+.pd-lab-mini{
+  display:block;padding:10px;border-radius:20px;background:#fff;color:#17211b;
+  box-shadow:0 18px 38px rgba(94,63,0,.16);transition:.25s ease;
+}
+.pd-lab-mini img{width:100%;aspect-ratio:1/1;object-fit:contain;border-radius:14px}
+.pd-lab-mini span{display:block;margin-top:8px;font-size:10px;font-weight:900;line-height:1.25}
+.pd-lab-mini b{display:block;margin-top:4px;font:900 17px Manrope}
+.pd-lab-mini.mini-1{transform:rotateY(8deg) rotateZ(-2deg);animation:pdFloatLeft 5.4s ease-in-out infinite}
+.pd-lab-mini.mini-2{transform:rotateY(-8deg) rotateZ(2deg);animation:pdFloatRight 5.8s ease-in-out infinite}
+.pd-lab-mini:hover{transform:translateY(-7px) rotate(0) scale(1.03)}
+.pd-orbit{position:absolute;border-radius:50%;border:1px dashed rgba(198,40,40,.20)}
+.pd-orbit.o1{width:210px;height:210px;right:-70px;top:-70px;animation:pdSpin 18s linear infinite}
+.pd-orbit.o2{width:120px;height:120px;left:42%;bottom:-50px;animation:pdSpin 11s linear infinite reverse}
+
+@keyframes pdFloatMain{0%,100%{transform:translateY(0) rotateX(1deg) rotateY(-3deg)}50%{transform:translateY(-10px) rotateX(-2deg) rotateY(4deg)}}
+@keyframes pdFloatLeft{0%,100%{translate:0 0}50%{translate:0 -11px}}
+@keyframes pdFloatRight{0%,100%{translate:0 0}50%{translate:0 9px}}
+@keyframes pdHeroOrbit{0%,100%{transform:translateY(0) rotateY(-5deg) rotateX(2deg)}50%{transform:translateY(-14px) rotateY(5deg) rotateX(-2deg)}}
+@keyframes pdProductFloat{0%,100%{transform:translateZ(22px) translateY(0) rotateX(1deg) rotateY(-1deg)}50%{transform:translateZ(35px) translateY(-9px) rotateX(-1deg) rotateY(2deg)}}
+@keyframes pdShadow{0%,100%{transform:scaleX(1);opacity:.65}50%{transform:scaleX(.82);opacity:.42}}
+@keyframes pdBlob{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(14px,-10px) scale(1.08)}}
+@keyframes pdSpin{to{transform:rotate(360deg)}}
+
+@media(max-width:1000px){
+ .playdoh-home,.pd-brand-hero,.pd-bundle-lab{grid-template-columns:1fr}
+ .playdoh-home-stage{max-width:760px;width:100%;margin:auto}
+ .pd-brand-stage{max-width:760px;width:100%;margin:auto}
+ .pd-benefit-strip{grid-template-columns:repeat(2,1fr)}
+ .pd-benefit-strip>div:nth-child(2){border-right:0}
+ .pd-benefit-strip>div:nth-child(-n+2){border-bottom:1px solid #f3ebc6}
+}
+@media(max-width:760px){
+ .playdoh-home{min-height:auto;padding:28px 20px;border-radius:28px}
+ .playdoh-home-copy h2{font-size:46px}
+ .playdoh-home-stage{min-height:300px}
+ .playdoh-home-card.hero{height:260px}
+ .pd-brand-hero{width:calc(100% - 24px);min-height:auto;padding:30px 20px;border-radius:28px}
+ .pd-brand-copy h1{font-size:58px}
+ .pd-brand-stage{min-height:420px}
+ .pd-hero-main{height:330px}
+ .pd-benefit-strip{width:calc(100% - 24px)}
+ .pd-story-grid{grid-template-columns:1fr}
+ .pd-story-card{min-height:auto;padding:30px 24px}
+ .pd-bundle-lab{padding:32px 24px}
+ .pd-product-signal{align-items:flex-start;flex-direction:column}
+ .pd-product-lab{grid-template-columns:1fr;padding:30px 22px}
+ .pd-product-lab-cards{max-width:520px}
+ .playdoh-product-page:after{display:none}
+}
+@media(max-width:480px){
+ .playdoh-home-stage{min-height:260px}
+ .playdoh-home-card.hero{width:62%;height:230px;left:19%}
+ .playdoh-home-card.pack,.playdoh-home-card.cup{width:35%;height:155px}
+ .pd-brand-copy h1{font-size:48px}
+ .pd-brand-stage{min-height:350px}
+ .pd-hero-main{width:72%;height:270px;left:14%}
+ .pd-hero-float{width:34%;height:135px}
+ .pd-benefit-strip{grid-template-columns:1fr}
+ .pd-benefit-strip>div{border-right:0;border-bottom:1px solid #f3ebc6}
+ .pd-benefit-strip>div:last-child{border-bottom:0}
+ .pd-product-lab-cards{gap:8px}
+}
+@media(prefers-reduced-motion:reduce){
+ .playdoh-home-card,.pd-hero-product,.pd-bundle-orbit:before,.pd-bundle-orbit:after,
+ .playdoh-product-page .gallery-main>img,.pd-lab-mini,.pd-orbit,.pd-blob{animation:none!important}
+}
