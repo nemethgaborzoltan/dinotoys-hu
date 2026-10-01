@@ -11,6 +11,8 @@ function normalizeText(value:string){return value.normalize('NFD').replace(/[\u0
 function toPoint(raw:unknown):FoxpostPickupPoint|null{
  if(!raw||typeof raw!=='object')return null
  const row=raw as Record<string,unknown>
+ const country=clean(row.country).toLowerCase()
+ if(country&&country!=='hu')return null
  const placeId=row.place_id
  const name=clean(row.name),address=clean(row.address),zip=clean(row.zip),city=clean(row.city)
  if((typeof placeId!=='string'&&typeof placeId!=='number')||!name||!address)return null
