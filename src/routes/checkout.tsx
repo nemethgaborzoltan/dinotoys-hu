@@ -5,6 +5,8 @@ import {useShop} from '../lib/shop'
 import {getProductArt,getProductPrice,getVariantLabel} from '../lib/catalog'
 import {demoCommerceDefaults,readDemoCommercePreferences} from '../lib/demo-commerce'
 import {billingProviderLabel,demoIntegrationDefaults,getDemoShippingMethods,readDemoIntegrationConfig} from '../lib/integration-config'
+import {FoxpostPointPicker} from '../components/FoxpostPointPicker'
+import {normalizeFoxpostPhone,type FoxpostPickupPoint} from '../lib/foxpost'
 
 export const Route=createFileRoute('/checkout')({
  head:()=>({meta:[{title:'Pénztár | DinoToys.hu'},{name:'robots',content:'noindex,nofollow'}]}),
@@ -23,7 +25,7 @@ function Checkout(){
  const shop=useShop()
  const [done,setDone]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState<string|null>(null),[result,setResult]=useState<any>(null)
  const initialShipping=getDemoShippingMethods(demoIntegrationDefaults)
- const [shippingOptions,setShippingOptions]=useState(initialShipping),[shipping,setShipping]=useState<string>(initialShipping[0]?.id||'personal-pickup'),[payment,setPayment]=useState<PaymentId>('card'),[invoice,setInvoice]=useState(false),[demoPrefs,setDemoPrefs]=useState(demoCommerceDefaults),[integrationConfig,setIntegrationConfig]=useState(demoIntegrationDefaults)
+ const [shippingOptions,setShippingOptions]=useState(initialShipping),[shipping,setShipping]=useState<string>(initialShipping[0]?.id||'personal-pickup'),[payment,setPayment]=useState<PaymentId>('card'),[invoice,setInvoice]=useState(false),[demoPrefs,setDemoPrefs]=useState(demoCommerceDefaults),[integrationConfig,setIntegrationConfig]=useState(demoIntegrationDefaults),[foxpostPoint,setFoxpostPoint]=useState<FoxpostPickupPoint|null>(null)
  useEffect(()=>{setDemoPrefs(readDemoCommercePreferences());const integrations=readDemoIntegrationConfig();setIntegrationConfig(integrations);const methods=getDemoShippingMethods(integrations);setShippingOptions(methods);setShipping(current=>methods.some(item=>item.id===current)?current:(methods[0]?.id||'personal-pickup'))},[])
  const shippingOption=shippingOptions.find(x=>x.id===shipping)??shippingOptions[0]??{id:'personal-pickup',provider:'local',name:'Személyes átvétel',description:'Demó',icon:'🏠',fee:0,freeAboveHuf:null}
  const configuredPaymentOptions=useMemo(()=>{const online=integrationConfig.payment.barion.enabled?{id:'card' as const,icon:'💳',name:'Barion bankkártya',description:`Barion ${integrationConfig.payment.barion.sandbox?'sandbox':'éles'} mód · demóban nincs terhelés`,fee:0}:integrationConfig.payment.stripe.enabled?{id:'card' as const,icon:'💳',name:'Stripe bankkártya',description:'Stripe integráció előkészítve · demóban nincs terhelés',fee:0}:paymentOptions[0];return[online,...paymentOptions.slice(1)]},[integrationConfig])
@@ -31,10 +33,11 @@ function Checkout(){
  const shippingFee=shippingOption.freeAboveHuf!==null&&shop.subtotal>=shippingOption.freeAboveHuf?0:shippingOption.fee
  const total=shop.subtotal+shippingFee+paymentOption.fee
  const shippingThreshold=shippingOption.freeAboveHuf
+ const needsFoxpostPoint=shippingOption.provider==='foxpost'
  const invoiceProvider=billingProviderLabel(integrationConfig)
  const productCount=useMemo(()=>shop.cart.reduce((sum,line)=>sum+line.quantity,0),[shop.cart])
 
- if(done)return <div className="container section checkout-success-page"><div className="success-card checkout-success"><span>✓</span><div className="demo-badge">DEMO RENDELÉS</div><h1>{result?.order_number?`Rendelés #${result.order_number}`:'Rendelés rögzítve'}</h1><p>Köszönjük! A demó pénztár végigfutott, de valódi fizetés, készletfoglalás és e-mail küldés nem történt.</p><div className="success-order-meta"><div><small>Fizetendő</small><b>{money(result?.total_huf??0)}</b></div><div><small>Szállítás</small><b>{result?.shipping_label}</b></div><div><small>Fizetés</small><b>{result?.payment_label}</b></div><div><small>Számlázás</small><b>{result?.invoice_provider||invoiceProvider}</b></div></div><div className="success-actions"><Link to="/" className="btn btn-primary">Főoldal</Link><Link to="/termekek" search={{}} className="btn btn-ghost">Tovább vásárolok</Link></div></div></div>
+ if(done)return <div className="container section checkout-success-page"><div className="success-card checkout-success"><span>✓</span><div className="demo-badge">DEMO RENDELÉS</div><h1>{result?.order_number?`Rendelés #${result.order_number}`:'Rendelés rögzítve'}</h1><p>Köszönjük! A demó pénztár végigfutott, de valódi fizetés, készletfoglalás és e-mail küldés nem történt.</p><div className="success-order-meta"><div><small>Fizetendő</small><b>{money(result?.total_huf??0)}</b></div><div><small>Szállítás</small><b>{result?.shipping_label}</b></div><div><small>Fizetés</small><b>{result?.payment_label}</b></div><div><small>Számlázás</small><b>{result?.invoice_provider||invoiceProvider}</b></div>{result?.pickup_point&&<div><small>Átvételi pont</small><b>{result.pickup_point.name}</b></div>}</div><div className="success-actions"><Link to="/" className="btn btn-primary">Főoldal</Link><Link to="/termekek" search={{}} className="btn btn-ghost">Tovább vásárolok</Link></div></div></div>
 
  if(!shop.cart.length)return <div className="container section"><div className="empty-state large"><span>🛒</span><h1>A pénztárhoz előbb tegyél valamit a kosárba</h1><p>A demo checkout teljes folyamatát termékkel tudod kipróbálni.</p><Link to="/termekek" search={{}} className="btn btn-primary">Termékek felfedezése</Link></div></div>
 
@@ -50,21 +53,25 @@ function Checkout(){
     e.preventDefault();setBusy(true);setError(null)
     try{
      const form=new FormData(e.currentTarget)
+     if(needsFoxpostPoint&&!foxpostPoint)throw new Error('FOXPOST szállításhoz válassz ki egy átvételi pontot.')
+     const normalizedPhone=needsFoxpostPoint?normalizeFoxpostPhone(String(form.get('phone')||'')):String(form.get('phone')||'')
+     if(needsFoxpostPoint&&!/^(\+36|36)(20|30|31|50|51|70)\d{7}$/.test(normalizedPhone))throw new Error('FOXPOST-hoz magyar mobiltelefonszám szükséges, például +36 30 123 4567.')
      const live=shop.cart.every(line=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(line.productId))
      if(!live){
-      const order={order_number:`DEMO-${Date.now().toString().slice(-6)}`,total_huf:total,shipping_label:shippingOption.name,payment_label:paymentOption.name,invoice_provider:invoiceProvider}
+      const order={order_number:`DEMO-${Date.now().toString().slice(-6)}`,total_huf:total,shipping_label:shippingOption.name,payment_label:paymentOption.name,invoice_provider:invoiceProvider,pickup_point:needsFoxpostPoint?foxpostPoint:null}
       setResult(order);shop.clearCart();setDone(true);return
      }
      const response=await fetch('/api/v1/checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({
       idempotencyKey:crypto.randomUUID(),
-      email:String(form.get('email')||''),phone:String(form.get('phone')||''),
+      email:String(form.get('email')||''),phone:normalizedPhone,
+      shippingMethod:{provider:shippingOption.provider,methodId:shippingOption.id,feeHuf:shippingFee,pickupPoint:needsFoxpostPoint?foxpostPoint:null},
       couponCode:shop.appliedCoupon?.code??null,
       shippingAddress:{name:String(form.get('name')||''),countryCode:'HU',postalCode:String(form.get('postalCode')||''),city:String(form.get('city')||''),line1:String(form.get('line1')||'')},
       items:shop.cart.map(line=>({productId:line.productId,variantId:line.variantId,quantity:line.quantity}))
      })})
      const payload=await response.json() as any
      if(!response.ok||payload?.ok===false)throw new Error(payload?.error?.message||'A rendelés létrehozása sikertelen.')
-     setResult({...payload.data,shipping_label:shippingOption.name,payment_label:paymentOption.name});shop.clearCart();setDone(true)
+     setResult({...payload.data,shipping_label:shippingOption.name,payment_label:paymentOption.name,invoice_provider:invoiceProvider,pickup_point:needsFoxpostPoint?foxpostPoint:null});shop.clearCart();setDone(true)
     }catch(err){setError(err instanceof Error?err.message:'Checkout hiba')}finally{setBusy(false)}
    }}>
     <section className="checkout-section">
@@ -80,6 +87,7 @@ function Checkout(){
     <section className="checkout-section">
      <div className="checkout-section-title"><b>3</b><div><h2>Szállítási mód</h2><p>Válassz kényelmes átvételi módot.</p></div></div>
      <div className="checkout-choice-grid">{shippingOptions.map(option=>{const effective=option.freeAboveHuf!==null&&shop.subtotal>=option.freeAboveHuf?0:option.fee;return <label key={option.id} className={`checkout-choice ${shipping===option.id?'selected':''}`}><input type="radio" name="shippingMethod" checked={shipping===option.id} onChange={()=>setShipping(option.id)}/><span className="choice-icon">{option.icon}</span><span className="choice-copy"><b>{option.name}</b><small>{option.description}</small></span><strong>{effective?money(effective):'Ingyenes'}</strong></label>})}</div>
+     {needsFoxpostPoint&&<FoxpostPointPicker value={foxpostPoint} onChange={setFoxpostPoint}/>} 
     </section>
 
     <section className="checkout-section">
@@ -103,6 +111,7 @@ function Checkout(){
     <div><span>Termékek</span><b>{money(shop.itemsSubtotal)}</b></div>
     {shop.discount>0&&<div className="summary-discount"><span>Kupon ({shop.appliedCoupon?.code})</span><b>− {money(shop.discount)}</b></div>}
     <div><span>{shippingOption.name}</span><b>{shippingFee?money(shippingFee):'Ingyenes'}</b></div>
+    {needsFoxpostPoint&&<div className="summary-pickup-point"><span>Átvételi pont</span><b>{foxpostPoint?.name||'Még nincs kiválasztva'}</b>{foxpostPoint&&<small>{foxpostPoint.address}</small>}</div>}
     {paymentOption.fee>0&&<div><span>{paymentOption.name}</span><b>{money(paymentOption.fee)}</b></div>}
     <div className="summary-total"><span>Összesen</span><b>{money(total)}</b></div>
     {shippingThreshold!==null&&shop.subtotal<shippingThreshold?<div className="checkout-free-shipping"><b>Még {money(shippingThreshold-shop.subtotal)} a(z) {shippingOption.name} ingyenes szállításáig</b><span><i style={{width:`${Math.min(100,(shop.subtotal/shippingThreshold)*100)}%`}}/></span></div>:<div className="secure-note">🎉 Ennél a kosárnál a választott szállítás díjmentes.</div>}
