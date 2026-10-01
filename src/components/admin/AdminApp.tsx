@@ -43,7 +43,11 @@ export function AdminApp(){
   const [me,setMe]=useState<AdminMe|null>(configured?null:{userId:'demo',email:'demo@local',role:'demo_admin',permissions:['*']})
   const [view,setView]=useState<View>('dashboard')
   const [sidebar,setSidebar]=useState(true)
+  const [simpleMode,setSimpleMode]=useState(true)
   const [message,setMessage]=useState<string|null>(null)
+
+  useEffect(()=>{try{const saved=localStorage.getItem('dinotoys-admin-simple-mode');if(saved!==null)setSimpleMode(saved!=='false')}catch{}},[])
+  useEffect(()=>{try{localStorage.setItem('dinotoys-admin-simple-mode',String(simpleMode))}catch{}},[simpleMode])
 
   useEffect(()=>{
     if(!configured)return
