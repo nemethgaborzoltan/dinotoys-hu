@@ -82,7 +82,7 @@ function Checkout(){
     <section className="checkout-section">
      <div className="checkout-section-title"><b>2</b><div><h2>Hogyan kéred a csomagot?</h2><p>Először válassz szállítási módot. FOXPOST esetén utána csak egy átvételi pontot kell kiválasztanod.</p></div></div>
      <div className="checkout-choice-grid">{shippingOptions.map(option=>{const effective=option.freeAboveHuf!==null&&shop.subtotal>=option.freeAboveHuf?0:option.fee;return <label key={option.id} className={`checkout-choice ${shipping===option.id?'selected':''}`}><input type="radio" name="shippingMethod" checked={shipping===option.id} onChange={()=>setShipping(option.id)}/><span className="choice-icon">{option.icon}</span><span className="choice-copy"><b>{option.name}</b><small>{option.description}</small></span><strong>{effective?money(effective):'Ingyenes'}</strong></label>})}</div>
-     {needsFoxpostPoint&&<FoxpostPointPicker value={foxpostPoint} onChange={point=>{setFoxpostPoint(point);setPostalCode(point.zip);setCity(point.city)}}/>}
+     {needsFoxpostPoint&&<FoxpostPointPicker value={foxpostPoint} onChange={setFoxpostPoint}/>} 
     </section>
 
     <section className="checkout-section">
