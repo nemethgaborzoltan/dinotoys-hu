@@ -4,6 +4,7 @@ import {
  addDemoOrderNote,clearDemoOrders,createDemoShipment,demoOrderStatusLabel,issueDemoInvoice,readDemoOrders,setDemoPaymentStatus,
  subscribeDemoOrders,updateDemoOrderStatus,type DemoOrder,type DemoOrderStatus,type DemoPaymentStatus
 } from '../../lib/demo-orders'
+import {demoEmailTypeLabels,demoEmailsForOrder,queueDemoEmailForOrder,subscribeDemoEmails,type DemoEmailType} from '../../lib/demo-emails'
 
 const statusOrder:DemoOrderStatus[]=['new','pending_payment','paid','processing','packed','shipped','delivered','cancelled','returned','refunded']
 const paymentLabels:Record<DemoPaymentStatus,string>={pending:'Fizetésre vár',paid:'Fizetve',cod:'Utánvét',failed:'Sikertelen',refunded:'Visszatérítve'}
@@ -82,9 +83,24 @@ function OrderDrawer({order,onClose,onChange}:{order:DemoOrder;onClose:()=>void;
    <section className="demo-order-panel"><div className="demo-order-panel-head"><div><span className="eyebrow">Számlázás</span><h3>{order.billing.provider}</h3></div><span className={`admin2-pill ${order.billing.invoiceStatus==='issued'?'ok':''}`}>{order.billing.invoiceStatus==='issued'?'számla kész':'nincs számla'}</span></div>{order.billing.invoiceStatus==='issued'?<div className="demo-invoice-summary"><span>🧾</span><div><small>Demo számlaszám</small><b>{order.billing.invoiceNumber}</b><em>{order.billing.companyInvoice?(`${order.billing.companyName||''} · ${order.billing.taxNumber||''}`):'Magánszemély'}</em></div></div>:<p className="demo-panel-help">API nélkül is kipróbálhatod a számlázási munkafolyamatot. A demo számla nem minősül valódi bizonylatnak.</p>}<div className="demo-panel-actions">{order.billing.invoiceStatus!=='issued'&&<button className="btn btn-primary" onClick={()=>mutate(()=>issueDemoInvoice(order.id))}>Demo számla kiállítása</button>}{order.billing.invoiceStatus==='issued'&&<button className="btn btn-ghost" onClick={()=>printInvoice(order)}>Számla előnézet / nyomtatás</button>}</div></section>
   </div>
   <section className="demo-order-panel"><div className="demo-order-panel-head"><div><span className="eyebrow">Rendelési állapot</span><h3>Munka következő lépése</h3></div></div><div className="demo-status-actions">{statusOrder.map(status=><button key={status} className={order.status===status?'active':''} onClick={()=>mutate(()=>updateDemoOrderStatus(order.id,status))}>{demoOrderStatusLabel(status)}</button>)}</div></section>
+  <OrderEmailPanel order={order}/>
   <section className="demo-order-panel"><div className="demo-order-panel-head"><div><span className="eyebrow">Belső megjegyzés</span><h3>Jegyzet az adminnak</h3></div></div><div className="demo-order-note"><input value={note} onChange={e=>setNote(e.target.value)} placeholder="Pl. ajándékcsomagolást kért telefonon…"/><button onClick={()=>{if(!note.trim())return;addDemoOrderNote(order.id,note);setNote('');onChange()}}>Hozzáadás</button></div></section>
   <section className="demo-order-panel timeline"><div className="demo-order-panel-head"><div><span className="eyebrow">Idővonal</span><h3>Mi történt a rendeléssel?</h3></div></div><div className="demo-order-timeline">{[...order.events].reverse().map(item=><div key={item.id}><i className={`event-${item.kind}`}/><time>{new Date(item.at).toLocaleString('hu-HU')}</time><span><b>{item.title}</b>{item.detail&&<small>{item.detail}</small>}</span></div>)}</div></section>
  </div></div>
+}
+
+
+function OrderEmailPanel({order}:{order:DemoOrder}){
+ const [emails,setEmails]=useState(()=>demoEmailsForOrder(order.id))
+ useEffect(()=>subscribeDemoEmails(()=>setEmails(demoEmailsForOrder(order.id))),[order.id])
+ const suggested:DemoEmailType[]=['order_confirmation',...(order.payment.status==='paid'?['payment_confirmed' as const]:[]),...(order.payment.status==='failed'?['payment_failed' as const]:[]),...(order.shipment.barcode?['shipment_handed_over' as const]:[]),...(order.billing.invoiceStatus==='issued'?['invoice_issued' as const]:[]),...(order.status==='delivered'?['delivered' as const]:[]),...(order.payment.status==='refunded'?['refund_confirmed' as const]:[])]
+ return <section className="demo-order-panel"><div className="demo-order-panel-head"><div><span className="eyebrow">E-mail automatizmus</span><h3>{emails.length} elkészült levél</h3></div><span className="admin2-pill">{emails.filter(email=>email.status==='queued').length} vár</span></div><div className="demo-order-email-list">{emails.length?emails.map(email=><button key={email.id} onClick={()=>openEmailHtml(email.subject,email.html)}><span>{email.status==='demo_sent'?'✓':'✉'}</span><div><b>{demoEmailTypeLabels[email.type]}</b><small>{email.subject}</small></div><i>Előnézet ↗</i></button>):<p className="demo-panel-help">Ehhez a rendeléshez még nincs e-mail. A rendelés eseményei automatikusan hozzák létre őket.</p>}</div><div className="demo-order-email-generate"><small>Új előnézet készítése:</small>{suggested.map(type=><button key={type} onClick={()=>queueDemoEmailForOrder(order,type,true)}>{demoEmailTypeLabels[type]}</button>)}</div></section>
+}
+
+function openEmailHtml(title:string,html:string){
+ const popup=window.open('','_blank','width=760,height=900')
+ if(!popup)return
+ popup.document.open();popup.document.write(html);popup.document.title=title;popup.document.close()
 }
 
 function flowDone(order:DemoOrder,target:DemoOrderStatus){
