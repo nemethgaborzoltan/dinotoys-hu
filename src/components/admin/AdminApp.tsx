@@ -11,14 +11,14 @@ type AdminMe={userId:string;email:string;role:string;permissions:string[]}
 type JsonRow=Record<string,any>
 
 const nav:Array<{id:View;icon:string;label:string;hint:string}>=[
-  {id:'dashboard',icon:'◫',label:'Áttekintés',hint:'Rendszerállapot'},
-  {id:'products',icon:'◈',label:'Termékek',hint:'Katalógus · ár · készlet'},
-  {id:'content',icon:'✎',label:'Tartalom & oldal',hint:'Kategória · menü · CMS'},
-  {id:'commerce',icon:'₣',label:'Kereskedelem',hint:'Árazás · promóció · beállítás'},
-  {id:'orders',icon:'▤',label:'Rendelések',hint:'Státusz · fulfillment'},
-  {id:'media',icon:'▧',label:'Médiatár',hint:'Képek · fájlok'},
-  {id:'integrations',icon:'⌁',label:'Integrációk',hint:'Supplier · provider'},
-  {id:'security',icon:'⌾',label:'Biztonság & audit',hint:'RBAC · események'},
+  {id:'dashboard',icon:'◫',label:'Áttekintés',hint:'Mi történik a boltban?'},
+  {id:'products',icon:'◈',label:'Termékek',hint:'Mit árulsz és mennyiért?'},
+  {id:'content',icon:'✎',label:'Oldalak & tartalmak',hint:'Szövegek · menük · főoldal'},
+  {id:'commerce',icon:'₣',label:'Vásárlási beállítások',hint:'Árak · kuponok · pénztár'},
+  {id:'orders',icon:'▤',label:'Rendelések',hint:'Beérkezett vásárlások'},
+  {id:'media',icon:'▧',label:'Képek & fájlok',hint:'Termékképek · feltöltések'},
+  {id:'integrations',icon:'⌁',label:'Kapcsolatok',hint:'Külső rendszerek összekötése'},
+  {id:'security',icon:'⌾',label:'Biztonság & napló',hint:'Ki mit csinált?'},
 ]
 
 const demoRows=demoProducts.map(p=>({
