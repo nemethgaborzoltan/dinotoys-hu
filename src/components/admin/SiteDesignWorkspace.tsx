@@ -228,9 +228,17 @@ function CheckoutBuilder({value,onChange,onSave}:{value:CheckoutEditorConfig;onC
    <BuilderGroup title="Fizetés és jogi">
     <TextField label="Fizetés címe" value={value.paymentTitle} onChange={v=>set('paymentTitle',v)}/>
     <TextField label="Fizetés leírás" value={value.paymentDescription} multiline onChange={v=>set('paymentDescription',v)}/>
+    <TextField label="Számlázás címe" value={value.billingTitle} onChange={v=>set('billingTitle',v)}/>
+    <TextField label="Számlázás leírása" value={value.billingDescription} multiline onChange={v=>set('billingDescription',v)}/>
+    <TextField label="Magánszemély felirat" value={value.privateInvoiceLabel} onChange={v=>set('privateInvoiceLabel',v)}/>
     <TextField label="Céges számla felirat" value={value.companyInvoiceLabel} onChange={v=>set('companyInvoiceLabel',v)}/>
+    <TextField label="Számlázási név mező" value={value.billingNameLabel} onChange={v=>set('billingNameLabel',v)}/>
+    <TextField label="Azonos cím kapcsoló" value={value.billingSameLabel} onChange={v=>set('billingSameLabel',v)}/>
     <TextField label="Cégnév mező" value={value.companyNameLabel} onChange={v=>set('companyNameLabel',v)}/>
     <TextField label="Adószám mező" value={value.taxNumberLabel} onChange={v=>set('taxNumberLabel',v)}/>
+    <TextField label="Számlázási irányítószám" value={value.billingPostalCodeLabel} onChange={v=>set('billingPostalCodeLabel',v)}/>
+    <TextField label="Számlázási város" value={value.billingCityLabel} onChange={v=>set('billingCityLabel',v)}/>
+    <TextField label="Számlázási utca" value={value.billingLine1Label} onChange={v=>set('billingLine1Label',v)}/>
     <TextField label="Elfogadó szöveg" value={value.consentText} multiline onChange={v=>set('consentText',v)}/>
     <TextField label="ÁSZF link felirat" value={value.termsLabel} onChange={v=>set('termsLabel',v)}/>
     <TextField label="Adatkezelés link felirat" value={value.privacyLabel} onChange={v=>set('privacyLabel',v)}/>
