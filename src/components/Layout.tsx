@@ -19,7 +19,7 @@ export function Layout({children,shell}:{children:React.ReactNode;shell:Storefro
  const promo=shell?.promotions?.[0]
  useEffect(()=>{const onKey=(event:KeyboardEvent)=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();setSearchOpen(true)}if(event.key==='Escape')setSearchOpen(false)};window.addEventListener('keydown',onKey);return()=>window.removeEventListener('keydown',onKey)},[])
  const submitSearch=()=>{const q=query.trim();if(!q)return;navigate({to:'/termekek',search:{q}});setSearchOpen(false)}
- return <div className={`site-shell ${header.sticky?'site-header-sticky':''} ${header.compact?'site-header-compact':''}`} style={{'--site-accent':header.accent,'--site-header-bg':header.headerBackground} as React.CSSProperties}>
+ return <div className={`site-shell ${header.sticky?'site-header-sticky':''} ${header.compact?'site-header-compact':''}`} style={{'--brand':header.accent,'--brand2':header.accent,'--site-accent':header.accent,'--site-header-bg':header.headerBackground} as React.CSSProperties}>
   <div className="storefront-top">
    {header.showAnnouncement&&<div className="announcement" style={{background:header.announcementBackground}}>{header.announcementItems.map((item,index)=><span key={index}>{item}</span>)}{promo?.code&&<><span>•</span><span>🎟 <b>{promo.code}</b> · {promo.name}</span></>}</div>}
    <div className="header-main">
