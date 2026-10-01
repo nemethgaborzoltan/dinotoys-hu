@@ -153,13 +153,15 @@ export function updateDemoOrderStatus(id:string,status:DemoOrderStatus){
  const order={...orders[index]}
  if(order.status===status)return order
  const previous=order.status
+ const terminal=['cancelled','returned','refunded'].includes(status)
+ if(order.stockReleased&&!terminal){reserveItems(order.items);order.stockReleased=false;order.events=[...order.events,event('stock','Készlet újra lefoglalva','A rendelés újra aktív lett, ezért a készletet ismét lefoglaltuk.')]}
  order.status=status;order.updatedAt=now()
  if(status==='paid')order.payment={...order.payment,status:'paid'}
  if(status==='refunded')order.payment={...order.payment,status:'refunded'}
  if(status==='shipped')order.shipment={...order.shipment,status:'handed_over'}
  if(status==='delivered')order.shipment={...order.shipment,status:'delivered'}
  if(status==='returned')order.shipment={...order.shipment,status:'returned'}
- if(['cancelled','returned','refunded'].includes(status)&&!order.stockReleased){releaseItems(order.items);order.stockReleased=true;order.events=[...order.events,event('stock','Készlet visszaállítva','A lefoglalt mennyiség visszakerült a demo készletbe.')]}
+ if(terminal&&!order.stockReleased){releaseItems(order.items);order.stockReleased=true;order.events=[...order.events,event('stock','Készlet visszaállítva','A lefoglalt mennyiség visszakerült a demo készletbe.')]}
  order.events=[...order.events,event('status',statusLabels[status],`${statusLabels[previous]} → ${statusLabels[status]}`)]
  orders[index]=order;writeDemoOrders(orders);return order
 }
@@ -168,7 +170,7 @@ export function setDemoPaymentStatus(id:string,status:DemoPaymentStatus){
  const orders=readDemoOrders(),index=orders.findIndex(order=>order.id===id);if(index<0)return null
  const order={...orders[index],payment:{...orders[index].payment,status},updatedAt:now()}
  if(status==='paid'&&['new','pending_payment'].includes(order.status))order.status='paid'
- if(status==='refunded')order.status='refunded'
+ if(status==='refunded'){order.status='refunded';if(!order.stockReleased){releaseItems(order.items);order.stockReleased=true;order.events=[...order.events,event('stock','Készlet visszaállítva','A visszatérített rendelés készletfoglalását feloldottuk.')]}}
  order.events=[...order.events,event('payment',status==='paid'?'Fizetés sikeres':status==='failed'?'Fizetés sikertelen':status==='refunded'?'Fizetés visszatérítve':'Fizetési állapot frissült',status)]
  orders[index]=order;writeDemoOrders(orders);return order
 }
