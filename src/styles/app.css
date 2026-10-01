@@ -1135,3 +1135,5 @@
  .integration-roadmap ol{grid-template-columns:1fr}
  .integration-heading-actions{justify-content:flex-start}
 }
+
+.success-order-meta{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
