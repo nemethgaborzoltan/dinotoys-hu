@@ -14,6 +14,7 @@ const schema = z.object({
   FOXPOST_API_USERNAME: z.string().optional(),
   FOXPOST_API_PASSWORD: z.string().optional(),
   FOXPOST_API_KEY: z.string().optional(),
+  FOXPOST_ENV: z.enum(['sandbox','production']).optional(),
   PACKETA_API_KEY: z.string().optional(),
   GLS_API_USERNAME: z.string().optional(),
   GLS_API_PASSWORD: z.string().optional(),
