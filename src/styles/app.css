@@ -2537,3 +2537,21 @@
  .site-builder-bar>div:last-child{width:100%}
  .site-builder-bar .btn{flex:1}
 }
+
+
+.site-builder-links>div{grid-template-columns:22px minmax(140px,.8fr) minmax(200px,1.2fr) auto}
+.site-builder-link-actions{display:flex;gap:4px}
+.site-builder-link-actions button{width:28px;height:28px}
+.site-builder-link-actions button:disabled{opacity:.35;cursor:not-allowed}
+.hero-showcase-v4.hero-products-hidden{grid-template-columns:1fr;grid-template-areas:"copy" "bottom";min-height:560px}
+.hero-showcase-v4.hero-products-hidden .showcase-v4-copy{max-width:850px}
+.hero-showcase-v4.hero-motion-soft .showcase-v4-product{animation-duration:13s!important}
+.hero-showcase-v4.hero-motion-soft .showcase-v4-backdrop .shape{animation-duration:16s!important}
+.hero-showcase-v4.hero-motion-soft:after{animation-duration:20s!important}
+.hero-showcase-v4.hero-motion-off:after,
+.hero-showcase-v4.hero-motion-off .showcase-v4-product,
+.hero-showcase-v4.hero-motion-off .showcase-v4-backdrop .shape{animation:none!important}
+@media(max-width:760px){
+ .site-builder-links>div{grid-template-columns:22px 1fr auto}
+ .site-builder-links>div input:nth-of-type(3){grid-column:2/4}
+}
