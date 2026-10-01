@@ -66,7 +66,7 @@ function Checkout(){
       email:String(form.get('email')||''),phone:normalizedPhone,
       shippingMethod:{provider:shippingOption.provider,methodId:shippingOption.id,feeHuf:shippingFee,pickupPoint:needsFoxpostPoint?foxpostPoint:null},
       couponCode:shop.appliedCoupon?.code??null,
-      shippingAddress:{name:String(form.get('name')||''),countryCode:'HU',postalCode:String(form.get('postalCode')||''),city:String(form.get('city')||''),line1:String(form.get('line1')||'')},
+      shippingAddress:needsFoxpostPoint&&foxpostPoint?{name:String(form.get('name')||''),countryCode:'HU',postalCode:foxpostPoint.zip||'0000',city:foxpostPoint.city||'FOXPOST',line1:foxpostPoint.street||foxpostPoint.address}:{name:String(form.get('name')||''),countryCode:'HU',postalCode:String(form.get('postalCode')||''),city:String(form.get('city')||''),line1:String(form.get('line1')||'')},
       items:shop.cart.map(line=>({productId:line.productId,variantId:line.variantId,quantity:line.quantity}))
      })})
      const payload=await response.json() as any
@@ -75,19 +75,19 @@ function Checkout(){
     }catch(err){setError(err instanceof Error?err.message:'Checkout hiba')}finally{setBusy(false)}
    }}>
     <section className="checkout-section">
-     <div className="checkout-section-title"><b>1</b><div><h2>Kapcsolattartás</h2><p>Ide küldenénk a rendelés visszaigazolását.</p></div></div>
-     <div className="form-grid"><label><span>E-mail</span><input name="email" type="email" autoComplete="email" placeholder="nev@email.hu" required/></label><label><span>Telefon</span><input name="phone" autoComplete="tel" placeholder="+36 30 123 4567" required/></label></div>
+     <div className="checkout-section-title"><b>1</b><div><h2>Kapcsolattartás</h2><p>A neved, e-mail címed és telefonszámod kell a rendeléshez.</p></div></div>
+     <div className="form-grid"><label className="field-wide"><span>Teljes név</span><input name="name" autoComplete="name" required/></label><label><span>E-mail</span><input name="email" type="email" autoComplete="email" placeholder="nev@email.hu" required/></label><label><span>Telefon</span><input name="phone" autoComplete="tel" placeholder="+36 30 123 4567" required/></label></div>
     </section>
 
     <section className="checkout-section">
-     <div className="checkout-section-title"><b>2</b><div><h2>Szállítási cím</h2><p>Magyarországi demo kézbesítés.</p></div></div>
-     <div className="form-grid"><label className="field-wide"><span>Teljes név</span><input name="name" autoComplete="name" required/></label><label><span>Irányítószám</span><input name="postalCode" inputMode="numeric" autoComplete="postal-code" pattern="[0-9]{4}" placeholder="5310" value={postalCode} onChange={e=>setPostalCode(e.target.value.replace(/\D/g,'').slice(0,4))} required/></label><label><span>Város</span><input name="city" autoComplete="address-level2" value={city} onChange={e=>setCity(e.target.value)} required/></label><label className="field-wide"><span>Utca, házszám</span><input name="line1" autoComplete="street-address" required/></label><label className="field-wide"><span>Megjegyzés a futárnak <small>(opcionális)</small></span><input name="deliveryNote" placeholder="Pl. kapucsengő, emelet…"/></label></div>
-    </section>
-
-    <section className="checkout-section">
-     <div className="checkout-section-title"><b>3</b><div><h2>Szállítási mód</h2><p>Válassz kényelmes átvételi módot.</p></div></div>
+     <div className="checkout-section-title"><b>2</b><div><h2>Hogyan kéred a csomagot?</h2><p>Először válassz szállítási módot. FOXPOST esetén utána csak egy átvételi pontot kell kiválasztanod.</p></div></div>
      <div className="checkout-choice-grid">{shippingOptions.map(option=>{const effective=option.freeAboveHuf!==null&&shop.subtotal>=option.freeAboveHuf?0:option.fee;return <label key={option.id} className={`checkout-choice ${shipping===option.id?'selected':''}`}><input type="radio" name="shippingMethod" checked={shipping===option.id} onChange={()=>setShipping(option.id)}/><span className="choice-icon">{option.icon}</span><span className="choice-copy"><b>{option.name}</b><small>{option.description}</small></span><strong>{effective?money(effective):'Ingyenes'}</strong></label>})}</div>
-     {needsFoxpostPoint&&<FoxpostPointPicker value={foxpostPoint} onChange={setFoxpostPoint} defaultQuery={city.trim()||postalCode.trim()}/>} 
+     {needsFoxpostPoint&&<FoxpostPointPicker value={foxpostPoint} onChange={point=>{setFoxpostPoint(point);setPostalCode(point.zip);setCity(point.city)}}/>}
+    </section>
+
+    <section className="checkout-section">
+     <div className="checkout-section-title"><b>3</b><div><h2>{needsFoxpostPoint?'Átvételi pont':'Szállítási cím'}</h2><p>{needsFoxpostPoint?'FOXPOST-nál nem kell külön utcacímet megadnod. A kiválasztott pont lesz a kézbesítési hely.':'Add meg, hová kéred a csomagot.'}</p></div></div>
+     {needsFoxpostPoint?<div className="foxpost-address-confirm">{foxpostPoint?<><span>✓</span><div><b>{foxpostPoint.name}</b><small>{foxpostPoint.address}</small></div></>:<><span>!</span><div><b>Még nincs átvételi pont kiválasztva</b><small>Menj vissza egy lépéssel, és válassz FOXPOST pontot.</small></div></>}</div>:<div className="form-grid"><label><span>Irányítószám</span><input name="postalCode" inputMode="numeric" autoComplete="postal-code" pattern="[0-9]{4}" placeholder="5310" value={postalCode} onChange={e=>setPostalCode(e.target.value.replace(/\D/g,'').slice(0,4))} required/></label><label><span>Város</span><input name="city" autoComplete="address-level2" value={city} onChange={e=>setCity(e.target.value)} required/></label><label className="field-wide"><span>Utca, házszám</span><input name="line1" autoComplete="street-address" required/></label><label className="field-wide"><span>Megjegyzés a futárnak <small>(opcionális)</small></span><input name="deliveryNote" placeholder="Pl. kapucsengő, emelet…"/></label></div>}
     </section>
 
     <section className="checkout-section">
