@@ -7,7 +7,8 @@ declare global {
   dataLayer?: unknown[]
   gtag?: (...args:unknown[])=>void
   fbq?: ((...args:unknown[])=>void)&{queue?:unknown[];loaded?:boolean;version?:string}
-  _fbq?: Window['fbq']
+  _fbq?: any
+  __dinotoysDirectGa4?: boolean
  }
 }
 
@@ -40,6 +41,7 @@ function applyGoogle(config:DemoIntegrationConfig){
  ensureGtag()
  window.gtag!('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'})
  window.gtag!('consent','update',{analytics_storage:consent?.analytics?'granted':'denied',ad_storage:consent?.marketing?'granted':'denied',ad_user_data:consent?.marketing?'granted':'denied',ad_personalization:consent?.marketing?'granted':'denied'})
+ window.__dinotoysDirectGa4=false
  if(!consent?.analytics)return
  if(/^GTM-[A-Z0-9]+$/i.test(gtm)){
   window.dataLayer!.push({'gtm.start':Date.now(),event:'gtm.js'})
@@ -47,6 +49,7 @@ function applyGoogle(config:DemoIntegrationConfig){
   return
  }
  if(/^G-[A-Z0-9]+$/i.test(ga4)){
+  window.__dinotoysDirectGa4=true
   addScript('dinotoys-ga4','https://www.googletagmanager.com/gtag/js?id='+encodeURIComponent(ga4))
   window.gtag!('js',new Date())
   window.gtag!('config',ga4,{send_page_view:true})
