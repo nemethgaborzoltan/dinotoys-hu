@@ -4,6 +4,7 @@ import type{Product} from '../data/products'
 import type{StorefrontPromotion} from '../server/storefront'
 import {demoPromotions} from '../data/offers'
 import {getProductPrice} from './catalog'
+import {readLocalVersioned,writeLocalVersioned} from './local-store'
 
 export type ProductSnapshot=Product
 export type CartLine={productId:string;variantId?:string;quantity:number;snapshot?:ProductSnapshot}
@@ -14,15 +15,44 @@ type ShopState=PersistedState&{
  markViewed:(productId:string,product?:ProductSnapshot)=>void;rememberProduct:(product:ProductSnapshot)=>void;getProduct:(productId:string)=>ProductSnapshot|undefined;
  applyCoupon:(code:string)=>{ok:boolean;message:string};removeCoupon:()=>void;cartCount:number;itemsSubtotal:number;discount:number;subtotal:number;freeShippingThreshold:number;shippingFee:number;freeShippingLeft:number;total:number
 }
-const ShopContext=createContext<ShopState|null>(null),storageKey='dinotoys-hu-store-v3'
+const ShopContext=createContext<ShopState|null>(null),storageKey='dinotoys-hu-store-v4',legacyStorageKey='dinotoys-hu-store-v3',storageVersion=4
 const initial:PersistedState={cart:[],wishlist:[],compare:[],recentlyViewed:[],snapshots:{},appliedCouponCode:null}
 const lineKey=(productId:string,variantId?:string)=>`${productId}:${variantId??'base'}`
+function normalizePersisted(raw:any):PersistedState{
+ const value=raw&&typeof raw==='object'?raw:{}
+ return{
+  cart:Array.isArray(value.cart)?value.cart.filter((line:any)=>line&&typeof line.productId==='string'&&Number(line.quantity)>0).map((line:any)=>({productId:line.productId,variantId:line.variantId||undefined,quantity:Math.max(1,Math.round(Number(line.quantity)||1)),snapshot:line.snapshot})):[],
+  wishlist:Array.isArray(value.wishlist)?value.wishlist.filter((id:any)=>typeof id==='string').slice(0,100):[],
+  compare:Array.isArray(value.compare)?value.compare.filter((id:any)=>typeof id==='string').slice(-4):[],
+  recentlyViewed:Array.isArray(value.recentlyViewed)?value.recentlyViewed.filter((id:any)=>typeof id==='string').slice(0,8):[],
+  snapshots:value.snapshots&&typeof value.snapshots==='object'?value.snapshots:{},
+  appliedCouponCode:typeof value.appliedCouponCode==='string'?value.appliedCouponCode:null,
+ }
+}
+function readPersistedState(){
+ if(typeof window==='undefined')return initial
+ const current=readLocalVersioned<PersistedState>(storageKey,storageVersion,initial,(legacy)=>normalizePersisted(legacy))
+ if(localStorage.getItem(storageKey))return normalizePersisted(current)
+ try{
+  const raw=localStorage.getItem(legacyStorageKey)
+  if(raw){const migrated=normalizePersisted(JSON.parse(raw));writeLocalVersioned(storageKey,storageVersion,compactPersistedState(migrated));localStorage.removeItem(legacyStorageKey);return migrated}
+ }catch{}
+ return normalizePersisted(current)
+}
+function compactPersistedState(state:PersistedState):PersistedState{
+ const referenced=new Set([...state.cart.map(line=>line.productId),...state.wishlist,...state.compare,...state.recentlyViewed])
+ const demoIds=new Set(products.map(product=>product.id))
+ const snapshots=Object.fromEntries(Object.entries(state.snapshots).filter(([id])=>referenced.has(id)&&!demoIds.has(id)))
+ const cart=state.cart.map(line=>({...line,snapshot:undefined}))
+ return{...state,cart,snapshots,recentlyViewed:state.recentlyViewed.slice(0,8),compare:state.compare.slice(-4)}
+}
+
 
 export function ShopProvider({children,freeShippingThreshold=15000,promotions}:{children:React.ReactNode;freeShippingThreshold?:number;promotions?:StorefrontPromotion[]}){
  const availablePromotions=promotions===undefined?demoPromotions:promotions
  const [state,setState]=useState<PersistedState>(initial)
- useEffect(()=>{try{const raw=localStorage.getItem(storageKey);if(raw)setState({...initial,...JSON.parse(raw)})}catch{}},[])
- useEffect(()=>{try{localStorage.setItem(storageKey,JSON.stringify(state))}catch{}},[state])
+ useEffect(()=>{setState(readPersistedState());const sync=(event:StorageEvent)=>{if(event.key===storageKey)setState(readPersistedState())};window.addEventListener('storage',sync);return()=>window.removeEventListener('storage',sync)},[])
+ useEffect(()=>{if(typeof window==='undefined')return;const compact=compactPersistedState(state),result=writeLocalVersioned(storageKey,storageVersion,compact);if(!result.ok){const emergency={...compact,snapshots:{},recentlyViewed:[]};writeLocalVersioned(storageKey,storageVersion,emergency)}},[state])
  const value=useMemo<ShopState>(()=>{
   const remember=(current:PersistedState,product?:ProductSnapshot)=>product?{...current.snapshots,[product.id]:product}:current.snapshots
   const rememberProduct=(product:ProductSnapshot)=>setState(c=>({...c,snapshots:remember(c,product)}))
